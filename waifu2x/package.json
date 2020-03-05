@@ -1,0 +1,16 @@
+{
+  "name": "waifu2x",
+  "version": "0.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "babel-node --presets @babel/preset-env index.js"
+  },
+  "dependencies": {
+    "canvas": "^2.6.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.8.4",
+    "@babel/node": "^7.8.4",
+    "@babel/preset-env": "^7.8.4"
+  }
+}
