@@ -16,7 +16,7 @@ const waifu2x = new Waifu2x({
 const done = (image2x, width, height) => {
   const c2 = createCanvas(width, height)
   const ctx2 = c2.getContext('2d')
-  const imgdata2x =  ctx2.createImageData(width, height)
+  const imgdata2x = ctx2.createImageData(width, height)
   imgdata2x.data.set(image2x)
   ctx2.putImageData(imgdata2x, 0, 0)
   const base64String = c2.toDataURL().replace(/^data:image\/\w+;base64,/, "")
