@@ -1,13 +1,16 @@
 {
-  "name": "waifu2x",
-  "main": "index.js",
   "scripts": {
-    "start": "babel-node --presets @babel/preset-env index.js"
+    "start": "babel-node --presets @babel/preset-env index.js",
+    "ts": "ts-node index.ts"
   },
   "dependencies": {
     "@babel/core": "^7.12.10",
     "@babel/node": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
-    "canvas": "^2.6.1"
+    "@types/node": "^14.14.22",
+    "canvas": "^2.6.1",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.1.3",
+    "waifu2x": "^0.2.3"
   }
 }

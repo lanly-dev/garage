@@ -1,1 +1,2 @@
-Convert the project https://github.com/takuyaa/waifu2x-js into command line version
+- Convert the project https://github.com/takuyaa/waifu2x-js into command line version
+- Trying https://github.com/Tenpi/waifu2x
