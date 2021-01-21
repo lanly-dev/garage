@@ -1,0 +1,6 @@
+.venv
+in
+node_modules
+out
+proj*
+tmp
