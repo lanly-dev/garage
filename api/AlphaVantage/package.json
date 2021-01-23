@@ -1,0 +1,11 @@
+{
+  "name": "alpha-vantage",
+  "dependencies": {
+    "alphavantage": "^2.0.1",
+    "dotenv": "^8.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js"
+  }
+}

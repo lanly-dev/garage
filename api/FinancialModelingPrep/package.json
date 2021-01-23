@@ -1,0 +1,11 @@
+{
+  "name": "alpha-vantage",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "financialmodelingprep": "^1.0.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js"
+  }
+}

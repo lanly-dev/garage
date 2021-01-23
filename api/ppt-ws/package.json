@@ -1,0 +1,7 @@
+{
+  "name": "ppt-ws",
+  "dependencies": {
+    "puppeteer": "^5.5.0",
+    "ws": "^7.4.0"
+  }
+}
