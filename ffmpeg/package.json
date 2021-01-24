@@ -2,8 +2,10 @@
   "scripts": {},
   "dependencies": {
     "any-shell-escape": "^0.1.1",
+    "exiftool-vendored": "^13.1.0",
     "ffmpeg-extract-frames": "^2.0.2",
     "ffmpeg-static": "^4.2.7",
-    "fluent-ffmpeg": "^2.1.2"
+    "fluent-ffmpeg": "^2.1.2",
+    "yaml": "^1.10.0"
   }
 }
