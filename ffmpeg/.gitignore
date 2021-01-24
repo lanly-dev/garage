@@ -1,0 +1,5 @@
+*.mov
+*.mp4
+node_modules
+out
+package-lock.json
