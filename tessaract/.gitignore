@@ -1,0 +1,5 @@
+*.jpg
+*.pdf
+*.traineddata
+node_modules
+package-lock.json
