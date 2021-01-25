@@ -3,7 +3,7 @@ Install python via MS Store - python3.8\
 'python' command -> latest version if there are multiple versions, use python3.8
 
 ## Remove max_path
-https://docs.python.org/3/using/windows.html#removing-the-max-path-limitation\
+https://docs.python.org/3/using/windows.html#removing-the-max-path-limitation \
 https://superuser.com/questions/1119883/windows-10-enable-ntfs-long-paths-policy-option-missing
 
 # Tensorflow

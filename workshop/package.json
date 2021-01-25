@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "Node index.js"
+    "start": "node index.js"
   },
   "dependencies": {
     "@tensorflow/tfjs-node": "^2.8.4"
