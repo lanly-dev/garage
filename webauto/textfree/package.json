@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "playwright-chromium": "^1.8.0",
+    "ts-node": "^9.1.1"
+  }
+}
