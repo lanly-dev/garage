@@ -1,6 +1,7 @@
 *.mov
 *.mp3
 *.mp4
+*.wav
 meta.yaml
 node_modules
 out
