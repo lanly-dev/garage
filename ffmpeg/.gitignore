@@ -1,6 +1,7 @@
 *.mov
 *.mp3
 *.mp4
+*.raw
 *.wav
 meta.yaml
 node_modules

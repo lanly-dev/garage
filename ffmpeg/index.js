@@ -30,6 +30,7 @@ const cmd = `${FPATH} -i ${IN}` // Info
 // const cmd = `${FPATH} -i ${IN} -i ${INmp3} -map 0:v -map 1:a -shortest mav-${OUT}` // merge video and audio
 // const cmd = `${FPATH} -r 24 -i ${IN} iv${OUT}` // images -> video
 // const cmd = `${FPATH} -i mav-b.mp4 ${OUT}.mp3` // extact audio
+// const cmd =  `${FPATH} -f s16le -ar 16000 -ac 1 -i audio.raw -ar 44100 -ac 1 ${OUT}raw.mp3` // for recording raw
 
 if (!fs.existsSync('out')) fs.mkdirSync('out')
 exec(cmd, (err) => (err ? console.error(err.message) : console.info('done!')))
