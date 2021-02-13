@@ -1,7 +1,7 @@
 const { exec } = require('child_process')
 const fs = require('fs')
 const exiftool = require('exiftool-vendored').exiftool
-const YAML = require('yaml');
+const YAML = require('yaml')
 const FPATH = require('ffmpeg-static')
 
 const DIR = 'out'
@@ -16,7 +16,7 @@ const fframes = 'frame%3d.jpg'
 // })
 
 exiftool.read(IN).then((info) => {
-  const doc = new YAML.Document();
+  const doc = new YAML.Document()
   doc.contents = info
   fs.writeFileSync('meta.yaml', doc.toString())
   exiftool.end()
@@ -33,4 +33,8 @@ const cmd = `${FPATH} -i ${IN}` // Info
 // const cmd =  `${FPATH} -f s16le -ar 16000 -ac 1 -i audio.raw -ar 44100 -ac 1 ${OUT}raw.mp3` // for recording raw
 
 if (!fs.existsSync('out')) fs.mkdirSync('out')
-exec(cmd, (err) => (err ? console.error(err.message) : console.info('done!')))
+exec(cmd, (err, stdout, stderr) => {
+  if (err) console.error(err)
+  // console.log(stdout)
+  // console.log(stderr)
+})
