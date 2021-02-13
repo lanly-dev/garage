@@ -1,0 +1,5 @@
+*.raw
+*.pbmm
+*.scorer
+node_modules
+package-lock.json

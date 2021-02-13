@@ -1,1 +1,1 @@
-https://www.npmjs.com/package/sox-stream \
+https://www.npmjs.com/package/sox-stream

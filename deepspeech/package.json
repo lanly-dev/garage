@@ -1,0 +1,13 @@
+{
+  "scripts": {
+    "download": "ts-node download.ts"
+  },
+  "dependencies": {
+    "deepspeech": "^0.9.3",
+    "got": "^11.8.1",
+    "pretty-bytes": "^5.5.0",
+    "speaker": "^0.5.2",
+    "speech-recorder": "^1.2.5",
+    "ts-node": "^9.1.1"
+  }
+}
