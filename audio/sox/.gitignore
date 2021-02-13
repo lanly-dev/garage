@@ -1,0 +1,6 @@
+*.raw
+*.wav
+*.zip
+node_modules
+package-lock.json
+sox-14.4.2
