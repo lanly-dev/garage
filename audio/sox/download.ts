@@ -1,7 +1,7 @@
 import { createWriteStream } from 'fs'
+import * as extractZip from 'extract-zip'
 import * as got from 'got'
 import * as pb from 'pretty-bytes'
-import * as extractZip from 'extract-zip'
 
 const url = 'https://sourceforge.net/projects/sox/files/sox/14.4.2/sox-14.4.2-win32.zip/download'
 const lastProgesses = {}
