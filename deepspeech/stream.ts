@@ -26,15 +26,13 @@ recorder.start({
 function processSpeech(audio) {
   if (!modelStream) createStream()
   feedAudioContent(audio)
-  if (bTimeoutId) {
-    clearTimeout(bTimeoutId)
-    bTimeoutId = null
-  }
-  if (lTimeoutId) {
-    clearTimeout(lTimeoutId)
-    lTimeoutId = null
-  }
-  if(!spinner.isSpinning) spinner.start().spinner = 'runner'
+  ;[bTimeoutId, lTimeoutId].forEach((id) => {
+    if (id) {
+      clearTimeout(id)
+      id = null
+    }
+  })
+  if (!spinner.isSpinning) spinner.start().spinner = 'runner'
 }
 
 function silenceStart() {
