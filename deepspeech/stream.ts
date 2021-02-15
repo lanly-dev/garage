@@ -8,18 +8,17 @@ const SILENCE_THRESHOLD = 600
 const model = new DeepSpeech.Model(`${FILE_NAME}.pbmm`)
 model.enableExternalScorer(`${FILE_NAME}.scorer`)
 
+const spinner = Ora()
 let isSpeaking = false
 let recordedAudioLength = 0
-const spinner = Ora()
 let modelStream, bTimeoutId, lTimeoutId
 
 const recorder = new SpeechRecorder({ sampleRate: 16000, framesPerBuffer: 320 })
 recorder.start({
   onAudio: (audio, speech) => {
     isSpeaking = speech
-    if (speech) {
-      processSpeech(audio)
-    } else silenceStart()
+    if (speech) processSpeech(audio)
+    else silenceStart()
   }
 })
 
