@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "download": "ts-node download.ts"
+  },
+  "dependencies": {
+    "7zip-bin": "^5.1.0",
+    "got": "^11.8.1",
+    "node-7z": "^2.1.2",
+    "pretty-bytes": "^5.5.0",
+    "ts-node": "^9.1.1"
+  }
+}
