@@ -1,0 +1,7 @@
+{
+  "terminal.integrated.env.windows": {
+    "ANDROID_SDK_ROOT": "${workspaceFolder}\\..\\sdk\\android",
+    "JAVA_HOME": "${workspaceFolder}\\..\\sdk\\openjdk",
+    "PATH": "${workspaceFolder}}\\..\\sdk\\gradle\\bin;${workspaceFolder}\\..\\sdk\\android\\cmdline-tools\\tools\\bin;${workspaceFolder}\\..\\sdk\\android\\emulator;${env:PATH}"
+  }
+}

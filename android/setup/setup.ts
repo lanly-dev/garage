@@ -3,10 +3,15 @@ import * as extractZip from 'extract-zip'
 import * as got from 'got'
 import * as path from 'path'
 import * as pb from 'pretty-bytes'
+import * as stream from 'stream'
+import { promisify } from 'util'
+
+const pipeline = promisify(stream.pipeline)
 
 const ASDK_URL = 'https://dl.google.com/android/repository/commandlinetools-win-6858069_latest.zip'
+const GRADEL_URL = 'https://services.gradle.org/distributions/gradle-6.8.3-bin.zip'
 const JDK_URL =
-  'https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u282-b08/OpenJDK8U-jdk_x64_windows_hotspot_8u282b08.zip'
+  'https://github.com/AdoptOpenJDK/openjdk15-binaries/releases/download/jdk-15.0.2%2B7/OpenJDK15U-jdk_x64_windows_hotspot_15.0.2_7.zip'
 const lastProgesses = {}
 
 function download(url, destPath, renameCb) {
@@ -39,19 +44,22 @@ function asdkRename(destPath) {
   )
 }
 
-function jdkRename(destPath) {
-  readdir(destPath, (err, files) => {
-    if (err) console.log(err)
-    else {
-      const jdkDirName = files.filter((elm) => elm.indexOf('jdk') != -1)[0]
-      rename(path.join(destPath, jdkDirName), path.join(destPath, 'openjdk'), (err) =>
-        err ? console.error(err) : console.log('Renamed to "openjdk"')
-      )
-    }
-  })
+function changeName(substring, name?) {
+  return (destPath) => {
+    readdir(destPath, (err, files) => {
+      if (err) console.log(err)
+      else {
+        const jdkDirName = files.filter((elm) => elm.indexOf(substring) != -1)[0]
+        rename(path.join(destPath, jdkDirName), path.join(destPath, name || substring), (err) =>
+          err ? console.error(err) : console.log(`Renamed to "${name || substring}"`)
+        )
+      }
+    })
+  }
 }
 
 function printProgress({ transferred, total, percent }, fileName) {
+  if (!total) return
   const percentage = round(percent * 100, 2)
   if (percentage % 1 != 0) return
   const str = `progress ${fileName}: ${pb(transferred)}/${pb(total)} (${percentage}%)`
@@ -64,5 +72,6 @@ function round(value, decimals) {
   return Number(Math.round(+(value + 'e' + decimals)) + 'e-' + decimals)
 }
 
-download(ASDK_URL, path.resolve(__dirname, '../', 'sdk', 'android', 'cmdline-tools'), asdkRename)
-download(JDK_URL, path.resolve(__dirname, '../', 'sdk'), jdkRename)
+// download(ASDK_URL, path.resolve(__dirname, '../', 'sdk', 'android', 'cmdline-tools'), asdkRename)
+// download(JDK_URL, path.resolve(__dirname, '../', 'sdk'), changeName('jdk', 'openjdk'))
+// download(GRADEL_URL, path.resolve(__dirname, '../', 'sdk'), changeName('gradle'))
