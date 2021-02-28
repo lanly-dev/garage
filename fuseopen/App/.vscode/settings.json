@@ -1,0 +1,10 @@
+{
+  "terminal.integrated.env.windows": {
+    "PATH": "${workspaceFolder}\\sdk\\openjdk\\bin;${env:PATH}"
+  },
+  "files.exclude": {
+    "**/.uno": true,
+    // "**/build": true,
+    "**/node_modules": true
+  }
+}

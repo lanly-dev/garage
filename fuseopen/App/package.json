@@ -1,0 +1,17 @@
+{
+  "name": "App",
+  "private": true,
+  "devDependencies": {
+    "@fuse-open/types": "^2.0.0-beta.3"
+  },
+  "scripts": {
+    "android": "uno build android --run",
+    "ios": "uno build ios --run",
+    "dotnet": "uno build dotnet --run",
+    "native": "uno build native --run",
+    "clean": "uno clean"
+  },
+  "dependencies": {
+    "android-build-tools": "^1.5.2"
+  }
+}

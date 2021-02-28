@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "setup": "ts-node setup.ts"
+  },
+  "dependencies": {
+    "extract-zip": "^2.0.1",
+    "got": "^11.8.1",
+    "pretty-bytes": "^5.5.0"
+  }
+}

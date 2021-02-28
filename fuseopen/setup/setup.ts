@@ -4,8 +4,6 @@ import * as got from 'got'
 import * as path from 'path'
 import * as pb from 'pretty-bytes'
 
-const ASDK_URL = 'https://dl.google.com/android/repository/commandlinetools-win-6858069_latest.zip'
-const GRADEL_URL = 'https://services.gradle.org/distributions/gradle-6.8.3-bin.zip'
 // prettier-ignore
 const JDK_URL = 'https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u282-b08/OpenJDK8U-jdk_x64_windows_hotspot_8u282b08.zip'
 const lastProgesses = {}
@@ -68,6 +66,4 @@ function round(value, decimals) {
   return Number(Math.round(+(value + 'e' + decimals)) + 'e-' + decimals)
 }
 
-// download(ASDK_URL, path.resolve(__dirname, '../', 'sdk', 'android', 'cmdline-tools'), asdkRename)
-// download(JDK_URL, path.resolve(__dirname, '../', 'sdk'), changeName('jdk', 'openjdk'))
-// download(GRADEL_URL, path.resolve(__dirname, '../', 'sdk'), changeName('gradle'))
+download(JDK_URL, path.resolve(__dirname, '../', 'sdk'), changeName('jdk', 'openjdk'))
