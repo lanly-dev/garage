@@ -6,6 +6,7 @@ import * as pb from 'pretty-bytes'
 
 // prettier-ignore
 const JDK_URL = 'https://github.com/AdoptOpenJDK/openjdk8-binaries/releases/download/jdk8u282-b08/OpenJDK8U-jdk_x64_windows_hotspot_8u282b08.zip'
+const ASDK_URL = 'https://dl.google.com/android/repository/commandlinetools-win-6858069_latest.zip'
 const lastProgesses = {}
 
 function download(url, destPath, renameCb) {
@@ -66,4 +67,7 @@ function round(value, decimals) {
   return Number(Math.round(+(value + 'e' + decimals)) + 'e-' + decimals)
 }
 
-download(JDK_URL, path.resolve(__dirname, '../', 'sdk'), changeName('jdk', 'openjdk'))
+// download(JDK_URL, path.resolve(__dirname, '../', 'sdk'), changeName('jdk', 'openjdk'))
+
+// If want to run in Android emulator
+download(ASDK_URL, path.resolve(__dirname, '../', 'sdk', 'android', 'cmdline-tools'), asdkRename)

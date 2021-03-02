@@ -1,17 +1,21 @@
 {
-  "name": "App",
+  "name": "app",
   "private": true,
   "devDependencies": {
     "@fuse-open/types": "^2.0.0-beta.3"
   },
   "scripts": {
     "android": "uno build android --run",
+    "android64": "uno build --set:Project.Android.Architectures.Debug=x86_64 android",
+    "apk": "adb install build\\Android\\Debug\\App.apk",
     "ios": "uno build ios --run",
     "dotnet": "uno build dotnet --run",
     "native": "uno build native --run",
     "clean": "uno clean"
   },
   "dependencies": {
+    "@fuse-open/fuselibs": "^1.14.0",
+    "@fuse-open/uno": "^1.14.3",
     "android-build-tools": "^1.5.2"
   }
 }

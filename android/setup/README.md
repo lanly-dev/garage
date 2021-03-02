@@ -8,9 +8,9 @@ https://gradle.org/install/#manually
 
 # Download Android SDK - required JDK 8
 ```sh
-sdkmanager “system-images;android-27;default;x86_64”
-sdkmanager “platform-tools”
-sdkmanager “build-tools;27.0.3”
-sdkmanager “platforms;android-27”
+sdkmanager system-images;android-27;default;x86_64
+sdkmanager platform-tools # emulator needs this
+sdkmanager build-tools;27.0.3
+sdkmanager platforms;android-27
 sdkmanager emulator
 ```
