@@ -1,5 +1,5 @@
-https://www.npmjs.com/package/fuse-sdk\
-https://www.npmjs.com/package/@fuse-open/fuselibs\
+https://www.npmjs.com/package/fuse-sdk \
+https://www.npmjs.com/package/@fuse-open/fuselibs \
 https://www.npmjs.com/package/@fuse-open/uno
 
 # Android cli commands:
