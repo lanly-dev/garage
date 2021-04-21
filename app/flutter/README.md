@@ -7,4 +7,5 @@ flutter create <app-name>
 flutter create -i swift .
 flutter create -a kotlin .
 flutter create --platforms web .
+flutter create --platforms=windows,macos,linux .
 ```
