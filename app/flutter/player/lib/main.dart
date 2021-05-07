@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:player/bottom.dart';
+import 'package:player/bar.dart';
 import 'package:player/focal.dart';
+import 'package:player/layout.dart';
 import 'package:player/side.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(MyApp());
@@ -36,28 +38,34 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _counter++;
       print(Directory.current.path);
+      print(_counter);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     print(Platform());
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Stack(
-        children: [
-          Focal(),
-          Side(),
-          Bottom()
-        ]
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ),
-    );
+
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+            create: (context) => LayoutModel(),
+          )
+        ],
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(widget.title),
+          ),
+          body: Stack(children: [Focal(), Side(), Bar()]),
+          floatingActionButton: FloatingActionButton(
+            onPressed: () {
+              _incrementCounter();
+              final lm = context.watch<LayoutModel>();
+              lm.layout = 'normal';
+            },
+            tooltip: 'Increment',
+            child: Icon(Icons.add),
+          ),
+        ));
   }
 }

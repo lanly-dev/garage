@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class Focal extends StatefulWidget {
+class Bar extends StatefulWidget {
   @override
-  _FocalState createState() => _FocalState();
+  _BarState createState() => _BarState();
 }
 
-class _FocalState extends State<Focal> {
+class _BarState extends State<Bar> {
   bool isOpen = false;
   @override
   Widget build(BuildContext context) {
