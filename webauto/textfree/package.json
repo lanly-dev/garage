@@ -3,8 +3,8 @@
     "start": "ts-node index.ts"
   },
   "dependencies": {
-    "dotenv": "^8.2.0",
-    "playwright-chromium": "^1.8.0",
+    "dotenv": "^9.0.0",
+    "playwright-chromium": "^1.10.0",
     "ts-node": "^9.1.1"
   }
 }

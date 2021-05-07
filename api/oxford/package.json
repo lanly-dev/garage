@@ -4,7 +4,7 @@
   "description": "",
   "main": "oxford-details.js",
   "dependencies": {
-    "dotenv": "^8.2.0",
+    "dotenv": "^9.0.0",
     "oxford-dictionary-api": "^1.0.1"
   },
   "devDependencies": {},

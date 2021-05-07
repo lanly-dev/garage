@@ -1,8 +1,8 @@
 {
   "name": "alpha-vantage",
   "dependencies": {
-    "alphavantage": "^2.0.1",
-    "dotenv": "^8.2.0"
+    "alphavantage": "^2.2.0",
+    "dotenv": "^9.0.0"
   },
   "devDependencies": {},
   "scripts": {
