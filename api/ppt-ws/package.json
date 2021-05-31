@@ -2,6 +2,6 @@
   "name": "ppt-ws",
   "dependencies": {
     "puppeteer": "^9.1.1",
-    "ws": "^7.4.5"
+    "ws": "^7.4.6"
   }
 }
