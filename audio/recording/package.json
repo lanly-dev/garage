@@ -4,8 +4,8 @@
     "play": "ts-node speaker.ts"
   },
   "dependencies": {
-    "@types/node": "^15.0.2",
+    "@types/node": "^15.12.2",
     "speaker": "^0.5.3",
-    "speech-recorder": "^1.3.0"
+    "speech-recorder": "^1.3.5"
   }
 }

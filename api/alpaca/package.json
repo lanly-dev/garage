@@ -1,7 +1,7 @@
 {
   "name": "alpaca",
   "dependencies": {
-    "@alpacahq/alpaca-trade-api": "^2.0.0",
-    "dotenv": "^9.0.0"
+    "@alpacahq/alpaca-trade-api": "^2.2.0",
+    "dotenv": "^10.0.0"
   }
 }

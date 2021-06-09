@@ -3,6 +3,6 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "@tensorflow/tfjs-node": "^3.6.1"
+    "@tensorflow/tfjs-node": "^3.7.0"
   }
 }

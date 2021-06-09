@@ -1,7 +1,7 @@
 {
   "name": "alpha-vantage",
   "dependencies": {
-    "dotenv": "^9.0.0",
+    "dotenv": "^10.0.0",
     "financialmodelingprep": "^1.1.0"
   },
   "devDependencies": {},
