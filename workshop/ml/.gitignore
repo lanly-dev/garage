@@ -1,6 +1,7 @@
 .venv
 in
 node_modules
+package-lock.json
 out
 proj*
 tmp
