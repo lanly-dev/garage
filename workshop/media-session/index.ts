@@ -17,7 +17,6 @@ const ID = 'MEDIA_SESSION_CONTROLLER'
 async function setupFn(source) {
   const { page } = source
   const html = compileFile('inject.pug')()
-  await page.addStyleTag({ path: 'inject.css' })
   await page.evaluate(
     ({ html, ID }) => {
       window.addEventListener('DOMContentLoaded', () => {
@@ -25,7 +24,6 @@ async function setupFn(source) {
         if (document.body && !document.getElementById(ID)) {
           const div = document.createElement('div')
           div.innerHTML = html
-          console.log(html)
           div.classList.add('playback-bar')
           div.setAttribute('id', ID)
           document.body.appendChild(div)
@@ -34,4 +32,6 @@ async function setupFn(source) {
     },
     { html, ID }
   )
+  const injected = await page.$(`#${ID}`)
+  injected ?? await page.addStyleTag({ path: 'inject.css' })
 }
