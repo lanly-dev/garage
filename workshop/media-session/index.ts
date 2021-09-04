@@ -24,7 +24,7 @@ async function setupFn(source) {
         if (document.body && !document.getElementById(ID)) {
           const div = document.createElement('div')
           div.innerHTML = html
-          div.classList.add('playback-bar')
+          div.classList.add('playback-controls')
           div.setAttribute('id', ID)
           document.body.appendChild(div)
         }
@@ -33,5 +33,5 @@ async function setupFn(source) {
     { html, ID }
   )
   const injected = await page.$(`#${ID}`)
-  injected ?? await page.addStyleTag({ path: 'inject.css' })
+  injected ?? (await page.addStyleTag({ path: 'inject.css' }))
 }
