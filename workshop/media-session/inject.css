@@ -1,25 +1,37 @@
-#MEDIA_SESSION_CONTROLLER {
-	position: fixed;
-	top: 0;
-	z-index: 2147483645;
-	background-color: #55ccddee;
-	padding-bottom: .5em;
-	width: 12em;
-	text-align: center;
+#MEDIA_SESSION_CONTROLS {
+  position: fixed;
+  top: 0;
+  z-index: 2147483645;
+  background-color: #55ccddee;
+  padding-bottom: 0.5em;
+  width: 12%;
+  text-align: center;
+}
+#MEDIA_SESSION_INFO {
+  position: fixed;
+  top: 40%;
+  z-index: 2147483645;
+  background-color: #55ccddee;
+  cursor: move;
+  padding: 0.5em;
+  width: 30%;
+  word-break: break-all;
+  color: #000;
 }
 .btn-media {
-	margin-top: .5em;
-	border-radius: 5px;
-	box-shadow: 1px 0px #3a587f, 0px 1px #4171ae;
-	background-color: #25aff0;
-	cursor: pointer;
-	width: 10em;
-	height: 2em;
-	text-align: center;
+  margin-top: 0.5em;
+  border-radius: 5px;
+  box-shadow: 1px 0px #3a587f, 0px 1px #4171ae;
+  background-color: #25aff0;
+  cursor: pointer;
+  width: 10em;
+  height: 2em;
+  text-align: center;
+  color: #000;
 }
 #THE-HEADER {
-	background-color: #2196f3;
-	cursor: move;
-	padding: 10px;
-	color: #fff;
+  background-color: #2196f3;
+  cursor: move;
+  padding: 10px;
+  color: #fff;
 }

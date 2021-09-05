@@ -1,8 +1,9 @@
-export const injectScript = (html) => {
+export const injectScript = () => {
   // window.addEventListener('DOMContentLoaded', () => {
   //   console.log('Loaded!')
   // })
-  const ID = 'MEDIA_SESSION_CONTROLLER'
+  const ID = 'MEDIA_SESSION_CONTROLS'
+  const ID2 = 'MEDIA_SESSION_INFO'
   const actionHandlers = new Map()
 
   const proxyHandler = {
@@ -19,6 +20,7 @@ export const injectScript = (html) => {
     },
     set(target, prop, value) {
       target[prop] = value
+      updateInfoPanel()
       return true
     }
   }
@@ -26,6 +28,7 @@ export const injectScript = (html) => {
   function setActionHandler(fn) {
     return (action, handler) => {
       handler ? actionHandlers.set(action, handler) : actionHandlers.delete(action)
+      updateInfoPanel()
       return fn
     }
   }
@@ -40,22 +43,49 @@ export const injectScript = (html) => {
     value: new Proxy(navigator.mediaSession, proxyHandler)
   })
 
-  // Make the DIV element draggable:
   const id = setInterval(() => {
-    if(document.getElementById(ID)) {
-      dragElement()
+    if (document.body && document.getElementById(ID)) {
+      setupInfoPanel()
+      dragElement(ID)
+      dragElement(ID2)
       clearInterval(id)
     }
   }, 1000)
 
-  function dragElement() {
+  function setupInfoPanel() {
+    const div = document.createElement('div')
+    div.innerHTML = getInfoHtml()
+    div.setAttribute('id', ID2)
+    document.body.appendChild(div)
+  }
+
+  function getInfoHtml() {
+    const { playbackState, metadata } = navigator.mediaSession
+    let metaString = '<pre>'
+    if (metadata) {
+      const { title, artist, album, artwork } = metadata
+      metaString = `title: ${title}<br>artist: ${artist}<br>album: ${album}<br>artwork: ${JSON.stringify(artwork)}`
+    } else metaString += `metadata: ${metadata}`
+    return (
+      `${metaString}<br>playbackState: ${playbackState}<br>` +
+      `actionsHandlers: ${Array.from(actionHandlers.keys()).join(', ')}<pre>`
+    )
+  }
+
+  function updateInfoPanel() {
+    const elm = document.getElementById(ID2)
+    if (elm) elm.innerHTML = getInfoHtml()
+  }
+
+  function dragElement(elemId) {
     let pos1 = 0
     let pos2 = 0
     let pos3 = 0
     let pos4 = 0
 
-    const elm = document.getElementById(ID)
-    elm.onmousedown = dragMouseDown
+    if (elemId === 'MEDIA_SESSION_CONTROLS') document.getElementById('THE-HEADER').onmousedown = dragMouseDown
+    else document.getElementById(elemId).onmousedown = dragMouseDown
+    const elm = document.getElementById(elemId)
 
     function dragMouseDown(e) {
       e = e || window.event

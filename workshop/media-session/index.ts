@@ -1,12 +1,14 @@
+// import { homedir } from 'os'
 import { chromium } from 'playwright-chromium'
 import { compileFile } from 'pug'
 import { injectScript } from './inject'
 
-const ID = 'MEDIA_SESSION_CONTROLLER'
+const ID = 'MEDIA_SESSION_CONTROLS'
 
 ;(async () => {
   const browser = await chromium.launch({ headless: false, devtools: true })
-  const context = await browser.newContext()
+  const context = await browser.newContext({ bypassCSP: true })
+  // const context = await chromium.launchPersistentContext(`${homedir()}/Desktop/mediasession-profile`, { headless: false, devtools: true, bypassCSP: true })
   await context.exposeBinding('setup', setupFn)
   await context.addInitScript({ content: 'window.setup()' })
   await context.addInitScript(injectScript)
@@ -24,7 +26,7 @@ async function setupFn(source) {
         if (document.body && !document.getElementById(ID)) {
           const div = document.createElement('div')
           div.innerHTML = html
-          div.classList.add('playback-controls')
+          // div.classList.add('playback-controls')
           div.setAttribute('id', ID)
           document.body.appendChild(div)
         }
