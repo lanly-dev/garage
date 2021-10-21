@@ -1,6 +1,6 @@
 import { SpeechRecorder } from 'speech-recorder'
 import * as DeepSpeech from 'deepspeech'
-import * as Ora from 'ora'
+import Ora from 'ora'
 
 const FILE_NAME = 'deepspeech-0.9.3-models'
 const SILENCE_THRESHOLD = 600
