@@ -1,5 +1,6 @@
 {
   "terminal.integrated.env.windows": {
+    "ANDROID_SDK_ROOT": "${workspaceFolder}\\..\\sdk\\android",
     "PATH": "${workspaceFolder}\\..\\sdk\\dotnet;${env:PATH}"
   }
 }

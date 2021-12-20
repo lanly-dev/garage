@@ -7,14 +7,16 @@ import path from 'path'
 import pb from 'pretty-bytes'
 
 const DOTNET_URL = 'https://download.visualstudio.microsoft.com/download/pr/8e55ce37-9740-41b7-a758-f731043060da/4b8bfd4aad9d322bf501ca9e473e35c5/dotnet-sdk-6.0.101-win-x64.zip'
+const ANDROID_URL = 'https://dl.google.com/android/repository/commandlinetools-win-7583922_latest.zip'
+
 const lastProgress: { [key: string]: string } = {}
-let spinner: any
 
 function download(url: string, destPath: string) {
+  let spinner: any
   const fileName = <string>url.split('/').pop()
   if (fs.existsSync(fileName)) {
     console.log(`File ${fileName} exists`)
-    extract(fileName, destPath)
+    extract(fileName, destPath, spinner)
     return
   }
 
@@ -22,45 +24,43 @@ function download(url: string, destPath: string) {
   const fileWriterStream = createWriteStream(fileName)
 
   downloadStream
-    .on('downloadProgress', (data) => printProgress(data, fileName))
+    .on('downloadProgress', (data) => printProgress(data, fileName, spinner))
     .on('error', (error) => {
       spinner.fail()
-      console.error(`Download failed: ${error.message}`)
+      console.error(`${fileName} - Download failed: ${error.message}`)
       process.exit(1)
     })
 
   fileWriterStream
     .on('error', (error) => {
       spinner.fail()
-      console.error(`Could not write file to system: ${error.message}`)
+      console.error(`${fileName} - Could not write file to system: ${error.message}`)
       process.exit(1)
     })
     .on('finish', () => {
       spinner.succeed()
       console.log(`File downloaded: ${fileName}`)
-      extract(fileName , destPath)
+      extract(fileName, destPath, spinner)
     })
 
-  console.log(`Downloading ${fileName}`)
   spinner = ora().start()
   downloadStream.pipe(fileWriterStream)
 }
 
-function printProgress(data: any, fileName: string) {
+function printProgress(data: any, fileName: string, spinner: any) {
   const { transferred, total, percent } = data
   if (!total) return
   const percentage = round(percent * 100, 2)
   if (percentage % 1 != 0) return
-  const str = `${pb(transferred)}/${pb(total)} (${percentage}%)`
+  const str = `Downloading ${fileName}: ${pb(transferred)}/${pb(total)} (${percentage}%)`
   let last = lastProgress[fileName]
   if (last != str) spinner.text = str
   lastProgress[fileName] = str
 }
 
-function extract(fileName: string, destPath: string) {
-  console.log('Extracting...')
+function extract(fileName: string, destPath: string, spinner: any) {
   spinner = ora().start()
-  extractZip(fileName, { dir: destPath, onEntry })
+  extractZip(fileName, { dir: destPath, onEntry: (entry, zipFile) => onEntry(entry, zipFile, fileName, spinner) })
     .catch((err) => {
       spinner.fail()
       console.error(err)
@@ -73,11 +73,11 @@ function extract(fileName: string, destPath: string) {
 }
 
 // Extracting event
-function onEntry(entry: any, zipFile: any) {
+function onEntry(entry: any, zipFile: any, fileName: string, spinner: any) {
   const { entryCount, entriesRead } = zipFile
   const percentage = round(entriesRead / entryCount * 100, 2)
   if (percentage % 1 != 0) return
-  spinner.text = `${entriesRead}/${entryCount}-${percentage}%`
+  spinner.text = `Extracting: ${fileName}: ${entriesRead}/${entryCount}-${percentage}%`
 }
 
 function round(value: number, decimals: number) {
@@ -85,3 +85,4 @@ function round(value: number, decimals: number) {
 }
 
 download(DOTNET_URL, path.resolve(path.resolve(), '../sdk/dotnet'))
+download(ANDROID_URL, path.resolve(path.resolve(), '../sdk/android/cmdline-tools'))

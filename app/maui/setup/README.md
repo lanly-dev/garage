@@ -1,5 +1,5 @@
 >https://dotnet.microsoft.com/en-us/download/dotnet
-
+>https://developer.android.com/studio#command-tools
 ### Commonjs vs ESM hassle
 >https://github.com/microsoft/TypeScript/issues/46452
 
