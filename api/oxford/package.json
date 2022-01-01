@@ -1,24 +1,6 @@
 {
-  "name": "oxford",
-  "version": "1.0.0",
-  "description": "",
-  "main": "oxford-details.js",
   "dependencies": {
     "dotenv": "^9.0.0",
     "oxford-dictionary-api": "^1.0.1"
-  },
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/lanly-dev/Oxford.git"
-  },
-  "author": "lanly-dev",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/lanly-dev/Oxford/issues"
-  },
-  "homepage": "https://github.com/lanly-dev/Oxford#readme"
+  }
 }
