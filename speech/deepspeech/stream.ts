@@ -11,7 +11,7 @@ model.enableExternalScorer(`${FILE_NAME}.scorer`)
 const spinner = Ora()
 let isSpeaking = false
 let recordedAudioLength = 0
-let modelStream, bTimeoutId, lTimeoutId
+let modelStream, timeoutId
 
 const recorder = new SpeechRecorder({ sampleRate: 16000, framesPerBuffer: 320 })
 recorder.start({
@@ -25,17 +25,15 @@ recorder.start({
 function processSpeech(audio) {
   if (!modelStream) createStream()
   feedAudioContent(audio)
-  ;[bTimeoutId, lTimeoutId].forEach((id) => {
-    if (id) {
-      clearTimeout(id)
-      id = null
-    }
-  })
+  if (timeoutId) {
+    clearTimeout(timeoutId)
+    timeoutId = null
+  }
   if (!spinner.isSpinning) spinner.start().spinner = 'runner'
 }
 
 function silenceStart() {
-  if (!bTimeoutId) bTimeoutId = setTimeout(printResult, SILENCE_THRESHOLD)
+  if (!timeoutId) timeoutId = setTimeout(printResult, SILENCE_THRESHOLD)
 }
 
 function printResult() {
