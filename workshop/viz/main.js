@@ -1,8 +1,8 @@
 import './style.css'
 const d3 = await import('d3')
 
-// Draw 5 rects
-const svg = d3.select('#g1')
+// 5 rects ------------------------------
+const svg = d3.select('#g1').style('background-color', 'lightblue')
 const rects = svg.selectAll('rect')
 const data1 = [0, 1, 2, 3, 4]
 
@@ -15,13 +15,14 @@ rects
   .attr('y', 10)
   .attr('x', (d, i) => 10 + i * 30)
 
-// donut graph
+// donut graph ------------------------------
 const width = 960
 const height = 450
 const radius = Math.min(width, height) / 2
 
 const svg2 = d3
   .select('#g2')
+  .style('background-color', 'lightblue')
   .append('svg')
   .attr('width', width)
   .attr('height', height)
@@ -68,7 +69,7 @@ svg2
   .attr('stroke', 'black')
   .style('fill', 'none')
   .attr('stroke-width', 1)
-  .attr('points', function (d) {
+  .attr('points', (d) => {
     const posA = arc.centroid(d) // line insertion in the slice
     const posB = outerArc.centroid(d) // line break: we use the other arc generator that has been built only for that
     const posC = outerArc.centroid(d) // Label position = almost the same as posB
@@ -83,13 +84,15 @@ svg2
   .data(dataReady)
   .join('text')
   .text((d) => d.data[0])
-  .attr('transform', function (d) {
+  .attr('transform', (d) => {
     const pos = outerArc.centroid(d)
     const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
     pos[0] = radius * 0.99 * (midangle < Math.PI ? 1 : -1)
     return `translate(${pos})`
   })
-  .style('text-anchor', function (d) {
+  .style('text-anchor', (d) => {
     const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2
     return midangle < Math.PI ? 'start' : 'end'
   })
+
+// multi-layers donut graph ------------------------------
