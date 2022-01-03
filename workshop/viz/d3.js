@@ -1,8 +1,10 @@
-import './style.css'
+import '@bootstrap-css'
+import '@bootstrap-js'
+
 const d3 = await import('d3')
 
 // 5 rects ------------------------------
-const svg = d3.select('#g1').style('background-color', 'lightblue')
+const svg = d3.select('#g1').style('background-color', 'lightgrey')
 const rects = svg.selectAll('rect')
 const data1 = [0, 1, 2, 3, 4]
 
@@ -22,7 +24,7 @@ const radius = Math.min(width, height) / 2
 
 const svg2 = d3
   .select('#g2')
-  .style('background-color', 'lightblue')
+  .style('background-color', 'lightgrey')
   .append('svg')
   .attr('width', width)
   .attr('height', height)

@@ -3,6 +3,7 @@
     "chartjs",
     "midangle",
     "polylines",
-    "Vite"
-  ]
+    "vite"
+  ],
+  "explorer.sortOrder": "type",
 }
