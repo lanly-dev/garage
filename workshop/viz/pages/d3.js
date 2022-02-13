@@ -97,4 +97,69 @@ svg2
     return midangle < Math.PI ? 'start' : 'end'
   })
 
-// multi-layers donut graph ------------------------------
+// donut with update ------------------------------
+
+// multi-layers donut ------------------------------
+
+const svg = d3.select('#g1').style('background-color', 'lightgrey')
+const rects = svg.selectAll('rect')
+const data1 = [0, 1, 2, 3, 4]
+
+rects
+  .data(data1)
+  .join('rect')
+  .style('fill', 'black')
+  .attr('height', 20)
+  .attr('width', 20)
+  .attr('y', 10)
+  .attr('x', (d, i) => 10 + i * 30)
+
+// donut graph ------------------------------
+const w1 = 960
+const h1 = 450
+const radius = Math.min(w1, h1) / 2
+
+const svg3 = d3
+  .select('#g2')
+  .style('background-color', 'lightgrey')
+  .append('svg')
+  .attr('width', w1)
+  .attr('height', h1)
+  .append('g')
+  .attr('transform', `translate(${w1 / 2}, ${h1 / 2})`)
+
+const data1 = { a: 9, b: 20, c: 30, d: 8, e: 12, f: 3, g: 7, h: 14 }
+
+const c1 = d3.scaleOrdinal().domain(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']).range(d3.schemeDark2)
+
+const pie = d3
+  .pie()
+  .sort(null) // Do not sort group by size
+  .value((d) => d[1])
+
+const dataReady = pie(Object.entries(data2))
+
+const arc = d3
+  .arc()
+  .outerRadius(radius * 0.5)
+  .innerRadius(radius * 0.8)
+
+const outerArc = d3
+  .arc()
+  .innerRadius(radius * 0.9)
+  .outerRadius(radius * 0.9)
+
+// Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+svg2
+  .selectAll('allSlices')
+  .data(dataReady)
+  .join('path')
+  .attr('d', arc)
+  .attr('fill', (d) => color(d.data[1]))
+  .attr('stroke', 'white')
+  .style('stroke-width', '2px')
+  .style('opacity', 0.7)
+
+function getData() {
+
+}

@@ -1,12 +1,13 @@
 import { resolve } from 'path'
 import { defineConfig } from 'vite'
+
 export default defineConfig({
   build: {
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        d3: resolve(__dirname, 'd3.html'),
-        chartjs: resolve(__dirname, 'chartjs.html')
+        d3: resolve(__dirname, 'pages/d3.html'),
+        chartjs: resolve(__dirname, 'pages/chartjs.html')
       }
     }
   },
