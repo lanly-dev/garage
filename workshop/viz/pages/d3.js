@@ -18,14 +18,31 @@ function draw1() {
     .attr('y', 10)
     .attr('x', (d, i) => 10 + i * 30)
 }
-// donut graph ------------------------------
+
+// 5 rects with update
 function draw2() {
+  const svg = d3.select('#g2').style('background-color', 'lightgrey')
+  const rects = svg.selectAll('rect1')
+  const data = [0, 1, 2, 3, 4]
+
+  rects
+    .data(data)
+    .join('rect1')
+    .style('fill', 'black')
+    .attr('height', 200)
+    .attr('width', 200)
+    .attr('y', 100)
+    .attr('x', (d, i) => 100 + i * 300)
+}
+
+// donut graph with labels------------------------------
+function draw3() {
   const width = 960
   const height = 450
   const radius = Math.min(width, height) / 2
 
   const svg = d3
-    .select('#g2')
+    .select('#g3')
     .style('background-color', 'lightgrey')
     .append('svg')
     .attr('width', width)
@@ -99,24 +116,7 @@ function draw2() {
       return midangle < Math.PI ? 'start' : 'end'
     })
 }
-// donut with update ------------------------------
 
-// multi-layers donut ------------------------------
-
-function draw3() {
-  const svg = d3.select('#g3').style('background-color', 'lightgrey')
-  const rects = svg.selectAll('rect')
-  const data = [0, 1, 2, 3, 4]
-
-  rects
-    .data(data)
-    .join('rect')
-    .style('fill', 'black')
-    .attr('height', 20)
-    .attr('width', 20)
-    .attr('y', 10)
-    .attr('x', (d, i) => 10 + i * 30)
-}
 // donut graph ------------------------------
 function draw4() {
   const w = 960
