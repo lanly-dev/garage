@@ -16,48 +16,43 @@
     <div style="margin:20px;border-width:2px">
       <b>Start:</b>
       <select id="start">
-        <option value="Boston, MA">Boston, MA</option>
-        <option value="Milwaukee, WI">Milwaukee, WI</option>
-        <option value="New York, NY">New York, NY</option>
-        <option value="Tacoma, WA" selected>Tacoma, WA</option>
+        <option value="Vancouver, BC" selected>Vancouver, BC</option>
       </select>
       <br>
       <b>Waypoints:</b> <br>
       <i>optimizeWaypoints: false</i> <br>
       <i>(Ctrl-Click for multiple selection)</i> <br>
       <select multiple id="waypoints">
-        <option value="Atlanta, GA">1 Atlanta</option>
-        <option value="Albuquerque, NM">2 Albuquerque</option>
-        <option value="Calgary, AB">3 Calgary</option>
-        <option value="Chicago, IL">4 Chicago</option>
-        <option value="Dallas, TX">5 Dallas</option>
-        <option value="Fargo, ND">6 Fargo</option>
-        <option value="Houston, TX">7 Houston</option>
-        <option value="Las Vegas, NV">8 Las Vegas</option>
-        <option value="Los Angeles, CA">9 Los Angeles</option>
-        <option value="Miami, FL">10 Miami, FL</option>
-        <option value="Montreal, Quebec">11 Montreal</option>
-        <option value="New York, NY">12 New York</option>
-        <option value="Philadelphia, PA">13 Philadelphia</option>
-        <option value="Phoenix, AZ">14 Phoenix</option>
-        <option value="Portland, OR">15 Portland</option>
-        <option value="Orlando, FL">16 Orlando</option>
-        <option value="Regina, SK">17 Regina</option>
-        <option value="Spokane, WA">18 Spokane</option>
-        <option value="San Diego, CA">19 San Diego</option>
-        <option value="San Jose, CA">20 San Jose</option>
-        <option value="Toronto, ONT">21 Toronto</option>
-        <option value="Washington, DC">22 Washington DC</option>
-        <option value="Winnipeg, MB">23 Winnipeg</option>
-        <option value="Yakima, WA">24 Yakima</option>
+        <option value="Bellingham, Washington">Bellingham, Washington</option>
+        <option value="Marysville, Washington">Marysville, Washington</option>
+        <option value="Lynnwood, Washington">Lynnwood, Washington</option>
+        <option value="Northgate, Seattle, WA">Northgate, Seattle, WA</option>
+        <option value="University of Washington Bothell">University of Washington Bothell</option>
+        <option value="South Lake Union">South Lake Union</option>
+        <option value="Space Needle">Space Needle</option>
+        <option value="The Spheres">The Spheres</option>
+        <option value="The Seattle Great Wheel">The Seattle Great Wheel</option>
+        <option value="Seattle Art Museum">Seattle Art Museum</option>
+        <option value="Seattle Public Library-Central Library">Seattle Public Library-Central Library</option>
+        <option value="Seattle University">Seattle University</option>
+        <option value="Harborview Medical Center">Harborview Medical Center</option>
+        <option value="Seattle Chinatown-International District">Seattle Chinatown-International District</option>
+        <option value="T-Mobile Park">T-Mobile Park</option>
+        <option value="SODO">SODO</option>
+        <option value="Jefferson Park Golf Course">Jefferson Park Golf Course</option>
+        <option value="Hamilton Viewpoint Park">Hamilton Viewpoint Park</option>
+        <option value="West Seattle">West Seattle</option>
+        <option value="The Museum of Flight">The Museum of Flight</option>
+        <option value="Seattle-Tacoma International Airport">Seattle-Tacoma International Airport</option>
+        <option value="Museum of Glass">Museum of Glass</option>
+        <option value="University of Washington Tacoma">University of Washington Tacoma</option>
+        <option value="Olympia, Washington">Olympia, Washington</option>
+        <option value="Rochester, WA">Rochester, WA</option>
       </select>
       <br>
       <b>End:</b>
       <select id="end">
-        <option value="Lagos, NG">Lagos, NG</option>
-        <option value="San Francisco, CA">San Francisco, CA</option>
-        <option value="Seattle, WA">Seattle, WA</option>
-        <option value="Vancouver, BC" selected>Vancouver, BC</option>
+        <option value="Vancouver, WA" selected>Vancouver, WA</option>
       </select>
       <br>
       <input type="submit" onclick="calcRoute();">
@@ -103,7 +98,7 @@
       origin: start,
       destination: end,
       waypoints: wPoints,
-      optimizeWaypoints: true, // this helps route too long
+      optimizeWaypoints: false,
       travelMode: google.maps.TravelMode.DRIVING
     }
     directionsService.route(request, function (response, status) {
@@ -147,7 +142,7 @@
 
   #waypoints {
     height: 10em;
-    width: 12.8em;
+    width: 18em;
   }
 </style>
 
