@@ -16,21 +16,38 @@
       <b>Start:</b>
       <select id="start">
         <option value="Boston, MA">Boston, MA</option>
-        <option value="Miami, FL">Miami, FL</option>
         <option value="Milwaukee, WI">Milwaukee, WI</option>
-        <option value="montreal, quebec">Montreal, QBC</option>
         <option value="New York, NY">New York, NY</option>
+        <option value="Tacoma, WA" selected>Tacoma, WA</option>
       </select>
       <br>
       <b>Waypoints:</b> <br>
       <i>(Ctrl-Click for multiple selection)</i> <br>
       <select multiple id="waypoints">
-        <option value="calgary, ab">Calgary</option>
-        <option value="chicago, il">Chicago</option>
-        <option value="fargo, nd">Fargo</option>
-        <option value="spokane, wa">Spokane</option>
-        <option value="toronto, ont">Toronto, ONT</option>
-        <option value="winnipeg, mb">Winnipeg</option>
+        <option value="Atlanta, GA">1 Atlanta</option>
+        <option value="Albuquerque, NM">2 Albuquerque</option>
+        <option value="Calgary, AB">3 Calgary</option>
+        <option value="Chicago, IL">4 Chicago</option>
+        <option value="Dallas, TX">5 Dallas</option>
+        <option value="Fargo, ND">6 Fargo</option>
+        <option value="Houston, TX">7 Houston</option>
+        <option value="Las Vegas, NV">8 Las Vegas</option>
+        <option value="Los Angeles, CA">9 Los Angeles</option>
+        <option value="Miami, FL">10 Miami, FL</option>
+        <option value="Montreal, Quebec">11 Montreal</option>
+        <option value="New York, NY">12 New York</option>
+        <option value="Philadelphia, PA">13 Philadelphia</option>
+        <option value="Phoenix, AZ">14 Phoenix</option>
+        <option value="Portland, OR">15 Portland</option>
+        <option value="Orlando, FL">16 Orlando</option>
+        <option value="Regina, SK">17 Regina</option>
+        <option value="Spokane, WA">18 Spokane</option>
+        <option value="San Diego, CA">19 San Diego</option>
+        <option value="San Jose, CA">20 San Jose</option>
+        <option value="Toronto, ONT">21 Toronto</option>
+        <option value="Washington, DC">22 Washington DC</option>
+        <option value="Winnipeg, MB">23 Winnipeg</option>
+        <option value="Yakima, WA">24 Yakima</option>
       </select>
       <br>
       <b>End:</b>
@@ -38,7 +55,7 @@
         <option value="Lagos, NG">Lagos, NG</option>
         <option value="San Francisco, CA">San Francisco, CA</option>
         <option value="Seattle, WA">Seattle, WA</option>
-        <option value="Vancouver, BC">Vancouver, BC</option>
+        <option value="Vancouver, BC" selected>Vancouver, BC</option>
       </select>
       <br>
       <input type="submit" onclick="calcRoute();">
@@ -64,9 +81,11 @@
     const start = document.getElementById('start').value
     const end = document.getElementById('end').value
     console.log(start, end)
+
     const wPoints = []
     const checkboxArray = document.getElementById('waypoints')
-    console.log(checkboxArray)
+    console.log('Total wp length: ' + checkboxArray.length)
+
     for (let i = 0; i < checkboxArray.length; i++) {
       if (checkboxArray.options[i].selected == true) {
         wPoints.push({
@@ -80,7 +99,7 @@
       origin: start,
       destination: end,
       waypoints: wPoints,
-      optimizeWaypoints: true,
+      optimizeWaypoints: true, // this helps route too long
       travelMode: google.maps.TravelMode.DRIVING
     }
     directionsService.route(request, function (response, status) {
@@ -120,6 +139,11 @@
     background-color: #fff;
     padding: 5px;
     border: 1px solid #999;
+  }
+
+  #waypoints {
+    height: 10em;
+    width: 12.8em;
   }
 </style>
 
