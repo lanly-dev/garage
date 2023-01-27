@@ -1,11 +1,12 @@
 <html>
 <!-- // npx http-server -o index.html -->
+<!-- http://127.0.0.1:8081/workshop/gmap -->
 
 <head>
   <meta charset='utf-8' />
-  <title>GMap2</title>
+  <title>GMap</title>
   <script
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyApUUuFkU2n7TAVHeniz_GcKPOFGcSvDDU&amp;callback=initialize"
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyApUUuFkU2n7TAVHeniz_GcKPOFGcSvDDU&callback=initialize"
     async defer></script>
 </head>
 
@@ -25,30 +26,32 @@
       <i>optimizeWaypoints: true</i> <br>
       <i>(Ctrl-Click for multiple selection)</i> <br>
       <select multiple id="waypoints">
-        <option value="Atlanta, GA">1 Atlanta</option>
-        <option value="Albuquerque, NM">2 Albuquerque</option>
-        <option value="Calgary, AB">3 Calgary</option>
-        <option value="Chicago, IL">4 Chicago</option>
-        <option value="Dallas, TX">5 Dallas</option>
-        <option value="Fargo, ND">6 Fargo</option>
-        <option value="Houston, TX">7 Houston</option>
-        <option value="Las Vegas, NV">8 Las Vegas</option>
-        <option value="Los Angeles, CA">9 Los Angeles</option>
-        <option value="Miami, FL">10 Miami, FL</option>
-        <option value="Montreal, Quebec">11 Montreal</option>
-        <option value="New York, NY">12 New York</option>
-        <option value="Philadelphia, PA">13 Philadelphia</option>
-        <option value="Phoenix, AZ">14 Phoenix</option>
-        <option value="Portland, OR">15 Portland</option>
-        <option value="Orlando, FL">16 Orlando</option>
-        <option value="Regina, SK">17 Regina</option>
-        <option value="Spokane, WA">18 Spokane</option>
-        <option value="San Diego, CA">19 San Diego</option>
-        <option value="San Jose, CA">20 San Jose</option>
-        <option value="Toronto, ONT">21 Toronto</option>
-        <option value="Washington, DC">22 Washington DC</option>
-        <option value="Winnipeg, MB">23 Winnipeg</option>
-        <option value="Yakima, WA">24 Yakima</option>
+        <option value="Albuquerque, NM">1 Albuquerque</option>
+        <option value="Atlanta, GA">2 Atlanta</option>
+        <option value="Burlington, VT">3 Burlington</option>
+        <option value="Calgary, AB">4 Calgary</option>
+        <option value="Chicago, IL">5 Chicago</option>
+        <option value="Dallas, TX">6 Dallas</option>
+        <option value="Fargo, ND">7 Fargo</option>
+        <option value="Houston, TX">8 Houston</option>
+        <option value="Las Vegas, NV">9 Las Vegas</option>
+        <option value="Los Angeles, CA">10 Los Angeles</option>
+        <option value="Miami, FL">11 Miami, FL</option>
+        <option value="Minneapolis, MN">12 Minneapolis, MN</option>
+        <option value="Montreal, Quebec">13 Montreal</option>
+        <option value="New York, NY">14 New York</option>
+        <option value="Orlando, FL">15 Orlando</option>
+        <option value="Philadelphia, PA">16 Philadelphia</option>
+        <option value="Phoenix, AZ">17 Phoenix</option>
+        <option value="Portland, OR">18 Portland</option>
+        <option value="Regina, SK">19 Regina</option>
+        <option value="San Diego, CA">20 San Diego</option>
+        <option value="San Jose, CA">21 San Jose</option>
+        <option value="Spokane, WA">22 Spokane</option>
+        <option value="Toronto, ONT">23 Toronto</option>
+        <option value="Washington, DC">24 Washington DC</option>
+        <option value="Winnipeg, MB">25 Winnipeg</option>
+        <option value="Yakima, WA">26 Yakima</option>
       </select>
       <br>
       <b>End:</b>
@@ -102,7 +105,7 @@
       origin: start,
       destination: end,
       waypoints: wPoints,
-      optimizeWaypoints: true, // this helps route too long
+      optimizeWaypoints: true, // this helps if route too long
       travelMode: google.maps.TravelMode.DRIVING
     }
     directionsService.route(request, function (response, status) {
