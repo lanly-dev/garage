@@ -1,6 +1,6 @@
 <html>
-<!-- // npx http-server -o index4.html -->
-<!-- http://127.0.0.1:8081/workshop/gmap/index4 -->
+<!-- // npx http-server -o index5.html -->
+<!-- http://127.0.0.1:8081/workshop/gmap/index5 -->
 
 <head>
   <meta charset='utf-8' />
@@ -17,12 +17,35 @@
       <i>optimizeWaypoints: false</i> <br>
       <i>(Ctrl-Click for multiple selection)</i> <br>
       <select multiple id="waypoints">
+        <option value="Vancouver, BC" selected>Vancouver, BC</option>
         <option value="Bellingham, Washington">Bellingham, Washington</option>
         <option value="Marysville, Washington">Marysville, Washington</option>
         <option value="Lynnwood, Washington">Lynnwood, Washington</option>
         <option value="Northgate, Seattle, WA">Northgate, Seattle, WA</option>
-        <option value="Ballard, WA">Ballard, WA</option>
+        <option value="University of Washington Bothell">University of Washington Bothell</option>
         <option value="Westlake, Seattle">Westlake, Seattle</option>
+        <option value="South Lake Union">South Lake Union</option>
+        <option value="Space Needle">Space Needle</option>
+        <option value="The Spheres">The Spheres</option>
+        <option value="The Seattle Great Wheel">The Seattle Great Wheel</option>
+        <option value="Seattle Art Museum">Seattle Art Museum</option>
+        <option value="Seattle Public Library-Central Library">Seattle Public Library-Central Library</option>
+        <option value="Seattle University">Seattle University</option>
+        <option value="Harborview Medical Center">Harborview Medical Center</option>
+        <option value="Seattle Chinatown-International District">Seattle Chinatown-International District</option>
+        <option value="T-Mobile Park">T-Mobile Park</option>
+        <option value="SODO">SODO</option>
+        <option value="Jefferson Park Golf Course">Jefferson Park Golf Course</option>
+        <option value="Hamilton Viewpoint Park">Hamilton Viewpoint Park</option>
+        <option value="West Seattle">West Seattle</option>
+        <option value="The Museum of Flight">The Museum of Flight</option>
+        <option value="Seattle-Tacoma International Airport">Seattle-Tacoma International Airport</option>
+        <option value="Southcenter, WA">Southcenter, WA</option>
+        <option value="Museum of Glass">Museum of Glass</option>
+        <option value="University of Washington Tacoma">University of Washington Tacoma</option>
+        <option value="Olympia, Washington">Olympia, Washington</option>
+        <option value="Rochester, WA">Rochester, WA</option>
+        <option value="Vancouver, WA" selected>Vancouver, WA</option>
       </select>
       <br>
       <br>
@@ -77,7 +100,7 @@
       selected++
     }
     console.log('Total wp selected: ' + selected)
-    const chunks = splitToChunk(wPoints, 1)
+    const chunks = splitToChunk(wPoints, 10)
     const promises = []
     for (let i = 0; i < chunks.length; i++) {
       promises.push(requestDirService(start, end, chunks[i]))
