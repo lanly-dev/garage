@@ -4,7 +4,7 @@
 
 <head>
   <meta charset='utf-8' />
-  <title>GMap4</title>
+  <title>GMap5</title>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyApUUuFkU2n7TAVHeniz_GcKPOFGcSvDDU&callback=initialize"
     async defer></script>
 </head>
@@ -70,7 +70,7 @@
       strokeWeight: 2
     }
     directionsDisplay = new google.maps.DirectionsRenderer({
-      markerOptions: { icon, label: { text: 'a'}}
+      markerOptions: { icon, label: { text: 'a' } }
     })
     const chicago = new google.maps.LatLng(41.850033, -87.6500523)
     const mapOptions = {
@@ -155,7 +155,6 @@
     const newDiv = document.createElement('div')
     directionsDisplay.setDirections(masterR)
     directionsDisplay.setPanel(newDiv)
-    console.log(directionsDisplay)
     document.getElementById('directionsPanel').appendChild(newDiv)
   }
 </script>
@@ -184,6 +183,7 @@
     height: 10em;
     width: 18em;
   }
+
 </style>
 
 </html>
