@@ -1,0 +1,166 @@
+<html>
+<!-- // npx http-server -o index3.html -->
+<!-- http://127.0.0.1:8081/workshop/gmap/index4 -->
+
+<head>
+  <meta charset='utf-8' />
+  <title>GMap4</title>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyApUUuFkU2n7TAVHeniz_GcKPOFGcSvDDU&callback=initialize"
+    async defer></script>
+</head>
+
+<body>
+  <div id="map-canvas" style="float:left;width:70%;height:100%"></div>
+  <div id="control_panel" style="float:right;width:30%;text-align:left;padding-top:20px">
+    <div style="margin:20px;border-width:2px">
+      <b>Waypoints</b> <br>
+      <i>optimizeWaypoints: false</i> <br>
+      <i>(Ctrl-Click for multiple selection)</i> <br>
+      <select multiple id="waypoints">
+        <option value="Bellingham, Washington">Bellingham, Washington</option>
+        <option value="Marysville, Washington">Marysville, Washington</option>
+        <option value="Lynnwood, Washington">Lynnwood, Washington</option>
+        <option value="Northgate, Seattle, WA">Northgate, Seattle, WA</option>
+        <option value="Ballard, WA">Ballard, WA</option>
+        <option value="Westlake, Seattle">Westlake, Seattle</option>
+      </select>
+      <br>
+      <br>
+      <input type="submit" onclick="calcRoute();">
+    </div>
+    <div id="directionsPanel" style="margin:20px;background-color:lightblue"></div>
+  </div>
+</body>
+
+<script>
+  const STO_MARK = 'm7 0q3 0 5 2t2 5q0 1-1 3t-6 10q-5-8-6-10t-1-3q0-3 2-5t5-2z'
+
+  function initialize() {
+
+    const icon = {
+      path: STO_MARK,
+      fillColor: 'white',
+      fillOpacity: 1,
+      rotation: 0,
+      scale: 1.5,
+      strokeColor: 'blue',
+      strokeWeight: 2
+    }
+    directionsDisplay = new google.maps.DirectionsRenderer({
+      markerOptions: { icon, label: { text: 'a'}}
+    })
+    const chicago = new google.maps.LatLng(41.850033, -87.6500523)
+    const mapOptions = {
+      zoom: 6,
+      center: chicago
+    }
+    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions)
+    directionsDisplay.setMap(map)
+  }
+
+  async function calcRoute() {
+    directionsService = new google.maps.DirectionsService()
+    const wPoints = []
+    const checkboxArray = document.getElementById('waypoints')
+
+    console.log(checkboxArray)
+    const start = checkboxArray[0].value
+    const end = checkboxArray[checkboxArray.length - 1].value
+    console.log(start + " -> " + end)
+
+    let selected = 0
+    for (let i = 1; i < checkboxArray.length - 1; i++) {
+      wPoints.push({
+        location: checkboxArray[i].value,
+        stopover: true
+      })
+      selected++
+    }
+    console.log('Total wp selected: ' + selected)
+    const chunks = splitToChunk(wPoints, 1)
+    const promises = []
+    for (let i = 0; i < chunks.length; i++) {
+      promises.push(requestDirService(start, end, chunks[i]))
+    }
+    const routeResponses = await Promise.all(promises)
+    mergeRoutes(routeResponses)
+  }
+
+  function splitToChunk(arr, size) {
+    const chunks = []
+    for (let i = 0; i < arr.length; i += size) {
+      const chunk = arr.slice(i, i + size + 1)
+      chunks.push(chunk)
+    }
+    return chunks
+  }
+
+  function requestDirService(origin, destination, waypoints) {
+    return new Promise((resolve, reject) => {
+      const request = {
+        origin,
+        destination,
+        waypoints,
+        optimizeWaypoints: false,
+        travelMode: google.maps.TravelMode.DRIVING
+      }
+      directionsService.route(request, (response, status) => {
+        if (status === google.maps.DirectionsStatus.OK) resolve(response)
+      })
+    })
+  }
+
+  function mergeRoutes(rs) {
+    const masterR = rs[0]
+
+    // trim useless data https://developers.google.com/maps/documentation/javascript/reference/directions#DirectionsResult
+    masterR.request = { travelMode: 'DRIVING' }
+    delete masterR.geocoded_waypoints
+    delete masterR.status
+    delete masterR.routes[0].waypoint_order
+    delete masterR.routes[0].copyrights
+    delete masterR.routes[0].overview_path
+    delete masterR.routes[0].overview_polyline
+    console.log('masterR before:', masterR.routes[0])
+
+    for (let i = 1; i < rs.length; i++) {
+      masterR.routes[0].legs.pop()
+      rs[i].routes[0].legs.shift()
+      masterR.routes[0].legs.push.apply(masterR.routes[0].legs, rs[i].routes[0].legs)
+    }
+    console.log('masterR after:', masterR.routes[0])
+    const newDiv = document.createElement('div')
+    directionsDisplay.setDirections(masterR)
+    directionsDisplay.setPanel(newDiv)
+    console.log(directionsDisplay)
+    document.getElementById('directionsPanel').appendChild(newDiv)
+  }
+</script>
+
+<style>
+  html,
+  body,
+  #map-canvas {
+    height: 100%;
+    margin: 0px;
+    padding: 0px
+  }
+
+  #panel {
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    margin-left: -180px;
+    z-index: 5;
+    background-color: #fff;
+    padding: 5px;
+    border: 1px solid #999;
+  }
+
+  #waypoints {
+    height: 10em;
+    width: 18em;
+  }
+</style>
+
+</html>

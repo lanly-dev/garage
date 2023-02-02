@@ -1,0 +1,119 @@
+<html>
+<!-- // npx http-server -o index3.html -->
+<!-- http://127.0.0.1:8081/workshop/gmap/index3 -->
+
+<head>
+  <meta charset='utf-8' />
+  <title>GMap3</title>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyApUUuFkU2n7TAVHeniz_GcKPOFGcSvDDU&callback=initialize"
+    async defer></script>
+</head>
+
+<body>
+  <div id="map-canvas" style="float:left;width:70%;height:100%"></div>
+  <div id="control_panel" style="float:right;width:30%;text-align:left;padding-top:20px">
+    <div style="margin:20px;border-width:2px">
+      <b>Waypoints</b> <br>
+      <i>optimizeWaypoints: false</i> <br>
+      <i>(Ctrl-Click for multiple selection)</i> <br>
+      <select multiple id="waypoints">
+        <option value="Bellingham, Washington">Bellingham, Washington</option>
+        <option value="Marysville, Washington">Marysville, Washington</option>
+        <option value="Lynnwood, Washington">Lynnwood, Washington</option>
+        <option value="Northgate, Seattle, WA">Northgate, Seattle, WA</option>
+        <option value="University of Washington Bothell">University of Washington Bothell</option>
+        <option value="Westlake, Seattle">Westlake, Seattle</option>
+      </select>
+      <br>
+      <br>
+      <input type="submit" onclick="calcRoute();">
+    </div>
+    <div id="directionsPanel" style="margin:20px;background-color:lightblue"></div>
+  </div>
+</body>
+
+<script>
+  function initialize() {
+    directionsDisplay = new google.maps.DirectionsRenderer()
+    const chicago = new google.maps.LatLng(41.850033, -87.6500523)
+    const mapOptions = {
+      zoom: 6,
+      center: chicago
+    }
+    map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions)
+    directionsDisplay.setMap(map)
+  }
+
+  function calcRoute() {
+    const directionsService = new google.maps.DirectionsService()
+    const wPoints = []
+    const checkboxArray = document.getElementById('waypoints')
+
+    const start = checkboxArray[0].value
+    const end = checkboxArray[checkboxArray.length - 1].value
+    console.log(start + " -> " + end)
+
+    let selected = 0
+    for (let i = 1; i < checkboxArray.length - 1; i++) {
+      wPoints.push({
+        location: checkboxArray[i].value,
+        stopover: true
+      })
+      selected++
+    }
+    console.log('Total wp selected: ' + selected)
+
+    const request = {
+      origin: start,
+      destination: end,
+      waypoints: wPoints,
+      optimizeWaypoints: false,
+      travelMode: google.maps.TravelMode.DRIVING
+    }
+    directionsService.route(request, (response, status) => {
+      if (status === google.maps.DirectionsStatus.OK) {
+        directionsDisplay.setDirections(response)
+        directionsDisplay.setPanel(document.getElementById("directionsPanel"))
+        const route = response.routes[0]
+        const summaryPanel = document.getElementById('directions_panel')
+        summaryPanel.innerHTML = ''
+        // For each route, display summary information.
+        for (let i = 0; i < route.legs.length; i++) {
+          const routeSegment = i + 1
+          summaryPanel.innerHTML += '<b>Route Segment: ' + routeSegment + '</b><br>'
+          summaryPanel.innerHTML += route.legs[i].start_address + ' to '
+          summaryPanel.innerHTML += route.legs[i].end_address + '<br>'
+          summaryPanel.innerHTML += route.legs[i].distance.text + '<br><br>'
+        }
+      }
+    })
+  }
+</script>
+
+<style>
+  html,
+  body,
+  #map-canvas {
+    height: 100%;
+    margin: 0px;
+    padding: 0px
+  }
+
+  #panel {
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    margin-left: -180px;
+    z-index: 5;
+    background-color: #fff;
+    padding: 5px;
+    border: 1px solid #999;
+  }
+
+  #waypoints {
+    height: 10em;
+    width: 18em;
+  }
+</style>
+
+</html>
