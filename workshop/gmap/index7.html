@@ -1,10 +1,10 @@
 <html>
-<!-- // npx http-server -o index6.html -->
-<!-- http://127.0.0.1:8081/workshop/gmap/index6 -->
+<!-- // npx http-server -o index7.html -->
+<!-- http://127.0.0.1:8081/workshop/gmap/index7 -->
 
 <head>
   <meta charset='utf-8' />
-  <title>GMap6</title>
+  <title>GMap7</title>
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyApUUuFkU2n7TAVHeniz_GcKPOFGcSvDDU&callback=initialize"
     async defer></script>
 </head>
@@ -160,6 +160,40 @@
     directionsDisplay.setDirections(masterR)
     directionsDisplay.setPanel(newDiv)
     document.getElementById('directionsPanel').appendChild(newDiv)
+    const elmGMapIconClass = '.adp-marker2'
+    waitForElement(elmGMapIconClass).then(() => replaceAlphabetToNumIcon(elmGMapIconClass))
+  }
+
+  function waitForElement(querySelector, timeout) {
+    return new Promise((resolve, reject) => {
+      var timer = false
+      if (document.querySelectorAll(querySelector).length) return resolve()
+      const observer = new MutationObserver(() => {
+        if (document.querySelectorAll(querySelector).length) {
+          observer.disconnect()
+          if (timer !== false) clearTimeout(timer)
+          return resolve()
+        }
+      })
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true
+      })
+      if (timeout) timer = setTimeout(() => {
+        observer.disconnect()
+        reject()
+      }, timeout)
+    })
+  }
+
+  function replaceAlphabetToNumIcon(className) {
+    const elms = document.querySelectorAll(className)
+    console.log(elms)
+    for (let i = 0; i < elms.length; i++) {
+      if (i === 0) continue
+      const src = elms[i].src
+      elms[i].src = elms[i].src.replace(/FFF%22%3E.*%3C\/t/g, `FFF%22%3E${i}%3C\/t`)
+    }
   }
 </script>
 
@@ -186,6 +220,22 @@
   #waypoints {
     height: 10em;
     width: 18em;
+  }
+
+  .marker {
+    background: url('data:image/svg+xml, <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15 20"><path fill="red" d="m7 0q3 0 5 2t2 5q0 1-1 3t-6 10q-5-8-6-10t-1-3q0-3 2-5t5-2z"/></svg>');
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 26px;
+    height: 37px;
+  }
+
+  /* https://www.w3schools.com/cssref/css_selectors.php */
+  .marker div {
+    color: white;
+    font-weight: 900;
+    width: 26px;
+    height: 37px;
   }
 
 </style>
