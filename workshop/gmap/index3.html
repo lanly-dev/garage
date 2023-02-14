@@ -72,7 +72,7 @@
     directionsService.route(request, (response, status) => {
       if (status === google.maps.DirectionsStatus.OK) {
         directionsDisplay.setDirections(response)
-        directionsDisplay.setPanel(document.getElementById("directionsPanel"))
+        directionsDisplay.setPanel(document.getElementById('directionsPanel'))
         const route = response.routes[0]
         const summaryPanel = document.getElementById('directions_panel')
         summaryPanel.innerHTML = ''

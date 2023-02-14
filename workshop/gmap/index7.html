@@ -25,7 +25,7 @@
         <option value="Westlake, Seattle">Westlake, Seattle</option>
         <option value="South Lake Union">South Lake Union</option>
         <option value="Space Needle">Space Needle</option>
-        <option value="The Spheres">The Spheres</option>
+        <!-- <option value="The Spheres">The Spheres</option>
         <option value="The Seattle Great Wheel">The Seattle Great Wheel</option>
         <option value="Seattle Art Museum">Seattle Art Museum</option>
         <option value="Seattle Public Library-Central Library">Seattle Public Library-Central Library</option>
@@ -44,12 +44,13 @@
         <option value="University of Washington Tacoma">University of Washington Tacoma</option>
         <option value="Olympia, Washington">Olympia, Washington</option>
         <option value="Rochester, WA">Rochester, WA</option>
-        <option value="Vancouver, WA" selected>Vancouver, WA</option>
+        <option value="Vancouver, WA" selected>Vancouver, WA</option> -->
       </select>
       <br>
       <br>
       <input type="submit" onclick="calcRoute();">
     </div>
+    <div id="streetViewPanel"></div>
     <div id="directionsPanel" style="margin:20px;background-color:lightblue"></div>
   </div>
 </body>
@@ -68,7 +69,7 @@
       strokeWeight: 2
     }
     directionsDisplay = new google.maps.DirectionsRenderer({
-      markerOptions: { icon, label: { text: 'a' } }
+      markerOptions: { icon, label: { text: 'labelText' } }
     })
     const chicago = new google.maps.LatLng(41.850033, -87.6500523)
     const mapOptions = {
@@ -76,6 +77,9 @@
       center: chicago
     }
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions)
+    map.addListener("click", (e) => {
+      placeMarkerAndPanTo(e.latLng, map)
+    })
     directionsDisplay.setMap(map)
   }
 
@@ -157,11 +161,25 @@
     }
     console.log('masterR after:', masterR.routes[0])
     const newDiv = document.createElement('div')
+    const masterR2 = changeRoutesLegInfoContent(masterR.routes[0])
     directionsDisplay.setDirections(masterR)
     directionsDisplay.setPanel(newDiv)
     document.getElementById('directionsPanel').appendChild(newDiv)
+
+    // const svPanel = document.getElementById('streetViewPanel')
+    // const panorama = new google.maps.StreetViewPanorama(svPanel, {
+    //   position: { lat: 42.345573, lng: -71.098326 },
+    //   pov: {
+    //     heading: 34,
+    //     pitch: 10,
+    //   }
+    // })
+
     const elmGMapIconClass = '.adp-marker2'
-    waitForElement(elmGMapIconClass).then(() => replaceAlphabetToNumIcon(elmGMapIconClass))
+    waitForElement(elmGMapIconClass).then(() => {
+      replaceAlphabetToNumIcon(elmGMapIconClass)
+      replaceIconColor(elmGMapIconClass)
+    })
   }
 
   function waitForElement(querySelector, timeout) {
@@ -188,12 +206,58 @@
 
   function replaceAlphabetToNumIcon(className) {
     const elms = document.querySelectorAll(className)
-    console.log(elms)
+    // console.log(elms)
     for (let i = 0; i < elms.length; i++) {
       if (i === 0) continue
-      const src = elms[i].src
+      // console.log(elms[i].src)
+      // console.log(decodeURIComponent(elms[i].src))
       elms[i].src = elms[i].src.replace(/FFF%22%3E.*%3C\/t/g, `FFF%22%3E${i}%3C\/t`)
     }
+  }
+
+  function replaceIconColor(className) {
+    const elms = document.querySelectorAll(className)
+    const outline = '000000'
+    const color = '00FFFF' // cyan
+    for (let i = 0; i < elms.length; i++) {
+      if (i === 0) continue
+      elms[i].src = elms[i].src.replace(/C5221F/g, outline)
+      elms[i].src = elms[i].src.replace(/EA4335/g, color)
+    }
+  }
+
+  function changeRoutesLegInfoContent({ legs }) {
+    console.log(legs)
+    legs.map(l => {
+      const { start_address, end_address, steps } = l
+      // this can't render elements
+      l.start_address = `<div>${l.start_address}</div><br/><a class="instructionInfo" href="google.com">google.com</a>`
+      const { instructions } = steps[0]
+      const newDiv = document.createElement('div')
+      newDiv.className = 'streetView'
+      steps[0].instructions += newDiv.outerHTML
+
+      new google.maps.StreetViewPanorama(newDiv, {
+        position: { lat: 42.345573, lng: -71.098326 },
+        pov: {
+          heading: 34,
+          pitch: 10,
+        }
+      })
+      // steps?.map(s => {
+      //   const { instructions } = s
+      //   const newDiv = document.createElement('div')
+      //   newDiv.className = 'streetView'
+      //   new google.maps.StreetViewPanorama(newDiv, {
+      //     position: { lat: 42.345573, lng: -71.098326 },
+      //     pov: {
+      //       heading: 34,
+      //       pitch: 10,
+      //     }
+      //   })
+      //   s.instructions += newDiv.outerHTML
+      // })
+    })
   }
 </script>
 
@@ -220,6 +284,15 @@
   #waypoints {
     height: 10em;
     width: 18em;
+  }
+
+  #directionsPanel .instructionInfo {
+    display: none;
+  }
+
+  #streetViewPanel,
+  .streetView {
+    height: 20em
   }
 
   .marker {
