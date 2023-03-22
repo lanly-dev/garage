@@ -19,13 +19,13 @@
         <option value="Vancouver, BC" selected>Vancouver, BC</option>
         <option value="Bellingham, Washington">Bellingham, Washington</option>
         <option value="Marysville, Washington">Marysville, Washington</option>
-        <option value="Lynnwood, Washington">Lynnwood, Washington</option>
+        <!-- <option value="Lynnwood, Washington">Lynnwood, Washington</option>
         <option value="Northgate, Seattle, WA">Northgate, Seattle, WA</option>
         <option value="University of Washington Bothell">University of Washington Bothell</option>
         <option value="Westlake, Seattle">Westlake, Seattle</option>
         <option value="South Lake Union">South Lake Union</option>
         <option value="Space Needle">Space Needle</option>
-        <!-- <option value="The Spheres">The Spheres</option>
+        <option value="The Spheres">The Spheres</option>
         <option value="The Seattle Great Wheel">The Seattle Great Wheel</option>
         <option value="Seattle Art Museum">Seattle Art Museum</option>
         <option value="Seattle Public Library-Central Library">Seattle Public Library-Central Library</option>
@@ -77,9 +77,6 @@
       center: chicago
     }
     map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions)
-    map.addListener("click", (e) => {
-      placeMarkerAndPanTo(e.latLng, map)
-    })
     directionsDisplay.setMap(map)
   }
 
@@ -164,16 +161,17 @@
     const masterR2 = changeRoutesLegInfoContent(masterR.routes[0])
     directionsDisplay.setDirections(masterR)
     directionsDisplay.setPanel(newDiv)
+    console.log(directionsDisplay)
     document.getElementById('directionsPanel').appendChild(newDiv)
 
-    // const svPanel = document.getElementById('streetViewPanel')
-    // const panorama = new google.maps.StreetViewPanorama(svPanel, {
-    //   position: { lat: 42.345573, lng: -71.098326 },
-    //   pov: {
-    //     heading: 34,
-    //     pitch: 10,
-    //   }
-    // })
+    const svPanel = document.getElementById('streetViewPanel')
+    const panorama = new google.maps.StreetViewPanorama(svPanel, {
+      position: { lat: 42.345573, lng: -71.098326 },
+      pov: {
+        heading: 34,
+        pitch: 10,
+      }
+    })
 
     const elmGMapIconClass = '.adp-marker2'
     waitForElement(elmGMapIconClass).then(() => {
@@ -244,10 +242,11 @@
           pitch: 10,
         }
       })
+      // // this crashed with WebGL errors
       // steps?.map(s => {
       //   const { instructions } = s
       //   const newDiv = document.createElement('div')
-      //   newDiv.className = 'streetView'
+      //   newDiv.className = 'streetViewEmbed'
       //   new google.maps.StreetViewPanorama(newDiv, {
       //     position: { lat: 42.345573, lng: -71.098326 },
       //     pov: {
@@ -257,6 +256,19 @@
       //   })
       //   s.instructions += newDiv.outerHTML
       // })
+      const newDiv1 = document.createElement('div')
+      // newDiv1.innerHTML = 'Helloworld'
+      newDiv1.className = 'streetViewEmbed'
+      const p = new google.maps.StreetViewPanorama(newDiv1, {
+        position: { lat: 42.345573, lng: -71.098326 },
+        pov: {
+          heading: 34,
+          pitch: 10,
+        }
+      })
+      console.log(newDiv1)
+      steps[0].instructions += newDiv1
+      console.log(steps[0])
     })
   }
 </script>
