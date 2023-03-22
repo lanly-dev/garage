@@ -168,7 +168,7 @@
     waitForElement(elmGMapIconClass).then(() => {
       replaceAlphabetToNumIcon(elmGMapIconClass)
       replaceIconColor(elmGMapIconClass)
-      addClickListener()
+      addClickListener(masterR)
     })
   }
 
@@ -227,22 +227,59 @@
     }
   }
 
-  function addClickListener() {
-    const elem = document.querySelectorAll('div[jstcache="0"]')[0]
-    console.log(elem)
-    elem.addEventListener('click', hijackInfoWindow)
+  function addClickListener({ routes }) {
+    const { legs } = routes[0]
+    const dirPanelElem = document.querySelectorAll('div[jstcache="0"]')[0]
+    dirPanelElem.addEventListener('click', (e) => {
+      const trElem = e.target.closest('tr')
+      const legIndex = trElem.getAttribute('data-leg-index')
+      const stepIndex = trElem.getAttribute('data-step-index')
+      const { steps } = legs[legIndex]
+      const step = steps[stepIndex]
+      const { lat, lng } = step.start_location
+      hijackInfoWindow(lat(), lng(), getHeadingDegree(steps, stepIndex))
+    })
   }
 
-  function hijackInfoWindow() {
+  function getHeadingDegree(steps, stepIndex, curObj) {
+    const { instructions: iText, maneuver } = steps[curObj?.index ?? 0]
+    console.log(iText, maneuver, curObj?.theD)
+    if (!curObj) {
+      if (iText.includes('>east<')) d = 0
+      else if (iText.includes('southeast')) d = 45
+      else if (iText.includes('>south<')) d = 90
+      else if (iText.includes('southwest')) d = 135
+      else if (iText.includes('>west<')) d = 180
+      else if (iText.includes('northwest')) d = 225
+      else if (iText.includes('>north<')) d = 270
+      else d = 315 // northeast
+      if (stepIndex === 0) return d
+      return getHeadingDegree(steps, stepIndex, { index: 1, theD: d })
+    } else {
+      let { index, theD } = curObj
+      console.log(index)
+      switch (maneuver) {
+        case 'turn-left': theD -= 90; break
+        case 'ramp-left': theD -= 45; break
+        case 'turn-right': theD += 90; break
+        case 'ramp-right': theD += 45; break
+      }
+      if (index < stepIndex) return getHeadingDegree(steps, stepIndex, { index: ++index, theD })
+      else return theD
+    }
+
+  }
+
+  function hijackInfoWindow(lat, lng, heading) {
+    console.log(heading)
     const dialogElem = document.querySelectorAll('div[role="dialog"]')[0]
     const observerOptions = { attributes: true }
 
     let id, count = 0
-    // gmap probably has another observer to change the dimension
+    // Something repeatedly change back the dimension
     const observer = new MutationObserver((e) => {
-      console.log(e, dialogElem.style.maxWidth, dialogElem.style.maxHeight, count++)
-      // Prevent the behavior on browser inspect
-      if (!id) id = setTimeout(() => observer.disconnect(), 2000)
+      // console.log(e, dialogElem.style.maxWidth, dialogElem.style.maxHeight, count++)
+      if (!id) id = setTimeout(() => observer.disconnect(), 2000) // Prevent the behavior on browser inspect
       if (dialogElem.style.maxHeight != '30em') dialogElem.style.maxHeight = '30em'
       if (dialogElem.style.maxWidth != '30em') dialogElem.style.maxWidth = '30em'
     })
@@ -259,10 +296,10 @@
     newDiv.style.minWidth = '20em'
     elem.appendChild(newDiv)
     new google.maps.StreetViewPanorama(newDiv, {
-      position: { lat: 42.345573, lng: -71.098326 },
+      position: { lat, lng },
       pov: {
-        heading: 34,
-        pitch: 10,
+        heading,
+        pitch: 10 // top-down control
       }
     })
   }
