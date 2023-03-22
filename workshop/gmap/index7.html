@@ -50,7 +50,7 @@
       <br>
       <input type="submit" onclick="calcRoute();">
     </div>
-    <div id="streetViewPanel"></div>
+    <!-- <div id="testPanoPanel"></div> -->
     <div id="directionsPanel" style="margin:20px;background-color:lightblue"></div>
   </div>
 </body>
@@ -164,19 +164,23 @@
     console.log(directionsDisplay)
     document.getElementById('directionsPanel').appendChild(newDiv)
 
-    const svPanel = document.getElementById('streetViewPanel')
-    const panorama = new google.maps.StreetViewPanorama(svPanel, {
-      position: { lat: 42.345573, lng: -71.098326 },
-      pov: {
-        heading: 34,
-        pitch: 10,
-      }
-    })
+    // showTestPano()
 
     const elmGMapIconClass = '.adp-marker2'
     waitForElement(elmGMapIconClass).then(() => {
       replaceAlphabetToNumIcon(elmGMapIconClass)
       replaceIconColor(elmGMapIconClass)
+    })
+  }
+
+  function showTestPano() {
+    const svPanel = document.getElementById('testPanoPanel')
+    new google.maps.StreetViewPanorama(svPanel, {
+      position: { lat: 42.345573, lng: -71.098326 },
+      pov: {
+        heading: 34,
+        pitch: 10,
+      }
     })
   }
 
@@ -228,47 +232,10 @@
     console.log(legs)
     legs.map(l => {
       const { start_address, end_address, steps } = l
-      // this can't render elements
+      // this can't render elements on panel but ok in infoWindow
       l.start_address = `<div>${l.start_address}</div><br/><a class="instructionInfo" href="google.com">google.com</a>`
-      const { instructions } = steps[0]
-      const newDiv = document.createElement('div')
-      newDiv.className = 'streetView'
-      steps[0].instructions += newDiv.outerHTML
-
-      new google.maps.StreetViewPanorama(newDiv, {
-        position: { lat: 42.345573, lng: -71.098326 },
-        pov: {
-          heading: 34,
-          pitch: 10,
-        }
-      })
-      // // this crashed with WebGL errors
-      // steps?.map(s => {
-      //   const { instructions } = s
-      //   const newDiv = document.createElement('div')
-      //   newDiv.className = 'streetViewEmbed'
-      //   new google.maps.StreetViewPanorama(newDiv, {
-      //     position: { lat: 42.345573, lng: -71.098326 },
-      //     pov: {
-      //       heading: 34,
-      //       pitch: 10,
-      //     }
-      //   })
-      //   s.instructions += newDiv.outerHTML
-      // })
       const newDiv1 = document.createElement('div')
-      // newDiv1.innerHTML = 'Helloworld'
       newDiv1.className = 'streetViewEmbed'
-      const p = new google.maps.StreetViewPanorama(newDiv1, {
-        position: { lat: 42.345573, lng: -71.098326 },
-        pov: {
-          heading: 34,
-          pitch: 10,
-        }
-      })
-      console.log(newDiv1)
-      steps[0].instructions += newDiv1
-      console.log(steps[0])
     })
   }
 </script>
@@ -302,7 +269,7 @@
     display: none;
   }
 
-  #streetViewPanel,
+  #testPanoPanel,
   .streetView {
     height: 20em
   }
