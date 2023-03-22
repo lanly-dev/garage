@@ -158,10 +158,8 @@
     }
     console.log('masterR after:', masterR.routes[0])
     const newDiv = document.createElement('div')
-    const masterR2 = changeRoutesLegInfoContent(masterR.routes[0])
     directionsDisplay.setDirections(masterR)
     directionsDisplay.setPanel(newDiv)
-    console.log(directionsDisplay)
     document.getElementById('directionsPanel').appendChild(newDiv)
 
     // showTestPano()
@@ -170,6 +168,7 @@
     waitForElement(elmGMapIconClass).then(() => {
       replaceAlphabetToNumIcon(elmGMapIconClass)
       replaceIconColor(elmGMapIconClass)
+      addClickListener()
     })
   }
 
@@ -228,15 +227,19 @@
     }
   }
 
-  function changeRoutesLegInfoContent({ legs }) {
-    console.log(legs)
-    legs.map(l => {
-      const { start_address, end_address, steps } = l
-      // this can't render elements on panel but ok in infoWindow
-      l.start_address = `<div>${l.start_address}</div><br/><a class="instructionInfo" href="google.com">google.com</a>`
-      const newDiv1 = document.createElement('div')
-      newDiv1.className = 'streetViewEmbed'
-    })
+  function addClickListener() {
+    const elem = document.querySelectorAll('div[jstcache="0"]')[0]
+    console.log(elem)
+    elem.addEventListener('click', hijackInfoWindow)
+  }
+
+  function hijackInfoWindow() {
+    const elem = document.getElementsByClassName('gm-style-iw-d')[0]
+    console.log(elem)
+
+    const newDiv = document.createElement('div')
+    newDiv.innerHTML = 'Hijacked'
+    elem.appendChild(newDiv)
   }
 </script>
 
