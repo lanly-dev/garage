@@ -234,12 +234,37 @@
   }
 
   function hijackInfoWindow() {
+    const dialogElem = document.querySelectorAll('div[role="dialog"]')[0]
+    const observerOptions = { attributes: true }
+
+    let id, count = 0
+    // gmap probably has another observer to change the dimension
+    const observer = new MutationObserver((e) => {
+      console.log(e, dialogElem.style.maxWidth, dialogElem.style.maxHeight, count++)
+      // Prevent the behavior on browser inspect
+      if (!id) id = setTimeout(() => observer.disconnect(), 2000)
+      if (dialogElem.style.maxHeight != '30em') dialogElem.style.maxHeight = '30em'
+      if (dialogElem.style.maxWidth != '30em') dialogElem.style.maxWidth = '30em'
+    })
+    observer.observe(dialogElem, observerOptions)
+
     const elem = document.getElementsByClassName('gm-style-iw-d')[0]
+    const elemIw = document.getElementsByClassName('gm-iw')[0]
+    elemIw.style.maxWidth = null
     console.log(elem)
 
     const newDiv = document.createElement('div')
-    newDiv.innerHTML = 'Hijacked'
+    newDiv.id = 'pano'
+    newDiv.style.height = '20em'
+    newDiv.style.minWidth = '20em'
     elem.appendChild(newDiv)
+    new google.maps.StreetViewPanorama(newDiv, {
+      position: { lat: 42.345573, lng: -71.098326 },
+      pov: {
+        heading: 34,
+        pitch: 10,
+      }
+    })
   }
 </script>
 
