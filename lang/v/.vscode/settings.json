@@ -1,5 +1,8 @@
 {
   "terminal.integrated.env.windows": {
     "PATH": "${workspaceFolder}\\bin;${env:PATH}"
-  }
+  },
+  "cSpell.words": [
+    "helloworld"
+  ]
 }
