@@ -2,7 +2,7 @@
 // it augments the installed puppeteer with plugin functionality.
 // Any number of plugins can be added through `puppeteer.use()`
 const puppeteer = require('puppeteer-extra')
-import { setTimeout } from "node:timers/promises";
+import { setTimeout } from 'node:timers/promises'
 
 // Add stealth plugin and use defaults (all tricks to hide puppeteer usage)
 const StealthPlugin = require('puppeteer-extra-plugin-stealth')
