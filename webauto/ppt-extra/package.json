@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "start": "ts-node index.ts"
+  },
   "dependencies": {
     "puppeteer": "^10.4.0",
     "puppeteer-extra": "^3.2.3",

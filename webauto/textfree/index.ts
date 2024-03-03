@@ -1,15 +1,15 @@
 import { config } from 'dotenv'
 import { chromium } from 'playwright-chromium'
 config()
-const MSG = 'HELLOWOLRD'
+const MSG = 'HELLO_WORLD'
 const { USER, PASS, PHONE } = process.env
 
 async function run() {
   const browser = await chromium.launch({
     headless: false
   })
-  const constext = await browser.newContext()
-  const page = await constext.newPage()
+  const context = await browser.newContext()
+  const page = await context.newPage()
   page.goto('https://messages.textfree.us/login')
 
   await page.fill('input[type="text"]', USER!)
