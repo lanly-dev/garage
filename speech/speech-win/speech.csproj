@@ -6,9 +6,11 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>speech</RootNamespace>
     <TargetFramework>net8.0-windows</TargetFramework>
+    <WindowsSdkPackageVersion>10.0.26100.39</WindowsSdkPackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.1.1" />
     <PackageReference Include="System.Speech" Version="8.0.0" />
   </ItemGroup>
 

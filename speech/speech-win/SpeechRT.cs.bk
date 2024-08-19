@@ -1,0 +1,28 @@
+using System;
+using System.Threading.Tasks;
+using Windows.Media.SpeechSynthesis;
+using Windows.Media.Playback;
+using Windows.Media.Core;
+using Windows.Foundation; // For IAsyncOperation
+
+class Program
+{
+    static async Task Main(string[] args)
+    {
+        var synth = new SpeechSynthesizer();
+        var voices = SpeechSynthesizer.AllVoices;
+        Console.WriteLine(voices.Count);
+        foreach(var v in voices) {
+          Console.WriteLine(v.DisplayName);
+        }
+        IAsyncOperation<SpeechSynthesisStream> operation = synth.SynthesizeTextToStreamAsync("How are you doing?");
+        SpeechSynthesisStream stream = await operation.AsTask();
+        var mediaPlayer = new MediaPlayer();
+        mediaPlayer.Source = MediaSource.CreateFromStream(stream, stream.ContentType);
+        mediaPlayer.Play();
+
+        Console.WriteLine("Press any key to exit...");
+        Console.ReadKey();
+    }
+}
+
