@@ -1,3 +1,7 @@
+// Newer?
+// Doesn't access the natural/HQ voices like MS Guy
+// Those natural voices is installed in MS Store instead
+
 using System;
 using System.Threading.Tasks;
 using Windows.Media.SpeechSynthesis;
@@ -7,22 +11,36 @@ using Windows.Foundation; // For IAsyncOperation
 
 class Program
 {
-    static async Task Main(string[] args)
+  static async Task Main(string[] args)
+  {
+    var synth = new SpeechSynthesizer();
+    var voices = SpeechSynthesizer.AllVoices;
+    Console.WriteLine(voices.Count);
+    foreach (var v in voices)
     {
-        var synth = new SpeechSynthesizer();
-        var voices = SpeechSynthesizer.AllVoices;
-        Console.WriteLine(voices.Count);
-        foreach(var v in voices) {
-          Console.WriteLine(v.DisplayName);
-        }
-        IAsyncOperation<SpeechSynthesisStream> operation = synth.SynthesizeTextToStreamAsync("How are you doing?");
-        SpeechSynthesisStream stream = await operation.AsTask();
-        var mediaPlayer = new MediaPlayer();
-        mediaPlayer.Source = MediaSource.CreateFromStream(stream, stream.ContentType);
-        mediaPlayer.Play();
-
-        Console.WriteLine("Press any key to exit...");
-        Console.ReadKey();
+      Console.WriteLine(v.DisplayName);
     }
+    IAsyncOperation<SpeechSynthesisStream> operation = synth.SynthesizeTextToStreamAsync("How are you doing?");
+    SpeechSynthesisStream stream = await operation.AsTask();
+    var mediaPlayer = new MediaPlayer();
+    mediaPlayer.Source = MediaSource.CreateFromStream(stream, stream.ContentType);
+    mediaPlayer.Play();
+
+    Console.WriteLine("Press any key to exit...");
+    Console.ReadKey();
+  }
 }
+
+/*
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows10.0.26100.0</TargetFramework>
+    <WindowsSdkPackageVersion>10.0.26100.39</WindowsSdkPackageVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Windows.CsWinRT" Version="2.1.1" />
+  </ItemGroup>
+</Project>
+*/
 

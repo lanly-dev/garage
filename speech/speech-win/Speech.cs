@@ -1,9 +1,12 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Reflection.Metadata;
+using System.Runtime.InteropServices;
 using System.Speech.Synthesis;
+
 namespace Speech
 {
   class Speech
   {
+    private const int MAX_CHARS = 45;
     private static SpeechSynthesizer synthesizer = new SpeechSynthesizer();
     private static InstalledVoice[] voices = synthesizer.GetInstalledVoices().ToArray();
 
@@ -18,14 +21,20 @@ namespace Speech
 
     static void Main()
     {
-      // Speak("hello");
-      tryVoices();
+      Speak();
+      Speak("pneumonoultramicroscopicsilicovolcanoconiosis");
+      Speak("pneumonoultramicroscopicsilicovolcanoconiosis hello");
+      // tryVoices();
       Console.WriteLine(isWindows());
       pc(GetVoiceNames());
     }
 
-    static void Speak(string text)
+    static void Speak(string text = "hello world, how are you?")
     {
+      if (text.Length > MAX_CHARS) {
+        synthesizer.Speak("Text too long");
+        return;
+      }
       synthesizer.Speak(text);
     }
 
