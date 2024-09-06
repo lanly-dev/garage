@@ -1,0 +1,9 @@
+# For graph
+ipython
+nbformat
+plotly
+
+# For export to excel
+openpyxl
+
+yfinance
