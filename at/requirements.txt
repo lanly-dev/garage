@@ -1,9 +1,13 @@
-# For graph
+# graph
 ipython
 nbformat
 plotly
 
-# For export to excel
+# export to excel
 openpyxl
 
+# panda to graph
+matplotlib
+
+numpy
 yfinance

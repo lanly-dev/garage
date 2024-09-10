@@ -6,7 +6,7 @@ import * as pb from 'pretty-bytes'
 import * as sevenBin from '7zip-bin'
 
 const url = 'https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-full.7z'
-const lastProgesses = {}
+const lastProgresses = {}
 
 function download(url) {
   const downloadStream = got.default.stream(url)
@@ -56,9 +56,9 @@ function printProgress({ transferred, total, percent }, fileName) {
   const percentage = round(percent * 100, 2)
   if (percentage % 1 != 0) return
   const str = `progress ${fileName}: ${pb(transferred)}/${pb(total)} (${percentage}%)`
-  let last = lastProgesses[fileName]
+  let last = lastProgresses[fileName]
   if (last != str) console.log(str)
-  lastProgesses[fileName] = str
+  lastProgresses[fileName] = str
 }
 
 function round(value, decimals) {

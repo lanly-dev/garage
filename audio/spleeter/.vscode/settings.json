@@ -1,5 +1,8 @@
 {
   "terminal.integrated.env.windows": {
     "PATH": "${workspaceFolder}\\ffmpeg\\bin;${env:PATH}"
-  }
+  },
+  "cSpell.words": [
+    "Spleeter"
+  ]
 }
