@@ -9,5 +9,6 @@ openpyxl
 # panda to graph
 matplotlib
 
+backtesting
 numpy
 yfinance
