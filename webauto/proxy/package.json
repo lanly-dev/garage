@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "start": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "puppeteer": "^23.8.0"
+  }
+}
