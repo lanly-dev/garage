@@ -1,0 +1,11 @@
+{
+  "type": "module",
+  "scripts": {
+    "download": "ts-node download.js"
+  },
+  "dependencies": {
+    "extract-zip": "^2.0.1",
+    "got": "^14.4.5",
+    "pretty-bytes": "^6.1.1"
+  }
+}
