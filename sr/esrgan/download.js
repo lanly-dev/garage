@@ -1,7 +1,7 @@
 import { createWriteStream } from 'fs'
 import { dirname } from 'path'
 import { fileURLToPath } from 'url'
-import * as got from 'got'
+import got from 'got'
 import extractZip from 'extract-zip'
 import pb from 'pretty-bytes'
 
@@ -9,24 +9,25 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 
 
-const url = 'https://sourceforge.net/projects/sox/files/sox/14.4.2/sox-14.4.2-win32.zip/download'
+const url = `https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.5.0/realesrgan-ncnn-vulkan-20220424-windows.zip`
 const lastProgesses = {}
 
 function download(url) {
-  const downloadStream = got.default.stream(url)
-  const fileName = 'sox-14.4.2-win32.zip'
+  console.log(`Downloading ${url}`)
+  const downloadStream = got.stream(url)
+  const fileName = `resrgan-win.zip`
   const fileWriterStream = createWriteStream(fileName)
 
   downloadStream
-    .on('downloadProgress', (data) => printProgress(data, fileName))
-    .on('error', (error) => console.error(`Download failed: ${error.message}`))
+    .on(`downloadProgress`, (data) => printProgress(data, fileName))
+    .on(`error`, (error) => console.error(`Download failed: ${error.message}`))
 
   fileWriterStream
-    .on('error', (error) => console.error(`Could not write file to system: ${error.message}`))
-    .on('finish', () => {
+    .on(`error`, (error) => console.error(`Could not write file to system: ${error.message}`))
+    .on(`finish`, () => {
       console.log(`File downloaded to ${fileName}`)
       extractZip(fileName, { dir: __dirname })
-        .then(() => console.log('Extraction complete'))
+        .then(() => console.log(`Extraction complete`))
         .catch((err) => console.error(err))
     })
 
@@ -43,7 +44,7 @@ function printProgress({ transferred, total, percent }, fileName) {
 }
 
 function round(value, decimals) {
-  return Number(Math.round(+(value + 'e' + decimals)) + 'e-' + decimals)
+  return Number(Math.round(+(value + `e` + decimals)) + `e-` + decimals)
 }
 
 download(url)
