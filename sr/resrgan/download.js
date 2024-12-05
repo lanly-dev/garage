@@ -1,5 +1,3 @@
-import { dirname } from 'path'
-import { fileURLToPath } from 'url'
 import axios from 'axios'
 import extractZip from 'extract-zip'
 import fs from 'fs'
