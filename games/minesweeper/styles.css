@@ -1,16 +1,39 @@
 body {
+  font-family: Arial, sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background: #f0f0f0;
-  font-family: 'Arial', sans-serif;
   margin: 0;
+  background-color: #f0f0f0;
 }
 
 h1 {
+  margin: 20px 0;
+}
+
+#controls {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+#controls button {
+  margin: 0 10px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+#score-keeper {
+  display: flex;
+  align-items: center;
   margin-bottom: 20px;
+}
+
+#score-keeper span {
+  margin: 0 10px;
+  font-size: 18px;
 }
 
 #game-board {
@@ -21,24 +44,23 @@ h1 {
 .cell {
   width: 30px;
   height: 30px;
-  background: #ddd;
+  background-color: #ccc;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2em;
   cursor: pointer;
+  border: 1px solid #999;
 }
 
 .cell.revealed {
-  background: #fff;
-  cursor: default;
+  background-color: #eee;
 }
 
 .cell.mine {
-  background: red;
-  color: white;
+  background-color: red;
 }
 
 .cell.flag {
-  background: yellow;
+  color: red;
+  font-size: larger;
 }

@@ -15,8 +15,8 @@ function createBoard() {
       cell.classList.add(`cell`)
       cell.dataset.row = row
       cell.dataset.col = col
-      cell.addEventListener(`click`, handleClick)
-      cell.addEventListener(`contextmenu`, handleRightClick)
+      cell.addEventListener(`click`, cellClickHandler)
+      cell.addEventListener(`contextmenu`, putFlagHandler)
       gameBoard.appendChild(cell)
       board[row][col] = {
         element: cell,
@@ -40,17 +40,24 @@ function placeMines() {
   }
 }
 
-function handleClick(event) {
+function cellClickHandler(event) {
   const row = event.target.dataset.row
   const col = event.target.dataset.col
   revealCell(parseInt(row), parseInt(col))
 }
 
-function handleRightClick(event) {
+function putFlagHandler(event) {
   event.preventDefault()
-  const row = event.target.dataset.row
-  const col = event.target.dataset.col
-  toggleFlag(parseInt(row), parseInt(col))
+  const cell = event.target
+  const row = cell.dataset.row
+  const col = cell.dataset.col
+  const cellData = board[row][col]
+
+  if (cellData.revealed) return
+
+  cellData.flag = !cellData.flag
+  cell.textContent = cellData.flag ? `⚑` : ``
+  cell.classList.toggle(`flag`, cellData.flag)
 }
 
 function revealCell(row, col) {
@@ -71,21 +78,10 @@ function revealCell(row, col) {
   if (mineCount > 0) cell.element.textContent = mineCount
   else {
     for (let r = -1; r <= 1; r++) {
-      for (let c = -1; c <= 1; c++) {
-        if (r !== 0 || c !== 0)
-          revealCell(row + r, col + c)
-
-      }
+      for (let c = -1; c <= 1; c++)
+        if (r !== 0 || c !== 0) revealCell(row + r, col + c)
     }
   }
-}
-
-function toggleFlag(row, col) {
-  const cell = board[row][col]
-  if (cell.revealed) return
-
-  cell.flag = !cell.flag
-  cell.element.classList.toggle(`flag`)
 }
 
 function countMines(row, col) {
@@ -95,9 +91,10 @@ function countMines(row, col) {
       if (r === 0 && c === 0) continue
       const newRow = row + r
       const newCol = col + c
-      if (newRow >= 0 && newRow < boardSize && newCol >= 0 && newCol < boardSize) {
-        if (board[newRow][newCol].mine) count++
-      }
+      // Check if the new position is within the board boundaries
+      if (newRow < 0 || newRow >= boardSize || newCol < 0 || newCol >= boardSize) continue
+      // Increment count if a mine is found at the new position
+      if (board[newRow][newCol].mine) count++
     }
   }
   return count
