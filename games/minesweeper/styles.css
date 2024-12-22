@@ -52,6 +52,10 @@ h1 {
   border: 1px solid #999;
 }
 
+.cell:hover {
+  background-color: #bbb;
+}
+
 .cell.revealed {
   background-color: #eee;
 }
@@ -63,4 +67,9 @@ h1 {
 .cell.flag {
   color: red;
   font-size: larger;
+}
+
+.disabled {
+  cursor: not-allowed;
+  pointer-events: none;
 }

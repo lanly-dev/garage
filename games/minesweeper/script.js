@@ -3,11 +3,14 @@ const mineCount = 10
 let board = []
 let mines = 0
 
-function createBoard() {
-  const gameBoard = document.getElementById(`game-board`)
-  gameBoard.style.gridTemplateColumns = `repeat(${boardSize}, 30px)`
-  gameBoard.style.gridTemplateRows = `repeat(${boardSize}, 30px)`
 
+const gameBoard = document.getElementById(`game-board`)
+gameBoard.style.gridTemplateColumns = `repeat(${boardSize}, 30px)`
+gameBoard.style.gridTemplateRows = `repeat(${boardSize}, 30px)`
+document.getElementById(`reset`).addEventListener(`click`, resetGame)
+
+function initBoard() {
+  disableBoard(false)
   for (let row = 0; row < boardSize; row++) {
     board[row] = []
     for (let col = 0; col < boardSize; col++) {
@@ -70,6 +73,8 @@ function revealCell(row, col) {
 
   if (cell.mine) {
     cell.element.classList.add(`mine`)
+    cell.element.textContent = `💣`
+    disableBoard(true)
     alert(`Game Over`)
     return
   }
@@ -100,4 +105,22 @@ function countMines(row, col) {
   return count
 }
 
-createBoard()
+function resetGame() {
+  console.log(`Game reset!`)
+  const cells = document.querySelectorAll(`.cell`)
+  cells.forEach(cell => {
+    cell.classList.remove(`revealed`, `mine`, `flag`)
+    cell.style.backgroundColor = `#ccc`
+  })
+
+  board = []
+  mines = 0
+  gameBoard.innerHTML = ``
+  initBoard()
+}
+
+function disableBoard(bool) {
+  gameBoard.classList.toggle(`disabled`, bool)
+}
+
+initBoard()
