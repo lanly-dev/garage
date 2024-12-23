@@ -27,16 +27,14 @@ function applySettings(boardSize) {
 }
 
 function cellClickHandler(event) {
-  if (!gameStarted) {
-    startTimer()
-    gameStarted = true
-  }
   const row = event.target.dataset.row
   const col = event.target.dataset.col
   if (firstClick) {
     ensureSafeFirstClick(event.target)
     firstClick = false
+    gameStarted = true
     smileyAnimation()
+    startTimer()
   }
   if (event.target.classList.contains(`revealed`) && event.target.textContent) {
     revealAdjacentCells(parseInt(row), parseInt(col))
