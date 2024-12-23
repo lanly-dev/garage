@@ -179,10 +179,24 @@ function revealCell(row, col) {
     disableBoard(true)
     stopTimer()
     resetBtn.textContent = `😎`
-    // revealLastMine()
     return
   }
   smileyAnimation()
+}
+
+function revealHiddenMines() {
+  for (let row = 0; row < boardSize; row++) {
+    for (let col = 0; col < boardSize; col++) {
+      const cell = board[row][col]
+      if (cell.mine && !cell.revealed && !cell.flag) {
+        cell.revealed = true
+        cell.element.classList.add(`revealed`)
+        cell.element.classList.add(`last-mine`)
+        cell.element.textContent = `💣`
+        cell.element.style.backgroundColor = `lightgreen`
+      }
+    }
+  }
 }
 
 function checkWin() {
@@ -192,6 +206,7 @@ function checkWin() {
       if (!cell.mine && !cell.revealed) return false
     }
   }
+  revealHiddenMines()
   return true
 }
 
