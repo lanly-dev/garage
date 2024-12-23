@@ -15,7 +15,10 @@ let mines = 0
 let timerInterval
 let firstClick = true
 
-document.getElementById(`reset`).addEventListener(`click`, resetGame)
+const mineCountLabel = document.getElementById(`mine-count`)
+const resetBtn = document.getElementById(`reset`)
+resetBtn.addEventListener(`click`, resetGame)
+
 
 function applySettings(boardSize) {
   window.boardSize = boardSize.size
@@ -33,12 +36,16 @@ function cellClickHandler(event) {
   if (firstClick) {
     ensureSafeFirstClick(event.target)
     firstClick = false
+    smileyAnimation()
   }
-  if (event.target.classList.contains(`revealed`) && event.target.textContent)
+  if (event.target.classList.contains(`revealed`) && event.target.textContent) {
     revealAdjacentCells(parseInt(row), parseInt(col))
-  else
-    revealCell(parseInt(row), parseInt(col))
+  } else revealCell(parseInt(row), parseInt(col))
+}
 
+function smileyAnimation() {
+  resetBtn.textContent = `😮`
+  setTimeout(() => resetBtn.textContent = `😊`, 200)
 }
 
 function countMines(row, col) {
@@ -112,9 +119,8 @@ function putFlagHandler(event) {
   cell.textContent = cellData.flag ? `⚑` : ``
   cell.classList.toggle(`flag`, cellData.flag)
 
-  const mineCountElement = document.getElementById(`mine-count`)
   const flaggedCells = document.querySelectorAll(`.flag`).length
-  mineCountElement.textContent = `💣${mineCount - flaggedCells}`
+  mineCountLabel.textContent = `💣${mineCount - flaggedCells}`
 }
 
 function resetGame() {
@@ -132,7 +138,8 @@ function resetGame() {
   resetTimer()
   gameStarted = false
   firstClick = true
-  document.getElementById(`mine-count`).textContent = `💣${mineCount}` // Reset mine count label
+  mineCountLabel.textContent = `💣${mineCount}` // Reset mine count label
+  resetBtn.textContent = `😊`
   initBoard()
 }
 
@@ -150,12 +157,16 @@ function revealCell(row, col) {
   cell.element.classList.add(`revealed`)
 
   if (cell.mine) {
+    // Game over
     cell.element.classList.add(`mine`)
     cell.element.textContent = `💣`
     disableBoard(true)
     stopTimer()
+    resetBtn.textContent = `😆`
     return
   }
+
+  smileyAnimation()
 
   const mineCount = countMines(row, col)
   if (mineCount > 0) cell.element.textContent = mineCount
@@ -184,7 +195,7 @@ function setupSettings() {
     boardSize = selectedBoardSize.size
     mineCount = selectedBoardSize.mines
 
-    document.getElementById(`mine-count`).textContent = `💣${mineCount}`
+    mineCountLabel.textContent = `💣${mineCount}`
     applySettings(selectedBoardSize)
     document.getElementById(`settings-menu`).style.display = `none`
   })
@@ -204,7 +215,7 @@ function stopTimer() {
 
 function updateTimerDisplay() {
   const timerElement = document.getElementById(`timer`)
-  timerElement.textContent = `⏳ ${elapsedTime}`
+  timerElement.textContent = `⏳${elapsedTime}`
 }
 
 function ensureSafeFirstClick(cell) {
@@ -248,8 +259,7 @@ function expandSafeArea(row, col) {
     cell.element.classList.add(`revealed`)
 
     const mineCount = countMines(currentRow, currentCol)
-    if (mineCount > 0)
-      cell.element.textContent = mineCount
+    if (mineCount > 0) cell.element.textContent = mineCount
     else {
       expanded = true
       for (const [dRow, dCol] of directions) {
