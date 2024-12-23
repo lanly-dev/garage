@@ -4,21 +4,19 @@ const boardSizes = {
   large: { size: 22, mines: 99 }
 }
 const gameBoard = document.getElementById(`game-board`)
+const mineCountLabel = document.getElementById(`mine-count`)
+const resetBtn = document.getElementById(`reset`)
+resetBtn.addEventListener(`click`, resetGame)
 
 let board = []
 let boardSize = boardSizes.small.size
 let mineCount = boardSizes.small.mines
 
 let elapsedTime = 0
+let firstClick = true
 let gameStarted = false
 let mines = 0
 let timerInterval
-let firstClick = true
-
-const mineCountLabel = document.getElementById(`mine-count`)
-const resetBtn = document.getElementById(`reset`)
-resetBtn.addEventListener(`click`, resetGame)
-
 
 function applySettings(boardSize) {
   window.boardSize = boardSize.size
@@ -164,17 +162,37 @@ function revealCell(row, col) {
     return
   }
 
-  smileyAnimation()
-
   const mineCount = countMines(row, col)
-  if (mineCount > 0) cell.element.textContent = mineCount
-  else {
+  if (mineCount > 0) {
+    cell.element.textContent = mineCount
+  } else {
+    // Reveal adjacent cells
     for (let r = -1; r <= 1; r++) {
-      for (let c = -1; c <= 1; c++) { // Corrected condition
+      for (let c = -1; c <= 1; c++) {
         if (r !== 0 || c !== 0) revealCell(row + r, col + c)
       }
     }
   }
+
+  // Check for win condition
+  if (checkWin()) {
+    disableBoard(true)
+    stopTimer()
+    resetBtn.textContent = `😎`
+    // revealLastMine()
+    return
+  }
+  smileyAnimation()
+}
+
+function checkWin() {
+  for (let row = 0; row < boardSize; row++) {
+    for (let col = 0; col < boardSize; col++) {
+      const cell = board[row][col]
+      if (!cell.mine && !cell.revealed) return false
+    }
+  }
+  return true
 }
 
 function setupSettings() {
@@ -237,6 +255,7 @@ function placeNewMine() {
     }
   }
 }
+
 
 function expandSafeArea(row, col) {
   const queue = [[parseInt(row), parseInt(col)]]
