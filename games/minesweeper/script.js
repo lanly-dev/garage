@@ -34,7 +34,11 @@ function cellClickHandler(event) {
     ensureSafeFirstClick(event.target)
     firstClick = false
   }
-  revealCell(parseInt(row), parseInt(col))
+  if (event.target.classList.contains(`revealed`) && event.target.textContent)
+    revealAdjacentCells(parseInt(row), parseInt(col))
+  else
+    revealCell(parseInt(row), parseInt(col))
+
 }
 
 function countMines(row, col) {
@@ -105,6 +109,10 @@ function putFlagHandler(event) {
   cellData.flag = !cellData.flag
   cell.textContent = cellData.flag ? `⚑` : ``
   cell.classList.toggle(`flag`, cellData.flag)
+
+  const mineCountElement = document.getElementById(`mine-count`)
+  const flaggedCells = document.querySelectorAll(`.flag`).length
+  mineCountElement.textContent = `💣${mineCount - flaggedCells}`
 }
 
 function resetGame() {
@@ -251,6 +259,33 @@ function expandSafeArea(row, col) {
     // If no expansion happened on the first click, reset the board and try again
     resetGame()
     ensureSafeFirstClick(board[row][col].element)
+  }
+}
+
+function revealAdjacentCells(row, col) {
+  const mineCount = countMines(row, col)
+  let flagCount = 0
+
+  for (let r = -1; r <= 1; r++) {
+    for (let c = -1; c <= 1; c++) {
+      if (r === 0 && c === 0) continue
+      const newRow = row + r
+      const newCol = col + c
+      if (newRow < 0 || newRow >= boardSize || newCol < 0 || newCol >= boardSize) continue
+      if (board[newRow][newCol].flag) flagCount++
+    }
+  }
+
+  if (flagCount === mineCount) {
+    for (let r = -1; r <= 1; r++) {
+      for (let c = -1; c <= 1; c++) {
+        if (r === 0 && c === 0) continue
+        const newRow = row + r
+        const newCol = col + c
+        if (newRow < 0 || newRow >= boardSize || newCol < 0 || newCol >= boardSize) continue
+        revealCell(newRow, newCol)
+      }
+    }
   }
 }
 
