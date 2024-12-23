@@ -99,6 +99,8 @@ function placeMines() {
 
 function putFlagHandler(event) {
   event.preventDefault()
+  if (firstClick) return // Prevent flagging before the first click
+
   const cell = event.target
   const row = cell.dataset.row
   const col = cell.dataset.col
@@ -120,6 +122,7 @@ function resetGame() {
   cells.forEach(cell => {
     cell.classList.remove(`revealed`, `mine`, `flag`)
     cell.style.backgroundColor = `#ccc`
+    cell.textContent = `` // Reset cell content
   })
 
   board = []
@@ -129,6 +132,7 @@ function resetGame() {
   resetTimer()
   gameStarted = false
   firstClick = true
+  document.getElementById(`mine-count`).textContent = `💣${mineCount}` // Reset mine count label
   initBoard()
 }
 
@@ -157,8 +161,9 @@ function revealCell(row, col) {
   if (mineCount > 0) cell.element.textContent = mineCount
   else {
     for (let r = -1; r <= 1; r++) {
-      for (let c = -1; c <= 1; c++)
+      for (let c = -1; c <= 1; c++) { // Corrected condition
         if (r !== 0 || c !== 0) revealCell(row + r, col + c)
+      }
     }
   }
 }
