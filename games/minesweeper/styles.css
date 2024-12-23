@@ -74,21 +74,33 @@ h1 {
 }
 
 #settings-menu {
-  display: none; /* Hidden by default */
-  position: fixed;
+  display: none;
+  position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: white;
+  border: 2px solid #ccc;
   padding: 20px;
-  border: 1px solid #999;
-  border-radius: 5px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
 }
 
 #settings-menu h2 {
   margin-top: 0;
+}
+
+#settings-menu form {
+  display: flex;
+  flex-direction: column;
+}
+
+#settings-menu label {
+  margin-bottom: 10px;
+}
+
+#settings-menu button {
+  margin-top: 10px;
 }
 
 #open-settings {

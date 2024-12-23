@@ -1,22 +1,24 @@
 const boardSizes = {
-  small: 8,
-  medium: 10,
-  large: 12
+  small: { size: 8, mines: 10 },
+  medium: { size: 16, mines: 40 },
+  large: { size: 22, mines: 99 }
 }
 const gameBoard = document.getElementById(`game-board`)
 
 let board = []
-let boardSize = boardSizes.medium // Default to medium
+let boardSize = boardSizes.small.size
+let mineCount = boardSizes.small.mines
+
 let elapsedTime = 0
 let gameStarted = false
-let mineCount = 10
 let mines = 0
 let timerInterval
 
 document.getElementById(`reset`).addEventListener(`click`, resetGame)
 
 function applySettings(boardSize) {
-  window.boardSize = boardSize
+  window.boardSize = boardSize.size
+  mineCount = boardSize.mines
   resetGame()
 }
 
@@ -158,22 +160,13 @@ function setupSettings() {
 
   document.getElementById(`apply-settings`).addEventListener(`click`, function () {
     const selectedSize = document.querySelector(`input[name="board-size"]:checked`).value
-    boardSize = boardSizes[selectedSize]
+    const selectedBoardSize = boardSizes[selectedSize]
 
-    switch (selectedSize) {
-      case `small`:
-        mineCount = 10
-        break
-      case `medium`:
-        mineCount = 15
-        break
-      case `large`:
-        mineCount = 20
-        break
-    }
+    boardSize = selectedBoardSize.size
+    mineCount = selectedBoardSize.mines
 
     document.getElementById(`mine-count`).textContent = `💣${mineCount}`
-    applySettings(boardSize)
+    applySettings(selectedBoardSize)
     document.getElementById(`settings-menu`).style.display = `none`
   })
 }
