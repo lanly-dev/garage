@@ -2,6 +2,9 @@ const boardSize = 10
 const mineCount = 10
 let board = []
 let mines = 0
+let timerInterval
+let elapsedTime = 0
+let gameStarted = false
 
 
 const gameBoard = document.getElementById(`game-board`)
@@ -44,6 +47,10 @@ function placeMines() {
 }
 
 function cellClickHandler(event) {
+  if (!gameStarted) {
+    startTimer()
+    gameStarted = true
+  }
   const row = event.target.dataset.row
   const col = event.target.dataset.col
   revealCell(parseInt(row), parseInt(col))
@@ -75,7 +82,7 @@ function revealCell(row, col) {
     cell.element.classList.add(`mine`)
     cell.element.textContent = `💣`
     disableBoard(true)
-    alert(`Game Over`)
+    stopTimer()
     return
   }
 
@@ -106,7 +113,6 @@ function countMines(row, col) {
 }
 
 function resetGame() {
-  console.log(`Game reset!`)
   const cells = document.querySelectorAll(`.cell`)
   cells.forEach(cell => {
     cell.classList.remove(`revealed`, `mine`, `flag`)
@@ -116,11 +122,36 @@ function resetGame() {
   board = []
   mines = 0
   gameBoard.innerHTML = ``
+  stopTimer()
+  resetTimer()
+  gameStarted = false
   initBoard()
 }
 
 function disableBoard(bool) {
   gameBoard.classList.toggle(`disabled`, bool)
+}
+
+function startTimer() {
+  elapsedTime = 0
+  timerInterval = setInterval(() => {
+    elapsedTime++
+    updateTimerDisplay()
+  }, 1000)
+}
+
+function stopTimer() {
+  clearInterval(timerInterval)
+}
+
+function resetTimer() {
+  elapsedTime = 0
+  updateTimerDisplay()
+}
+
+function updateTimerDisplay() {
+  const timerElement = document.getElementById(`timer`)
+  timerElement.textContent = `⏳ ${elapsedTime}`
 }
 
 initBoard()
