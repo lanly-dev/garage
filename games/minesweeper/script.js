@@ -13,6 +13,7 @@ let elapsedTime = 0
 let gameStarted = false
 let mines = 0
 let timerInterval
+let firstClick = true
 
 document.getElementById(`reset`).addEventListener(`click`, resetGame)
 
@@ -29,6 +30,10 @@ function cellClickHandler(event) {
   }
   const row = event.target.dataset.row
   const col = event.target.dataset.col
+  if (firstClick) {
+    ensureSafeFirstClick(event.target)
+    firstClick = false
+  }
   revealCell(parseInt(row), parseInt(col))
 }
 
@@ -115,6 +120,7 @@ function resetGame() {
   stopTimer()
   resetTimer()
   gameStarted = false
+  firstClick = true
   initBoard()
 }
 
@@ -186,6 +192,66 @@ function stopTimer() {
 function updateTimerDisplay() {
   const timerElement = document.getElementById(`timer`)
   timerElement.textContent = `⏳ ${elapsedTime}`
+}
+
+function ensureSafeFirstClick(cell) {
+  const row = cell.dataset.row
+  const col = cell.dataset.col
+  if (board[row][col].mine) {
+    board[row][col].mine = false
+    placeNewMine()
+  }
+  expandSafeArea(row, col)
+}
+
+function placeNewMine() {
+  let placed = false
+  while (!placed) {
+    const row = Math.floor(Math.random() * boardSize)
+    const col = Math.floor(Math.random() * boardSize)
+    if (!board[row][col].mine) {
+      board[row][col].mine = true
+      placed = true
+    }
+  }
+}
+
+function expandSafeArea(row, col) {
+  const queue = [[parseInt(row), parseInt(col)]]
+  const directions = [
+    [-1, -1], [-1, 0], [-1, 1],
+    [0, -1], [0, 1],
+    [1, -1], [1, 0], [1, 1]
+  ]
+
+  let expanded = false
+
+  while (queue.length > 0) {
+    const [currentRow, currentCol] = queue.shift()
+    const cell = board[currentRow][currentCol]
+
+    if (cell.revealed || cell.mine) continue
+    cell.revealed = true
+    cell.element.classList.add(`revealed`)
+
+    const mineCount = countMines(currentRow, currentCol)
+    if (mineCount > 0)
+      cell.element.textContent = mineCount
+    else {
+      expanded = true
+      for (const [dRow, dCol] of directions) {
+        const newRow = currentRow + dRow
+        const newCol = currentCol + dCol
+        if (newRow >= 0 && newRow < boardSize && newCol >= 0 && newCol < boardSize) queue.push([newRow, newCol])
+      }
+    }
+  }
+
+  if (!expanded && firstClick) {
+    // If no expansion happened on the first click, reset the board and try again
+    resetGame()
+    ensureSafeFirstClick(board[row][col].element)
+  }
 }
 
 setupSettings()
