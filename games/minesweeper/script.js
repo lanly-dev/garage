@@ -6,11 +6,33 @@ let timerInterval
 let elapsedTime = 0
 let gameStarted = false
 
-
 const gameBoard = document.getElementById(`game-board`)
 gameBoard.style.gridTemplateColumns = `repeat(${boardSize}, 30px)`
 gameBoard.style.gridTemplateRows = `repeat(${boardSize}, 30px)`
 document.getElementById(`reset`).addEventListener(`click`, resetGame)
+
+function setupSettings() {
+  document.getElementById(`settings`).addEventListener(`click`, function () {
+    document.getElementById(`settings-menu`).style.display = `block`
+  })
+
+  document.getElementById(`close-settings`).addEventListener(`click`, function () {
+    document.getElementById(`settings-menu`).style.display = `none`
+  })
+
+  document.getElementById(`apply-settings`).addEventListener(`click`, function () {
+    const boardSize = parseInt(document.getElementById(`board-size`).value)
+    applySettings(boardSize)
+    document.getElementById(`settings-menu`).style.display = `none`
+  })
+}
+
+setupSettings()
+
+function applySettings(boardSize) {
+  window.boardSize = boardSize
+  resetGame()
+}
 
 function initBoard() {
   disableBoard(false)
