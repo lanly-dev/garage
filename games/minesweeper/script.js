@@ -1,41 +1,59 @@
-const boardSize = 10
-const mineCount = 10
+const boardSizes = {
+  small: 8,
+  medium: 10,
+  large: 12
+}
+const gameBoard = document.getElementById(`game-board`)
+
 let board = []
-let mines = 0
-let timerInterval
+let boardSize = boardSizes.medium // Default to medium
 let elapsedTime = 0
 let gameStarted = false
+let mineCount = 10
+let mines = 0
+let timerInterval
 
-const gameBoard = document.getElementById(`game-board`)
-gameBoard.style.gridTemplateColumns = `repeat(${boardSize}, 30px)`
-gameBoard.style.gridTemplateRows = `repeat(${boardSize}, 30px)`
 document.getElementById(`reset`).addEventListener(`click`, resetGame)
-
-function setupSettings() {
-  document.getElementById(`settings`).addEventListener(`click`, function () {
-    document.getElementById(`settings-menu`).style.display = `block`
-  })
-
-  document.getElementById(`close-settings`).addEventListener(`click`, function () {
-    document.getElementById(`settings-menu`).style.display = `none`
-  })
-
-  document.getElementById(`apply-settings`).addEventListener(`click`, function () {
-    const boardSize = parseInt(document.getElementById(`board-size`).value)
-    applySettings(boardSize)
-    document.getElementById(`settings-menu`).style.display = `none`
-  })
-}
-
-setupSettings()
 
 function applySettings(boardSize) {
   window.boardSize = boardSize
   resetGame()
 }
 
+function cellClickHandler(event) {
+  if (!gameStarted) {
+    startTimer()
+    gameStarted = true
+  }
+  const row = event.target.dataset.row
+  const col = event.target.dataset.col
+  revealCell(parseInt(row), parseInt(col))
+}
+
+function countMines(row, col) {
+  let count = 0
+  for (let r = -1; r <= 1; r++) {
+    for (let c = -1; c <= 1; c++) {
+      if (r === 0 && c === 0) continue
+      const newRow = row + r
+      const newCol = col + c
+      // Check if the new position is within the board boundaries
+      if (newRow < 0 || newRow >= boardSize || newCol < 0 || newCol >= boardSize) continue
+      // Increment count if a mine is found at the new position
+      if (board[newRow][newCol].mine) count++
+    }
+  }
+  return count
+}
+
+function disableBoard(bool) {
+  gameBoard.classList.toggle(`disabled`, bool)
+}
+
 function initBoard() {
   disableBoard(false)
+  gameBoard.style.gridTemplateColumns = `repeat(${boardSize}, 30px)`
+  gameBoard.style.gridTemplateRows = `repeat(${boardSize}, 30px)`
   for (let row = 0; row < boardSize; row++) {
     board[row] = []
     for (let col = 0; col < boardSize; col++) {
@@ -68,16 +86,6 @@ function placeMines() {
   }
 }
 
-function cellClickHandler(event) {
-  if (!gameStarted) {
-    startTimer()
-    gameStarted = true
-  }
-  const row = event.target.dataset.row
-  const col = event.target.dataset.col
-  revealCell(parseInt(row), parseInt(col))
-}
-
 function putFlagHandler(event) {
   event.preventDefault()
   const cell = event.target
@@ -90,6 +98,27 @@ function putFlagHandler(event) {
   cellData.flag = !cellData.flag
   cell.textContent = cellData.flag ? `⚑` : ``
   cell.classList.toggle(`flag`, cellData.flag)
+}
+
+function resetGame() {
+  const cells = document.querySelectorAll(`.cell`)
+  cells.forEach(cell => {
+    cell.classList.remove(`revealed`, `mine`, `flag`)
+    cell.style.backgroundColor = `#ccc`
+  })
+
+  board = []
+  mines = 0
+  gameBoard.innerHTML = ``
+  stopTimer()
+  resetTimer()
+  gameStarted = false
+  initBoard()
+}
+
+function resetTimer() {
+  elapsedTime = 0
+  updateTimerDisplay()
 }
 
 function revealCell(row, col) {
@@ -118,40 +147,35 @@ function revealCell(row, col) {
   }
 }
 
-function countMines(row, col) {
-  let count = 0
-  for (let r = -1; r <= 1; r++) {
-    for (let c = -1; c <= 1; c++) {
-      if (r === 0 && c === 0) continue
-      const newRow = row + r
-      const newCol = col + c
-      // Check if the new position is within the board boundaries
-      if (newRow < 0 || newRow >= boardSize || newCol < 0 || newCol >= boardSize) continue
-      // Increment count if a mine is found at the new position
-      if (board[newRow][newCol].mine) count++
-    }
-  }
-  return count
-}
-
-function resetGame() {
-  const cells = document.querySelectorAll(`.cell`)
-  cells.forEach(cell => {
-    cell.classList.remove(`revealed`, `mine`, `flag`)
-    cell.style.backgroundColor = `#ccc`
+function setupSettings() {
+  document.getElementById(`settings`).addEventListener(`click`, function () {
+    document.getElementById(`settings-menu`).style.display = `block`
   })
 
-  board = []
-  mines = 0
-  gameBoard.innerHTML = ``
-  stopTimer()
-  resetTimer()
-  gameStarted = false
-  initBoard()
-}
+  document.getElementById(`close-settings`).addEventListener(`click`, function () {
+    document.getElementById(`settings-menu`).style.display = `none`
+  })
 
-function disableBoard(bool) {
-  gameBoard.classList.toggle(`disabled`, bool)
+  document.getElementById(`apply-settings`).addEventListener(`click`, function () {
+    const selectedSize = document.querySelector(`input[name="board-size"]:checked`).value
+    boardSize = boardSizes[selectedSize]
+
+    switch (selectedSize) {
+      case `small`:
+        mineCount = 10
+        break
+      case `medium`:
+        mineCount = 15
+        break
+      case `large`:
+        mineCount = 20
+        break
+    }
+
+    document.getElementById(`mine-count`).textContent = `💣${mineCount}`
+    applySettings(boardSize)
+    document.getElementById(`settings-menu`).style.display = `none`
+  })
 }
 
 function startTimer() {
@@ -166,14 +190,10 @@ function stopTimer() {
   clearInterval(timerInterval)
 }
 
-function resetTimer() {
-  elapsedTime = 0
-  updateTimerDisplay()
-}
-
 function updateTimerDisplay() {
   const timerElement = document.getElementById(`timer`)
   timerElement.textContent = `⏳ ${elapsedTime}`
 }
 
+setupSettings()
 initBoard()
