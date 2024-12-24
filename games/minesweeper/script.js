@@ -20,7 +20,8 @@ const settingsForm = document.querySelector(`#settings-menu form`)
 let currentSettings = {
   boardSize: `small`,
   isDeciseconds: false,
-  doubleClickReveal: false
+  doubleClickReveal: false,
+  mute: false
 }
 
 let board = []
@@ -31,9 +32,9 @@ let elapsedTime = 0
 let firstClick = true
 let gameStarted = false
 let mines = 0
+let movesCount = 0
 let timerInterval
 let timerUnit = `seconds`
-let movesCount = 0
 
 const expandSound = document.getElementById(`expand-sound`)
 const flagSound = document.getElementById(`flag-sound`)
@@ -45,17 +46,18 @@ const winSound = document.getElementById(`win-sound`)
 const errSound = document.getElementById(`err-sound`)
 
 function playSound(sound) {
+  if (currentSettings.mute) return
   sound.currentTime = 0
   sound.play()
 }
 
-function applySettings(selectedSize, isDeciseconds, doubleClickReveal) {
+function applySettings(selectedSize, isDeciseconds, doubleClickReveal, mute) {
   const { size, mines } = boardSizes[selectedSize]
   boardSize = size
   mineCount = mines
   mineCountLabel.textContent = `💣${mines}`
   timerUnit = isDeciseconds ? `deciseconds` : `seconds`
-  currentSettings = { boardSize: selectedSize, isDeciseconds, doubleClickReveal } // Update this line
+  currentSettings = { boardSize: selectedSize, isDeciseconds, doubleClickReveal, mute }
   resetGame()
 }
 
@@ -313,8 +315,9 @@ function setupSettings() {
     const selectedSize = document.querySelector(`input[name="board-size"]:checked`).value
     const isDeciseconds = document.getElementById(`timer-unit`).checked
     const doubleClickReveal = document.getElementById(`double-click-reveal`).checked
+    const mute = document.getElementById(`mute-sounds`).checked
 
-    applySettings(selectedSize, isDeciseconds, doubleClickReveal)
+    applySettings(selectedSize, isDeciseconds, doubleClickReveal, mute)
     settingsMenu.style.display = `none`
   })
 
@@ -327,13 +330,15 @@ function hasChanges() {
   const selectedSize = document.querySelector(`input[name="board-size"]:checked`).value
   const isDeciseconds = document.getElementById(`timer-unit`).checked
   const doubleClickReveal = document.getElementById(`double-click-reveal`).checked
-  return selectedSize !== currentSettings.boardSize || isDeciseconds !== currentSettings.isDeciseconds || doubleClickReveal !== currentSettings.doubleClickReveal // Update this line
+  const mute = document.getElementById(`mute-sounds`).checked
+  return selectedSize !== currentSettings.boardSize || isDeciseconds !== currentSettings.isDeciseconds || doubleClickReveal !== currentSettings.doubleClickReveal || mute !== currentSettings.mute
 }
 
 function resetSettings() {
   document.querySelector(`input[name="board-size"][value="${currentSettings.boardSize}"]`).checked = true
   document.getElementById(`timer-unit`).checked = currentSettings.isDeciseconds
   document.getElementById(`double-click-reveal`).checked = currentSettings.doubleClickReveal
+  document.getElementById(`mute-sounds`).checked = currentSettings.mute
   applySettingsBtn.disabled = true
 }
 
