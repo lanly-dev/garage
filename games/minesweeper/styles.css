@@ -1,23 +1,23 @@
 body {
-  font-family: Arial, sans-serif;
+  align-items: center;
+  background-color: #f0f0f0;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  font-family: Arial, sans-serif;
   height: 100vh;
+  justify-content: center;
   margin: 0;
-  background-color: #f0f0f0;
 }
 
 .cell {
-  width: 30px;
-  height: 30px;
-  background-color: #ccc;
-  display: flex;
   align-items: center;
-  justify-content: center;
+  background-color: #ccc;
   border: 1px solid #999;
   border-radius: 3px;
+  display: flex;
+  height: 30px;
+  justify-content: center;
+  width: 30px;
 }
 
 .cell.flag {
@@ -41,6 +41,15 @@ body {
   background-color: #eee;
 }
 
+.cell.flash {
+  animation: flash 0.1s;
+}
+
+.cell.wave {
+  animation: wave .5s ease-in-out;
+  animation-delay: calc(var(--row) * 0.01s);
+}
+
 .disabled {
   cursor: not-allowed;
   pointer-events: none;
@@ -55,18 +64,9 @@ body {
   100% { background-color: transparent; }
 }
 
-.cell.flash {
-  animation: flash 0.1s;
-}
-
 @keyframes wave {
   0% { opacity: 0; transform: translateY(-5px); }
   100% { opacity: 1; transform: translateY(0); }
-}
-
-.cell.wave {
-  animation: wave .5s ease-in-out;
-  animation-delay: calc(var(--row) * 0.01s);
 }
 
 h1 {
@@ -74,20 +74,20 @@ h1 {
 }
 
 #controls {
-  display: flex;
   align-items: center;
+  display: flex;
   font-size: 18px;
   justify-content: space-between;
-  width: 300px;
   padding-bottom: 1em;
+  width: 300px;
 }
 
 #controls button {
-  padding: 5px;
-  font-size: 18px;
-  cursor: pointer;
   border: 1px solid #999;
   border-radius: 3px;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 5px;
 }
 
 #controls button:hover {
@@ -105,27 +105,26 @@ h1 {
 }
 
 #settings-menu {
-  display: none;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
   background-color: white;
   border: 2px solid #ccc;
   border-radius: 3px;
-  padding: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: none;
+  left: 50%;
+  padding: 20px;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
   z-index: 1000;
 }
 
 #settings-menu button {
-  margin-top: 10px;
-
-  padding: 5px;
-  font-size: 12px;
-  cursor: pointer;
   border: 1px solid #999;
   border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+  margin-top: 10px;
+  padding: 5px;
 }
 
 #settings-menu button:disabled {
@@ -143,19 +142,19 @@ h1 {
 }
 
 #settings-menu label {
-  display: flex;
-  cursor: pointer;
   align-items: center;
+  cursor: pointer;
+  display: flex;
   margin-bottom: 5px;
 }
 
 #reset-button {
-  margin-top: 10px;
-  padding: 5px;
-  font-size: 12px;
-  cursor: pointer;
   border: 1px solid #999;
   border-radius: 3px;
+  cursor: pointer;
+  font-size: 12px;
+  margin-top: 10px;
+  padding: 5px;
 }
 
 #reset-button:hover {
