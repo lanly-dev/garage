@@ -6,6 +6,7 @@ const boardSizes = {
 const gameBoard = document.getElementById(`game-board`)
 const mineCountLabel = document.getElementById(`mine-count`)
 const resetBtn = document.getElementById(`reset`)
+const settingsMenu = document.getElementById(`settings-menu`)
 resetBtn.addEventListener(`click`, resetGame)
 
 let board = []
@@ -17,10 +18,12 @@ let firstClick = true
 let gameStarted = false
 let mines = 0
 let timerInterval
+let timerUnit = `seconds`
 
-function applySettings(boardSize) {
+function applySettings(boardSize, isDeciseconds) {
   window.boardSize = boardSize.size
   mineCount = boardSize.mines
+  timerUnit = isDeciseconds ? `deciseconds` : `seconds`
   resetGame()
 }
 
@@ -212,32 +215,37 @@ function checkWin() {
 
 function setupSettings() {
   document.getElementById(`settings`).addEventListener(`click`, function () {
-    document.getElementById(`settings-menu`).style.display = `block`
+    settingsMenu.style.display ||= `none`
+
+    const display = settingsMenu.style.display
+    settingsMenu.style.display = display === `none` ? `block` : `none`
   })
 
   document.getElementById(`close-settings`).addEventListener(`click`, function () {
-    document.getElementById(`settings-menu`).style.display = `none`
+    settingsMenu.style.display = `none`
   })
 
   document.getElementById(`apply-settings`).addEventListener(`click`, function () {
     const selectedSize = document.querySelector(`input[name="board-size"]:checked`).value
     const selectedBoardSize = boardSizes[selectedSize]
+    const isDeciseconds =  document.getElementById(`timer-unit`).checked
 
     boardSize = selectedBoardSize.size
     mineCount = selectedBoardSize.mines
 
     mineCountLabel.textContent = `💣${mineCount}`
-    applySettings(selectedBoardSize)
-    document.getElementById(`settings-menu`).style.display = `none`
+    applySettings(selectedBoardSize, isDeciseconds)
+    settingsMenu.style.display = `none`
   })
 }
 
 function startTimer() {
   elapsedTime = 0
+  const interval = timerUnit === `deciseconds` ? 100 : 1000
   timerInterval = setInterval(() => {
-    elapsedTime++
+    elapsedTime += timerUnit === `deciseconds` ? 1 : 1
     updateTimerDisplay()
-  }, 1000)
+  }, interval)
 }
 
 function stopTimer() {
@@ -246,7 +254,8 @@ function stopTimer() {
 
 function updateTimerDisplay() {
   const timerElement = document.getElementById(`timer`)
-  timerElement.textContent = `⏳${elapsedTime}`
+  const displayTime = timerUnit === `deciseconds` ? (elapsedTime / 10).toFixed(1) : elapsedTime
+  timerElement.textContent = `⏳${displayTime}`
 }
 
 function ensureSafeFirstClick(cell) {
