@@ -11,6 +11,7 @@ const movesCountLabel = document.getElementById(`moves-count`)
 resetBtn.addEventListener(`click`, () => {
   resetGame()
   resetAnimation()
+  playSound(resetSound)
 })
 
 const applySettingsBtn = document.getElementById(`apply-settings`)
@@ -33,6 +34,20 @@ let mines = 0
 let timerInterval
 let timerUnit = `seconds`
 let movesCount = 0
+
+const expandSound = document.getElementById(`expand-sound`)
+const flagSound = document.getElementById(`flag-sound`)
+const overSound = document.getElementById(`over-sound`)
+const popSound = document.getElementById(`pop-sound`)
+const resetSound = document.getElementById(`reset-sound`)
+const revealSound = document.getElementById(`reveal-sound`)
+const winSound = document.getElementById(`win-sound`)
+const errSound = document.getElementById(`err-sound`)
+
+function playSound(sound) {
+  sound.currentTime = 0
+  sound.play()
+}
 
 function applySettings(selectedSize, isDeciseconds, doubleClickReveal) {
   const { size, mines } = boardSizes[selectedSize]
@@ -154,6 +169,7 @@ function putFlagHandler(event) {
   cellData.flag = !cellData.flag
   cell.textContent = cellData.flag ? `🚩` : ``
   cell.classList.toggle(`flag`, cellData.flag)
+  playSound(flagSound)
 
   const flaggedCells = document.querySelectorAll(`.flag`).length
   mineCountLabel.textContent = `💣${mineCount - flaggedCells}`
@@ -197,7 +213,7 @@ function resetTimer() {
   updateTimerDisplay()
 }
 
-function revealCell(row, col) {
+function revealCell(row, col, needPopSound = true) {
   if (row < 0 || col < 0 || row >= boardSize || col >= boardSize) return
   const cell = board[row][col]
   if (cell.revealed || cell.flag) return
@@ -205,7 +221,6 @@ function revealCell(row, col) {
   cell.revealed = true
   cell.element.classList.add(`revealed`)
 
-  const mineCount = countMines(row, col)
   if (cell.mine) {
     // Game over
     cell.element.classList.add(`mine`)
@@ -214,17 +229,29 @@ function revealCell(row, col) {
     stopTimer()
     revealIncorrectFlags()
     resetBtn.textContent = `😆`
+    playSound(overSound)
     return
-  } else if (mineCount > 0) {
+  }
+  const mineCount = countMines(row, col)
+  if (mineCount > 0) {
     cell.element.textContent = mineCount
-    cell.element.classList.add(`no-select`)
+    if (needPopSound) playSound(popSound)
   } else {
     // Reveal adjacent cells
+    let expanded = false
     for (let r = -1; r <= 1; r++) {
       for (let c = -1; c <= 1; c++) {
-        if (r !== 0 || c !== 0) revealCell(row + r, col + c)
+        if (r !== 0 || c !== 0) {
+          const newRow = row + r
+          const newCol = col + c
+          if (newRow >= 0 && newRow < boardSize && newCol >= 0 && newCol < boardSize) {
+            revealCell(newRow, newCol, false)
+            expanded = true
+          }
+        }
       }
     }
+    if (expanded) playSound(expandSound)
   }
 
   // Check for win condition
@@ -232,6 +259,7 @@ function revealCell(row, col) {
     disableBoard(true)
     stopTimer()
     resetBtn.textContent = `😎`
+    playSound(winSound)
     return
   }
   smileyAnimation()
@@ -390,6 +418,10 @@ function expandSafeArea(row, col) {
     }
   }
 
+  if (expanded) {
+    playSound(expandSound)
+  }
+
   if (!expanded && firstClick) {
     // If no expansion happened on the first click, reset the board and try again
     resetGame(false)
@@ -412,16 +444,18 @@ function revealAdjacentCells(row, col) {
   }
 
   if (flagCount === mineCount) {
+    playSound(revealSound)
     for (let r = -1; r <= 1; r++) {
       for (let c = -1; c <= 1; c++) {
         if (r === 0 && c === 0) continue
         const newRow = row + r
         const newCol = col + c
         if (newRow < 0 || newRow >= boardSize || newCol < 0 || newCol >= boardSize) continue
-        revealCell(newRow, newCol)
+        revealCell(newRow, newCol, false)
       }
     }
   } else {
+    playSound(errSound)
     // Provide feedback for incorrect flag count
     for (let r = -1; r <= 1; r++) {
       for (let c = -1; c <= 1; c++) {
