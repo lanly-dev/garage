@@ -8,7 +8,10 @@ const mineCountLabel = document.getElementById(`mine-count`)
 const resetBtn = document.getElementById(`reset`)
 const settingsMenu = document.getElementById(`settings-menu`)
 const movesCountLabel = document.getElementById(`moves-count`)
-resetBtn.addEventListener(`click`, resetGame)
+resetBtn.addEventListener(`click`, () => {
+  resetGame()
+  resetAnimation()
+})
 
 const applySettingsBtn = document.getElementById(`apply-settings`)
 const closeSettingsBtn = document.getElementById(`close-settings`)
@@ -32,7 +35,9 @@ let timerUnit = `seconds`
 let movesCount = 0
 
 function applySettings(selectedSize, isDeciseconds, doubleClickReveal) {
-  const { mines } = boardSizes[selectedSize]
+  const { size, mines } = boardSizes[selectedSize]
+  boardSize = size
+  mineCount = mines
   mineCountLabel.textContent = `💣${mines}`
   timerUnit = isDeciseconds ? `deciseconds` : `seconds`
   currentSettings = { boardSize: selectedSize, isDeciseconds, doubleClickReveal } // Update this line
@@ -42,6 +47,7 @@ function applySettings(selectedSize, isDeciseconds, doubleClickReveal) {
 function cellClickHandler(event) {
   const row = event.target.dataset.row
   const col = event.target.dataset.col
+  movesCount++
   if (firstClick) {
     ensureSafeFirstClick(event.target)
     firstClick = false
@@ -59,7 +65,6 @@ function cellClickHandler(event) {
     // Otherwise, reveal the clicked cell
     revealCell(parseInt(row), parseInt(col))
   }
-  movesCount++
   updateMovesCount()
 }
 
@@ -154,7 +159,7 @@ function putFlagHandler(event) {
   mineCountLabel.textContent = `💣${mineCount - flaggedCells}`
 }
 
-function resetGame() {
+function resetGame(needResetMovesCount = true) {
   const cells = document.querySelectorAll(`.cell`)
   cells.forEach(cell => {
     cell.classList.remove(`revealed`, `mine`, `flag`)
@@ -171,9 +176,20 @@ function resetGame() {
   firstClick = true
   mineCountLabel.textContent = `💣${mineCount}`
   resetBtn.textContent = `😊`
-  movesCount = 0
-  updateMovesCount()
+  if (needResetMovesCount) {
+    movesCount = 0
+    updateMovesCount()
+  }
   initBoard()
+}
+
+function resetAnimation() {
+  const cells = document.querySelectorAll(`.cell`)
+  cells.forEach((cell, index) => {
+    cell.style.setProperty(`--row`, cell.dataset.row)
+    cell.classList.add(`wave`)
+    setTimeout(() => cell.classList.remove(`wave`), 1000) // Increase animation duration
+  })
 }
 
 function resetTimer() {
@@ -376,7 +392,7 @@ function expandSafeArea(row, col) {
 
   if (!expanded && firstClick) {
     // If no expansion happened on the first click, reset the board and try again
-    resetGame()
+    resetGame(false)
     ensureSafeFirstClick(board[row][col].element)
   }
 }

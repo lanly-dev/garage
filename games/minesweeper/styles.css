@@ -59,6 +59,16 @@ body {
   animation: flash 0.1s;
 }
 
+@keyframes wave {
+  0% { opacity: 0; transform: translateY(-5px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.cell.wave {
+  animation: wave .5s ease-in-out;
+  animation-delay: calc(var(--row) * 0.01s);
+}
+
 h1 {
   margin: 20px 0;
 }
