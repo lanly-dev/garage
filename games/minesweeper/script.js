@@ -14,7 +14,8 @@ const closeSettingsBtn = document.getElementById(`close-settings`)
 const settingsForm = document.querySelector(`#settings-menu form`)
 let currentSettings = {
   boardSize: `small`,
-  isDeciseconds: false
+  isDeciseconds: false,
+  doubleClickReveal: false
 }
 
 let board = []
@@ -28,11 +29,11 @@ let mines = 0
 let timerInterval
 let timerUnit = `seconds`
 
-function applySettings(selectedSize, isDeciseconds) {
+function applySettings(selectedSize, isDeciseconds, doubleClickReveal) {
   const { mines } = boardSizes[selectedSize]
   mineCountLabel.textContent = `💣${mines}`
   timerUnit = isDeciseconds ? `deciseconds` : `seconds`
-  currentSettings = { boardSize: selectedSize, isDeciseconds }
+  currentSettings = { boardSize: selectedSize, isDeciseconds, doubleClickReveal } // Update this line
   resetGame()
 }
 
@@ -46,9 +47,24 @@ function cellClickHandler(event) {
     smileyAnimation()
     startTimer()
   }
+  // Check if the clicked cell is already revealed and has content
+  if (event.target.classList.contains(`revealed`) && event.target.textContent) {
+    // If double-click reveal is disabled, reveal adjacent cells
+    if (!currentSettings.doubleClickReveal) {
+      revealAdjacentCells(parseInt(row), parseInt(col))
+    }
+  } else {
+    // Otherwise, reveal the clicked cell
+    revealCell(parseInt(row), parseInt(col))
+  }
+}
+
+function cellDoubleClickHandler(event) {
+  const row = event.target.dataset.row
+  const col = event.target.dataset.col
   if (event.target.classList.contains(`revealed`) && event.target.textContent) {
     revealAdjacentCells(parseInt(row), parseInt(col))
-  } else revealCell(parseInt(row), parseInt(col))
+  }
 }
 
 function smileyAnimation() {
@@ -88,6 +104,9 @@ function initBoard() {
       cell.dataset.row = row
       cell.dataset.col = col
       cell.addEventListener(`click`, cellClickHandler)
+      if (currentSettings.doubleClickReveal) {
+        cell.addEventListener(`dblclick`, cellDoubleClickHandler)
+      }
       cell.addEventListener(`contextmenu`, putFlagHandler)
       gameBoard.appendChild(cell)
       board[row][col] = {
@@ -146,7 +165,7 @@ function resetGame() {
   resetTimer()
   gameStarted = false
   firstClick = true
-  mineCountLabel.textContent = `💣${mineCount}` // Reset mine count label
+  mineCountLabel.textContent = `💣${mineCount}`
   resetBtn.textContent = `😊`
   initBoard()
 }
@@ -176,7 +195,7 @@ function revealCell(row, col) {
     return
   } else if (mineCount > 0) {
     cell.element.textContent = mineCount
-    cell.element.classList.add(`no-select`) // Add this line
+    cell.element.classList.add(`no-select`)
   } else {
     // Reveal adjacent cells
     for (let r = -1; r <= 1; r++) {
@@ -243,15 +262,13 @@ function setupSettings() {
   applySettingsBtn.addEventListener(`click`, function () {
     const selectedSize = document.querySelector(`input[name="board-size"]:checked`).value
     const isDeciseconds = document.getElementById(`timer-unit`).checked
+    const doubleClickReveal = document.getElementById(`double-click-reveal`).checked
 
-    applySettings(selectedSize, isDeciseconds)
+    applySettings(selectedSize, isDeciseconds, doubleClickReveal)
     settingsMenu.style.display = `none`
   })
 
   settingsForm.addEventListener(`change`, function () {
-
-    
-    
     applySettingsBtn.disabled = !hasChanges()
   })
 }
@@ -259,12 +276,14 @@ function setupSettings() {
 function hasChanges() {
   const selectedSize = document.querySelector(`input[name="board-size"]:checked`).value
   const isDeciseconds = document.getElementById(`timer-unit`).checked
-  return selectedSize !== currentSettings.boardSize || isDeciseconds !== currentSettings.isDeciseconds
+  const doubleClickReveal = document.getElementById(`double-click-reveal`).checked
+  return selectedSize !== currentSettings.boardSize || isDeciseconds !== currentSettings.isDeciseconds || doubleClickReveal !== currentSettings.doubleClickReveal // Update this line
 }
 
 function resetSettings() {
   document.querySelector(`input[name="board-size"][value="${currentSettings.boardSize}"]`).checked = true
   document.getElementById(`timer-unit`).checked = currentSettings.isDeciseconds
+  document.getElementById(`double-click-reveal`).checked = currentSettings.doubleClickReveal
   applySettingsBtn.disabled = true
 }
 

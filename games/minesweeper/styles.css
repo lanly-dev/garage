@@ -87,6 +87,7 @@ h1 {
 #game-board {
   display: grid;
   gap: 2px;
+  user-select: none;
 }
 
 #open-settings {
