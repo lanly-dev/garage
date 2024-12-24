@@ -9,6 +9,14 @@ const resetBtn = document.getElementById(`reset`)
 const settingsMenu = document.getElementById(`settings-menu`)
 resetBtn.addEventListener(`click`, resetGame)
 
+const applySettingsBtn = document.getElementById(`apply-settings`)
+const closeSettingsBtn = document.getElementById(`close-settings`)
+const settingsForm = document.querySelector(`#settings-menu form`)
+let currentSettings = {
+  boardSize: `small`,
+  isDeciseconds: false
+}
+
 let board = []
 let boardSize = boardSizes.small.size
 let mineCount = boardSizes.small.mines
@@ -20,10 +28,11 @@ let mines = 0
 let timerInterval
 let timerUnit = `seconds`
 
-function applySettings(boardSize, isDeciseconds) {
-  window.boardSize = boardSize.size
-  mineCount = boardSize.mines
+function applySettings(selectedSize, isDeciseconds) {
+  const { mines } = boardSizes[selectedSize]
+  mineCountLabel.textContent = `💣${mines}`
   timerUnit = isDeciseconds ? `deciseconds` : `seconds`
+  currentSettings = { boardSize: selectedSize, isDeciseconds }
   resetGame()
 }
 
@@ -213,23 +222,17 @@ function checkWin() {
   return true
 }
 
-const applySettingsBtn = document.getElementById(`apply-settings`)
-const closeSettingsBtn = document.getElementById(`close-settings`)
-const settingsForm = document.querySelector(`#settings-menu form`)
-const initialSettings = {
-  boardSize: `small`,
-  isDeciseconds: false
-}
-
 function setupSettings() {
   document.getElementById(`settings`).addEventListener(`click`, function () {
     settingsMenu.style.display ||= `none`
 
+    // Toggle settings menu visibility
     const display = settingsMenu.style.display
     if (display === `block`) {
       resetSettings()
       settingsMenu.style.display = `none`
     } else settingsMenu.style.display = `block`
+    applySettingsBtn.disabled = !hasChanges()
   })
 
   closeSettingsBtn.addEventListener(`click`, function () {
@@ -239,28 +242,29 @@ function setupSettings() {
 
   applySettingsBtn.addEventListener(`click`, function () {
     const selectedSize = document.querySelector(`input[name="board-size"]:checked`).value
-    const selectedBoardSize = boardSizes[selectedSize]
     const isDeciseconds = document.getElementById(`timer-unit`).checked
 
-    boardSize = selectedBoardSize.size
-    mineCount = selectedBoardSize.mines
-
-    mineCountLabel.textContent = `💣${mineCount}`
-    applySettings(selectedBoardSize, isDeciseconds)
+    applySettings(selectedSize, isDeciseconds)
     settingsMenu.style.display = `none`
   })
 
   settingsForm.addEventListener(`change`, function () {
-    const selectedSize = document.querySelector(`input[name="board-size"]:checked`).value
-    const isDeciseconds = document.getElementById(`timer-unit`).checked
-    const hasChanges = selectedSize !== initialSettings.boardSize || isDeciseconds !== initialSettings.isDeciseconds
-    applySettingsBtn.disabled = !hasChanges
+
+    
+    
+    applySettingsBtn.disabled = !hasChanges()
   })
 }
 
+function hasChanges() {
+  const selectedSize = document.querySelector(`input[name="board-size"]:checked`).value
+  const isDeciseconds = document.getElementById(`timer-unit`).checked
+  return selectedSize !== currentSettings.boardSize || isDeciseconds !== currentSettings.isDeciseconds
+}
+
 function resetSettings() {
-  document.querySelector(`input[name="board-size"][value="${initialSettings.boardSize}"]`).checked = true
-  document.getElementById(`timer-unit`).checked = initialSettings.isDeciseconds
+  document.querySelector(`input[name="board-size"][value="${currentSettings.boardSize}"]`).checked = true
+  document.getElementById(`timer-unit`).checked = currentSettings.isDeciseconds
   applySettingsBtn.disabled = true
 }
 
