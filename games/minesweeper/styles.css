@@ -9,6 +9,40 @@ body {
   background-color: #f0f0f0;
 }
 
+.cell {
+  width: 30px;
+  height: 30px;
+  background-color: #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid #999;
+  border-radius: 3px;
+}
+
+.cell.flag {
+  color: red;
+  font-size: larger;
+}
+
+.cell:hover {
+  background-color: #bbb;
+}
+
+.cell.mine {
+  background-color: red;
+}
+
+.cell.revealed {
+  background-color: #eee;
+}
+
+.disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 h1 {
   margin: 20px 0;
 }
@@ -39,38 +73,8 @@ h1 {
   gap: 2px;
 }
 
-.cell {
-  width: 30px;
-  height: 30px;
-  background-color: #ccc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border: 1px solid #999;
-  border-radius: 3px;
-}
-
-.cell:hover {
-  background-color: #bbb;
-}
-
-.cell.revealed {
-  background-color: #eee;
-}
-
-.cell.mine {
-  background-color: red;
-}
-
-.cell.flag {
-  color: red;
-  font-size: larger;
-}
-
-.disabled {
-  cursor: not-allowed;
-  pointer-events: none;
+#open-settings {
+  margin-top: 10px;
 }
 
 #settings-menu {
@@ -86,8 +90,8 @@ h1 {
   z-index: 1000;
 }
 
-#settings-menu h2 {
-  margin-top: 0;
+#settings-menu button {
+  margin-top: 10px;
 }
 
 #settings-menu form {
@@ -95,14 +99,16 @@ h1 {
   flex-direction: column;
 }
 
+#settings-menu h2 {
+  margin-top: 0;
+}
+
 #settings-menu label {
   margin-bottom: 10px;
 }
 
-#settings-menu button {
-  margin-top: 10px;
-}
-
-#open-settings {
-  margin-top: 10px;
+.incorrect-flag span {
+  font-size: .6em;
+  margin-left: -1.2em;
+  margin-top: .9em;
 }

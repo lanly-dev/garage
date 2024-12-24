@@ -112,7 +112,7 @@ function putFlagHandler(event) {
   if (cellData.revealed) return
 
   cellData.flag = !cellData.flag
-  cell.textContent = cellData.flag ? `⚑` : ``
+  cell.textContent = cellData.flag ? `🚩` : ``
   cell.classList.toggle(`flag`, cellData.flag)
 
   const flaggedCells = document.querySelectorAll(`.flag`).length
@@ -158,6 +158,7 @@ function revealCell(row, col) {
     cell.element.textContent = `💣`
     disableBoard(true)
     stopTimer()
+    revealIncorrectFlags()
     resetBtn.textContent = `😆`
     return
   }
@@ -331,6 +332,21 @@ function revealAdjacentCells(row, col) {
         const newCol = col + c
         if (newRow < 0 || newRow >= boardSize || newCol < 0 || newCol >= boardSize) continue
         revealCell(newRow, newCol)
+      }
+    }
+  }
+}
+
+function revealIncorrectFlags() {
+  for (let row = 0; row < boardSize; row++) {
+    for (let col = 0; col < boardSize; col++) {
+      const cell = board[row][col]
+      if (cell.flag && !cell.mine) {
+        cell.element.classList.add(`incorrect-flag`)
+        cell.element.textContent = `🚩`
+        const xSpan = document.createElement(`span`)
+        xSpan.textContent = `❌`
+        cell.element.appendChild(xSpan)
       }
     }
   }
