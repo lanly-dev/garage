@@ -333,6 +333,21 @@ function revealAdjacentCells(row, col) {
         revealCell(newRow, newCol)
       }
     }
+  } else {
+    // Provide feedback for incorrect flag count
+    for (let r = -1; r <= 1; r++) {
+      for (let c = -1; c <= 1; c++) {
+        if (r === 0 && c === 0) continue
+        const newRow = row + r
+        const newCol = col + c
+        if (newRow < 0 || newRow >= boardSize || newCol < 0 || newCol >= boardSize) continue
+        const cell = board[newRow][newCol].element
+        if (!board[newRow][newCol].revealed) {
+          cell.classList.add(`flash`)
+          setTimeout(() => cell.classList.remove(`flash`), 300)
+        }
+      }
+    }
   }
 }
 

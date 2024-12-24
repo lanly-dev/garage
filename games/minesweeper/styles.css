@@ -50,6 +50,14 @@ body {
   user-select: none;
 }
 
+@keyframes flash {
+  0% { background-color: white; }
+  100% { background-color: transparent; }
+}
+
+.cell.flash {
+  animation: flash 0.1s;
+}
 
 h1 {
   margin: 20px 0;
