@@ -101,6 +101,7 @@ h1 {
   transform: translate(-50%, -50%);
   background-color: white;
   border: 2px solid #ccc;
+  border-radius: 3px;
   padding: 20px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
@@ -108,6 +109,17 @@ h1 {
 
 #settings-menu button {
   margin-top: 10px;
+
+  padding: 5px;
+  font-size: 12px;
+  cursor: pointer;
+  border: 1px solid #999;
+  border-radius: 3px;
+}
+
+#settings-menu button:disabled {
+  background-color: #ddd;
+  cursor: not-allowed;
 }
 
 #settings-menu form {
@@ -122,7 +134,21 @@ h1 {
 #settings-menu label {
   display: flex;
   cursor: pointer;
+  align-items: center;
   margin-bottom: 5px;
+}
+
+#reset-button {
+  margin-top: 10px;
+  padding: 5px;
+  font-size: 12px;
+  cursor: pointer;
+  border: 1px solid #999;
+  border-radius: 3px;
+}
+
+#reset-button:hover {
+  background-color: #999;
 }
 
 .incorrect-flag span {

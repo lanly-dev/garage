@@ -213,22 +213,34 @@ function checkWin() {
   return true
 }
 
+const applySettingsBtn = document.getElementById(`apply-settings`)
+const closeSettingsBtn = document.getElementById(`close-settings`)
+const settingsForm = document.querySelector(`#settings-menu form`)
+const initialSettings = {
+  boardSize: `small`,
+  isDeciseconds: false
+}
+
 function setupSettings() {
   document.getElementById(`settings`).addEventListener(`click`, function () {
     settingsMenu.style.display ||= `none`
 
     const display = settingsMenu.style.display
-    settingsMenu.style.display = display === `none` ? `block` : `none`
+    if (display === `block`) {
+      resetSettings()
+      settingsMenu.style.display = `none`
+    } else settingsMenu.style.display = `block`
   })
 
-  document.getElementById(`close-settings`).addEventListener(`click`, function () {
+  closeSettingsBtn.addEventListener(`click`, function () {
+    resetSettings()
     settingsMenu.style.display = `none`
   })
 
-  document.getElementById(`apply-settings`).addEventListener(`click`, function () {
+  applySettingsBtn.addEventListener(`click`, function () {
     const selectedSize = document.querySelector(`input[name="board-size"]:checked`).value
     const selectedBoardSize = boardSizes[selectedSize]
-    const isDeciseconds =  document.getElementById(`timer-unit`).checked
+    const isDeciseconds = document.getElementById(`timer-unit`).checked
 
     boardSize = selectedBoardSize.size
     mineCount = selectedBoardSize.mines
@@ -237,6 +249,19 @@ function setupSettings() {
     applySettings(selectedBoardSize, isDeciseconds)
     settingsMenu.style.display = `none`
   })
+
+  settingsForm.addEventListener(`change`, function () {
+    const selectedSize = document.querySelector(`input[name="board-size"]:checked`).value
+    const isDeciseconds = document.getElementById(`timer-unit`).checked
+    const hasChanges = selectedSize !== initialSettings.boardSize || isDeciseconds !== initialSettings.isDeciseconds
+    applySettingsBtn.disabled = !hasChanges
+  })
+}
+
+function resetSettings() {
+  document.querySelector(`input[name="board-size"][value="${initialSettings.boardSize}"]`).checked = true
+  document.getElementById(`timer-unit`).checked = initialSettings.isDeciseconds
+  applySettingsBtn.disabled = true
 }
 
 function startTimer() {
