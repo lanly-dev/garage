@@ -7,6 +7,7 @@ const gameBoard = document.getElementById(`game-board`)
 const mineCountLabel = document.getElementById(`mine-count`)
 const resetBtn = document.getElementById(`reset`)
 const settingsMenu = document.getElementById(`settings-menu`)
+const movesCountLabel = document.getElementById(`moves-count`)
 resetBtn.addEventListener(`click`, resetGame)
 
 const applySettingsBtn = document.getElementById(`apply-settings`)
@@ -28,6 +29,7 @@ let gameStarted = false
 let mines = 0
 let timerInterval
 let timerUnit = `seconds`
+let movesCount = 0
 
 function applySettings(selectedSize, isDeciseconds, doubleClickReveal) {
   const { mines } = boardSizes[selectedSize]
@@ -57,6 +59,8 @@ function cellClickHandler(event) {
     // Otherwise, reveal the clicked cell
     revealCell(parseInt(row), parseInt(col))
   }
+  movesCount++
+  updateMovesCount()
 }
 
 function cellDoubleClickHandler(event) {
@@ -167,6 +171,8 @@ function resetGame() {
   firstClick = true
   mineCountLabel.textContent = `💣${mineCount}`
   resetBtn.textContent = `😊`
+  movesCount = 0
+  updateMovesCount()
   initBoard()
 }
 
@@ -293,6 +299,11 @@ function startTimer() {
   timerInterval = setInterval(() => {
     elapsedTime += timerUnit === `deciseconds` ? 1 : 1
     updateTimerDisplay()
+    if (elapsedTime >= 600) { // 10 minutes in seconds
+      stopTimer()
+      disableBoard(true)
+      resetBtn.textContent = `😴`
+    }
   }, interval)
 }
 
@@ -304,6 +315,10 @@ function updateTimerDisplay() {
   const timerElement = document.getElementById(`timer`)
   const displayTime = timerUnit === `deciseconds` ? (elapsedTime / 10).toFixed(1) : elapsedTime
   timerElement.textContent = `⏳${displayTime}`
+}
+
+function updateMovesCount() {
+  movesCountLabel.textContent = `👣${movesCount}`
 }
 
 function ensureSafeFirstClick(cell) {

@@ -157,3 +157,7 @@ h1 {
   margin-left: -1.2em;
   margin-top: .9em;
 }
+
+#moves-count {
+  font-size: 18px;
+}
