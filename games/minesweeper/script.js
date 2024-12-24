@@ -32,8 +32,10 @@ let currentSettings = {
 }
 
 let board = []
+// Could use currentSettings instead?
 let boardSize = boardSizes.small.size
 let mineCount = boardSizes.small.mines
+
 let elapsedTime = 0
 let firstClick = true
 let gameStarted = false
@@ -67,6 +69,8 @@ function applySettingsHandler() {
   const mute = document.getElementById(`mute-sounds`).checked
 
   applySettings(selectedSize, isDeciseconds, doubleClickReveal, mute)
+  resetAnimation()
+  playSound(sounds.reset)
   settingsMenu.style.display = `none`
 }
 
@@ -248,6 +252,7 @@ function revealCell(row, col, needPopSound = true) {
 
   if (cell.mine) {
     // Game over
+    cell.element.classList.add(`mine`)
     cell.element.textContent = `💣`
     disableBoard(true)
     stopTimer()
@@ -327,18 +332,24 @@ function setupSettings() {
 }
 
 function hasChanges() {
-  const selectedSize = document.querySelector(`input[name="board-size"]:checked`).value
-  const isDeciseconds = document.getElementById(`timer-unit`).checked
   const doubleClickReveal = document.getElementById(`double-click-reveal`).checked
+  const isDeciseconds = document.getElementById(`timer-unit`).checked
   const mute = document.getElementById(`mute-sounds`).checked
-  return selectedSize !== currentSettings.boardSize || isDeciseconds !== currentSettings.isDeciseconds || doubleClickReveal !== currentSettings.doubleClickReveal || mute !== currentSettings.mute
+  const selectedSize = document.querySelector(`input[name="board-size"]:checked`).value
+  return (
+    selectedSize !== currentSettings.boardSize ||
+    isDeciseconds !== currentSettings.isDeciseconds ||
+    doubleClickReveal !== currentSettings.doubleClickReveal ||
+    mute !== currentSettings.mute
+  )
 }
 
 function resetSettings() {
-  document.querySelector(`input[name="board-size"][value="${currentSettings.boardSize}"]`).checked = true
-  document.getElementById(`timer-unit`).checked = currentSettings.isDeciseconds
-  document.getElementById(`double-click-reveal`).checked = currentSettings.doubleClickReveal
-  document.getElementById(`mute-sounds`).checked = currentSettings.mute
+  const { doubleClickReveal, isDeciseconds, mute, boardSize } = currentSettings
+  document.getElementById(`double-click-reveal`).checked = doubleClickReveal
+  document.getElementById(`mute-sounds`).checked = mute
+  document.getElementById(`timer-unit`).checked = isDeciseconds
+  document.querySelector(`input[name="board-size"][value="${boardSize}"]`).checked = true
   applySettingsBtn.disabled = true
 }
 

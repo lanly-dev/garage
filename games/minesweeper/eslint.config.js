@@ -1,6 +1,7 @@
 module.exports = {
   rules: {
     'comma-dangle': [`error`, `never`],
+    "max-len": [`error`, { code: 120 }],
     'no-throw-literal': `warn`,
     'quote-props': [`error`, `as-needed`],
     curly: [`error`, `multi-line`],
