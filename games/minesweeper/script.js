@@ -152,6 +152,7 @@ function revealCell(row, col) {
   cell.revealed = true
   cell.element.classList.add(`revealed`)
 
+  const mineCount = countMines(row, col)
   if (cell.mine) {
     // Game over
     cell.element.classList.add(`mine`)
@@ -161,11 +162,9 @@ function revealCell(row, col) {
     revealIncorrectFlags()
     resetBtn.textContent = `😆`
     return
-  }
-
-  const mineCount = countMines(row, col)
-  if (mineCount > 0) {
+  } else if (mineCount > 0) {
     cell.element.textContent = mineCount
+    cell.element.classList.add(`no-select`) // Add this line
   } else {
     // Reveal adjacent cells
     for (let r = -1; r <= 1; r++) {

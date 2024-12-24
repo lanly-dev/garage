@@ -16,7 +16,6 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
   border: 1px solid #999;
   border-radius: 3px;
 }
@@ -30,8 +29,12 @@ body {
   background-color: #bbb;
 }
 
+.cell:not(:empty) {
+  user-select: none;
+}
+
 .cell.mine {
-  background-color: red;
+  background-color: red !important;
 }
 
 .cell.revealed {
@@ -42,6 +45,11 @@ body {
   cursor: not-allowed;
   pointer-events: none;
 }
+
+.no-select {
+  user-select: none;
+}
+
 
 h1 {
   margin: 20px 0;
@@ -104,7 +112,8 @@ h1 {
 }
 
 #settings-menu label {
-  margin-bottom: 10px;
+  display: flex;
+  cursor: pointer;
 }
 
 .incorrect-flag span {
