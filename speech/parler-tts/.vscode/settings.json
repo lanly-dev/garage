@@ -1,6 +1,11 @@
 {
   "cSpell.words": [
+    "CUDA",
+    "nvcc",
     "Parler",
-    "samplerate"
+    "pycache",
+    "samplerate",
+    "torchaudio",
+    "torchvision"
   ]
 }
