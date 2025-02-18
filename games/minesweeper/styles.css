@@ -25,6 +25,10 @@ body.dark {
   width: 30px;
 }
 
+.cell.circle {
+  border-radius: 50%;
+}
+
 body.dark .cell {
   background-color: #555;
   border-color: #777;
@@ -194,6 +198,10 @@ body.dark #settings-menu button:disabled {
 }
 
 body.dark #settings-menu label {
+  color: #ccc;
+}
+
+body.dark #settings-menu button {
   color: #ccc;
 }
 

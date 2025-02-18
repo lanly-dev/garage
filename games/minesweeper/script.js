@@ -13,6 +13,7 @@ const applySettingsBtn = document.getElementById('apply-settings')
 const closeSettingsBtn = document.getElementById('close-settings')
 const settingsForm = document.querySelector('#settings-menu form')
 const themeToggle = document.getElementById('theme-toggle')
+const cellShapeToggle = document.getElementById('cell-shape-toggle')
 
 const sounds = {
   expand: document.getElementById('expand-sound'),
@@ -30,7 +31,8 @@ let currentSettings = {
   isDeciseconds: false,
   doubleClickReveal: false,
   mute: false,
-  theme: 'light'
+  theme: 'light',
+  cellShape: 'square'
 }
 
 let board = []
@@ -70,8 +72,9 @@ function applySettingsHandler() {
   const doubleClickReveal = document.getElementById('double-click-reveal').checked
   const mute = document.getElementById('mute-sounds').checked
   const theme = document.getElementById('theme-toggle').checked ? 'dark' : 'light'
+  const cellShape = document.getElementById('cell-shape-toggle').checked ? 'circle' : 'square'
 
-  applySettings(selectedSize, isDeciseconds, doubleClickReveal, mute, theme)
+  applySettings(selectedSize, isDeciseconds, doubleClickReveal, mute, theme, cellShape)
   resetAnimation()
   playSound(sounds.reset)
   settingsMenu.style.display = 'none'
@@ -82,14 +85,14 @@ function closeSettingsHandler() {
   settingsMenu.style.display = 'none'
 }
 
-function applySettings(selectedSize, isDeciseconds, doubleClickReveal, mute, theme) {
+function applySettings(selectedSize, isDeciseconds, doubleClickReveal, mute, theme, cellShape) {
   const { size, mines } = boardSizes[selectedSize]
   boardSize = size
   mineCount = mines
   mineCountLabel.textContent = `💣${mines}`
   timerUnit = isDeciseconds ? 'deciseconds' : 'seconds'
-  currentSettings = { boardSize: selectedSize, isDeciseconds, doubleClickReveal, mute, theme }
-  document.body.className = theme
+  currentSettings = { boardSize: selectedSize, isDeciseconds, doubleClickReveal, mute, theme, cellShape }
+  document.body.className = `${theme} ${cellShape}`
   resetGame()
 }
 
@@ -157,7 +160,7 @@ function initBoard() {
     board[row] = []
     for (let col = 0; col < boardSize; col++) {
       const cell = document.createElement('div')
-      cell.classList.add('cell')
+      cell.classList.add('cell', currentSettings.cellShape)
       cell.dataset.row = row
       cell.dataset.col = col
       cell.addEventListener('click', cellClickHandler)
@@ -341,22 +344,25 @@ function hasChanges() {
   const mute = document.getElementById('mute-sounds').checked
   const selectedSize = document.querySelector('input[name="board-size"]:checked').value
   const theme = document.getElementById('theme-toggle').checked ? 'dark' : 'light'
+  const cellShape = document.getElementById('cell-shape-toggle').checked ? 'circle' : 'square'
   return (
     selectedSize !== currentSettings.boardSize ||
     isDeciseconds !== currentSettings.isDeciseconds ||
     doubleClickReveal !== currentSettings.doubleClickReveal ||
     mute !== currentSettings.mute ||
-    theme !== currentSettings.theme
+    theme !== currentSettings.theme ||
+    cellShape !== currentSettings.cellShape
   )
 }
 
 function resetSettings() {
-  const { doubleClickReveal, isDeciseconds, mute, boardSize, theme } = currentSettings
+  const { doubleClickReveal, isDeciseconds, mute, boardSize, theme, cellShape } = currentSettings
   document.getElementById('double-click-reveal').checked = doubleClickReveal
   document.getElementById('mute-sounds').checked = mute
   document.getElementById('timer-unit').checked = isDeciseconds
   document.querySelector(`input[name="board-size"][value="${boardSize}"]`).checked = true
-  document.getElementById('theme-toggle').checked = currentSettings.theme === theme
+  document.getElementById('theme-toggle').checked = theme === 'dark'
+  document.getElementById('cell-shape-toggle').checked = cellShape === 'circle'
   applySettingsBtn.disabled = true
 }
 
