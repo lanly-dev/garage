@@ -86,7 +86,7 @@ function applySettings(selectedSize, isDeciseconds, doubleClickReveal, mute, the
   const { size, mines } = boardSizes[selectedSize]
   boardSize = size
   mineCount = mines
-  mineCountLabel.textContent = '💣${mines}'
+  mineCountLabel.textContent = `💣${mines}`
   timerUnit = isDeciseconds ? 'deciseconds' : 'seconds'
   currentSettings = { boardSize: selectedSize, isDeciseconds, doubleClickReveal, mute, theme }
   document.body.className = theme
@@ -151,8 +151,8 @@ function disableBoard(bool) {
 
 function initBoard() {
   disableBoard(false)
-  gameBoard.style.gridTemplateColumns = 'repeat(${boardSize}, 30px)'
-  gameBoard.style.gridTemplateRows = 'repeat(${boardSize}, 30px)'
+  gameBoard.style.gridTemplateColumns = `repeat(${boardSize}, 30px)`
+  gameBoard.style.gridTemplateRows = `repeat(${boardSize}, 30px)`
   for (let row = 0; row < boardSize; row++) {
     board[row] = []
     for (let col = 0; col < boardSize; col++) {
@@ -205,7 +205,7 @@ function putFlagHandler(event) {
   playSound(sounds.flag)
 
   const flaggedCells = document.querySelectorAll('.flag').length
-  mineCountLabel.textContent = '💣${mineCount - flaggedCells}'
+  mineCountLabel.textContent = `💣${mineCount - flaggedCells}`
 }
 
 function resetGame(needResetMovesCount = true) {
@@ -223,7 +223,7 @@ function resetGame(needResetMovesCount = true) {
   resetTimer()
   gameStarted = false
   firstClick = true
-  mineCountLabel.textContent = '💣${mineCount}'
+  mineCountLabel.textContent = `💣${mineCount}`
   resetBtn.textContent = '😊'
   if (needResetMovesCount) {
     movesCount = 0
@@ -355,7 +355,7 @@ function resetSettings() {
   document.getElementById('double-click-reveal').checked = doubleClickReveal
   document.getElementById('mute-sounds').checked = mute
   document.getElementById('timer-unit').checked = isDeciseconds
-  document.querySelector('input[name="board-size"][value="${boardSize}"]').checked = true
+  document.querySelector(`input[name="board-size"][value="${boardSize}"]`).checked = true
   document.getElementById('theme-toggle').checked = currentSettings.theme === theme
   applySettingsBtn.disabled = true
 }
@@ -381,11 +381,11 @@ function stopTimer() {
 function updateTimerDisplay() {
   const timerElement = document.getElementById('timer')
   const displayTime = timerUnit === 'deciseconds' ? (elapsedTime / 10).toFixed(1) : elapsedTime
-  timerElement.textContent = '⏳${displayTime}'
+  timerElement.textContent = `⏳${displayTime}`
 }
 
 function updateMovesCount() {
-  movesCountLabel.textContent = '👣${movesCount}'
+  movesCountLabel.textContent = `👣${movesCount}`
 }
 
 function ensureSafeFirstClick(cell) {

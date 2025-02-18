@@ -9,6 +9,11 @@ body {
   margin: 0;
 }
 
+body.dark {
+  background-color: #333;
+  color: #fff;
+}
+
 .cell {
   align-items: center;
   background-color: #ccc;
@@ -18,6 +23,11 @@ body {
   height: 30px;
   justify-content: center;
   width: 30px;
+}
+
+body.dark .cell {
+  background-color: #555;
+  border-color: #777;
 }
 
 .cell.flag {
@@ -37,8 +47,16 @@ body {
   background-color: red !important;
 }
 
+body.dark .cell.mine {
+  background-color: darkred !important;
+}
+
 .cell.revealed {
   background-color: #eee;
+}
+
+body.dark .cell.revealed {
+  background-color: #777;
 }
 
 .cell.flash {
@@ -90,8 +108,17 @@ h1 {
   padding: 5px;
 }
 
+body.dark #controls button {
+  background-color: #555;
+  border-color: #777;
+}
+
 #controls button:hover {
   background-color: #999;
+}
+
+body.dark #controls button:hover {
+  background-color: #777;
 }
 
 #game-board {
@@ -118,6 +145,11 @@ h1 {
   z-index: 1000;
 }
 
+body.dark #settings-menu {
+  background-color: #444;
+  border-color: #666;
+}
+
 #settings-menu button {
   border: 1px solid #999;
   border-radius: 3px;
@@ -127,9 +159,22 @@ h1 {
   padding: 5px;
 }
 
+body.dark #settings-menu button {
+  background-color: #555;
+  border-color: #777;
+}
+
+body.dark #settings-menu button:hover {
+  background-color: #777;
+}
+
 #settings-menu button:disabled {
   background-color: #ddd;
   cursor: not-allowed;
+}
+
+body.dark #settings-menu button:disabled {
+  background-color: #666;
 }
 
 #settings-menu form {
@@ -146,6 +191,10 @@ h1 {
   cursor: pointer;
   display: flex;
   margin-bottom: 5px;
+}
+
+body.dark #settings-menu label {
+  color: #ccc;
 }
 
 #reset-button {
