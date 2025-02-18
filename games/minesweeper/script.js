@@ -4,29 +4,29 @@ const boardSizes = {
   large: { size: 22, mines: 99 }
 }
 
-const gameBoard = document.getElementById(`game-board`)
-const mineCountLabel = document.getElementById(`mine-count`)
-const resetBtn = document.getElementById(`reset`)
-const settingsMenu = document.getElementById(`settings-menu`)
-const movesCountLabel = document.getElementById(`moves-count`)
-const applySettingsBtn = document.getElementById(`apply-settings`)
-const closeSettingsBtn = document.getElementById(`close-settings`)
-const settingsForm = document.querySelector(`#settings-menu form`)
-const themeToggle = document.getElementById(`theme-toggle`)
+const gameBoard = document.getElementById('game-board')
+const mineCountLabel = document.getElementById('mine-count')
+const resetBtn = document.getElementById('reset')
+const settingsMenu = document.getElementById('settings-menu')
+const movesCountLabel = document.getElementById('moves-count')
+const applySettingsBtn = document.getElementById('apply-settings')
+const closeSettingsBtn = document.getElementById('close-settings')
+const settingsForm = document.querySelector('#settings-menu form')
+const themeToggle = document.getElementById('theme-toggle')
 
 const sounds = {
-  expand: document.getElementById(`expand-sound`),
-  flag: document.getElementById(`flag-sound`),
-  over: document.getElementById(`over-sound`),
-  pop: document.getElementById(`pop-sound`),
-  reset: document.getElementById(`reset-sound`),
-  reveal: document.getElementById(`reveal-sound`),
-  win: document.getElementById(`win-sound`),
-  err: document.getElementById(`err-sound`)
+  expand: document.getElementById('expand-sound'),
+  flag: document.getElementById('flag-sound'),
+  over: document.getElementById('over-sound'),
+  pop: document.getElementById('pop-sound'),
+  reset: document.getElementById('reset-sound'),
+  reveal: document.getElementById('reveal-sound'),
+  win: document.getElementById('win-sound'),
+  err: document.getElementById('err-sound')
 }
 
 let currentSettings = {
-  boardSize: `small`,
+  boardSize: 'small',
   isDeciseconds: false,
   doubleClickReveal: false,
   mute: false,
@@ -44,17 +44,17 @@ let gameStarted = false
 let mines = 0
 let movesCount = 0
 let timerInterval
-let timerUnit = `seconds`
+let timerUnit = 'seconds'
 
-resetBtn.addEventListener(`click`, () => {
+resetBtn.addEventListener('click', () => {
   resetGame()
   resetAnimation()
   playSound(sounds.reset)
 })
 
-applySettingsBtn.addEventListener(`click`, applySettingsHandler)
-closeSettingsBtn.addEventListener(`click`, closeSettingsHandler)
-settingsForm.addEventListener(`change`, () => {
+applySettingsBtn.addEventListener('click', applySettingsHandler)
+closeSettingsBtn.addEventListener('click', closeSettingsHandler)
+settingsForm.addEventListener('change', () => {
   applySettingsBtn.disabled = !hasChanges()
 })
 
@@ -65,29 +65,29 @@ function playSound(sound) {
 }
 
 function applySettingsHandler() {
-  const selectedSize = document.querySelector(`input[name="board-size"]:checked`).value
-  const isDeciseconds = document.getElementById(`timer-unit`).checked
-  const doubleClickReveal = document.getElementById(`double-click-reveal`).checked
-  const mute = document.getElementById(`mute-sounds`).checked
-  const theme = document.getElementById(`theme-toggle`).checked ? 'dark' : 'light'
+  const selectedSize = document.querySelector('input[name="board-size"]:checked').value
+  const isDeciseconds = document.getElementById('timer-unit').checked
+  const doubleClickReveal = document.getElementById('double-click-reveal').checked
+  const mute = document.getElementById('mute-sounds').checked
+  const theme = document.getElementById('theme-toggle').checked ? 'dark' : 'light'
 
   applySettings(selectedSize, isDeciseconds, doubleClickReveal, mute, theme)
   resetAnimation()
   playSound(sounds.reset)
-  settingsMenu.style.display = `none`
+  settingsMenu.style.display = 'none'
 }
 
 function closeSettingsHandler() {
   resetSettings()
-  settingsMenu.style.display = `none`
+  settingsMenu.style.display = 'none'
 }
 
 function applySettings(selectedSize, isDeciseconds, doubleClickReveal, mute, theme) {
   const { size, mines } = boardSizes[selectedSize]
   boardSize = size
   mineCount = mines
-  mineCountLabel.textContent = `💣${mines}`
-  timerUnit = isDeciseconds ? `deciseconds` : `seconds`
+  mineCountLabel.textContent = '💣${mines}'
+  timerUnit = isDeciseconds ? 'deciseconds' : 'seconds'
   currentSettings = { boardSize: selectedSize, isDeciseconds, doubleClickReveal, mute, theme }
   document.body.className = theme
   resetGame()
@@ -105,7 +105,7 @@ function cellClickHandler(event) {
     startTimer()
   }
   // Check if the clicked cell is already revealed and has content
-  if (event.target.classList.contains(`revealed`) && event.target.textContent) {
+  if (event.target.classList.contains('revealed') && event.target.textContent) {
     // If double-click reveal is disabled, reveal adjacent cells
     if (!currentSettings.doubleClickReveal) {
       revealAdjacentCells(parseInt(row), parseInt(col))
@@ -119,14 +119,14 @@ function cellClickHandler(event) {
 function cellDoubleClickHandler(event) {
   const row = event.target.dataset.row
   const col = event.target.dataset.col
-  if (event.target.classList.contains(`revealed`) && event.target.textContent) {
+  if (event.target.classList.contains('revealed') && event.target.textContent) {
     revealAdjacentCells(parseInt(row), parseInt(col))
   }
 }
 
 function smileyAnimation() {
-  resetBtn.textContent = `😮`
-  setTimeout(() => resetBtn.textContent = `😊`, 200)
+  resetBtn.textContent = '😮'
+  setTimeout(() => resetBtn.textContent = '😊', 200)
 }
 
 function countMines(row, col) {
@@ -146,25 +146,25 @@ function countMines(row, col) {
 }
 
 function disableBoard(bool) {
-  gameBoard.classList.toggle(`disabled`, bool)
+  gameBoard.classList.toggle('disabled', bool)
 }
 
 function initBoard() {
   disableBoard(false)
-  gameBoard.style.gridTemplateColumns = `repeat(${boardSize}, 30px)`
-  gameBoard.style.gridTemplateRows = `repeat(${boardSize}, 30px)`
+  gameBoard.style.gridTemplateColumns = 'repeat(${boardSize}, 30px)'
+  gameBoard.style.gridTemplateRows = 'repeat(${boardSize}, 30px)'
   for (let row = 0; row < boardSize; row++) {
     board[row] = []
     for (let col = 0; col < boardSize; col++) {
-      const cell = document.createElement(`div`)
-      cell.classList.add(`cell`)
+      const cell = document.createElement('div')
+      cell.classList.add('cell')
       cell.dataset.row = row
       cell.dataset.col = col
-      cell.addEventListener(`click`, cellClickHandler)
+      cell.addEventListener('click', cellClickHandler)
       if (currentSettings.doubleClickReveal) {
-        cell.addEventListener(`dblclick`, cellDoubleClickHandler)
+        cell.addEventListener('dblclick', cellDoubleClickHandler)
       }
-      cell.addEventListener(`contextmenu`, putFlagHandler)
+      cell.addEventListener('contextmenu', putFlagHandler)
       gameBoard.appendChild(cell)
       board[row][col] = {
         element: cell,
@@ -200,31 +200,31 @@ function putFlagHandler(event) {
   if (cellData.revealed) return
 
   cellData.flag = !cellData.flag
-  cell.textContent = cellData.flag ? `🚩` : ``
-  cell.classList.toggle(`flag`, cellData.flag)
+  cell.textContent = cellData.flag ? '🚩' : ''
+  cell.classList.toggle('flag', cellData.flag)
   playSound(sounds.flag)
 
-  const flaggedCells = document.querySelectorAll(`.flag`).length
-  mineCountLabel.textContent = `💣${mineCount - flaggedCells}`
+  const flaggedCells = document.querySelectorAll('.flag').length
+  mineCountLabel.textContent = '💣${mineCount - flaggedCells}'
 }
 
 function resetGame(needResetMovesCount = true) {
-  const cells = document.querySelectorAll(`.cell`)
+  const cells = document.querySelectorAll('.cell')
   cells.forEach(cell => {
-    cell.classList.remove(`revealed`, `mine`, `flag`)
-    cell.style.backgroundColor = `#ccc`
-    cell.textContent = `` // Reset cell content
+    cell.classList.remove('revealed', 'mine', 'flag')
+    cell.style.backgroundColor = '#ccc'
+    cell.textContent = '' // Reset cell content
   })
 
   board = []
   mines = 0
-  gameBoard.innerHTML = ``
+  gameBoard.innerHTML = ''
   stopTimer()
   resetTimer()
   gameStarted = false
   firstClick = true
-  mineCountLabel.textContent = `💣${mineCount}`
-  resetBtn.textContent = `😊`
+  mineCountLabel.textContent = '💣${mineCount}'
+  resetBtn.textContent = '😊'
   if (needResetMovesCount) {
     movesCount = 0
     updateMovesCount()
@@ -233,11 +233,11 @@ function resetGame(needResetMovesCount = true) {
 }
 
 function resetAnimation() {
-  const cells = document.querySelectorAll(`.cell`)
+  const cells = document.querySelectorAll('.cell')
   cells.forEach((cell, index) => {
-    cell.style.setProperty(`--row`, cell.dataset.row)
-    cell.classList.add(`wave`)
-    setTimeout(() => cell.classList.remove(`wave`), 1000)
+    cell.style.setProperty('--row', cell.dataset.row)
+    cell.classList.add('wave')
+    setTimeout(() => cell.classList.remove('wave'), 1000)
   })
 }
 
@@ -252,16 +252,16 @@ function revealCell(row, col, needPopSound = true) {
   if (cell.revealed || cell.flag) return
 
   cell.revealed = true
-  cell.element.classList.add(`revealed`)
+  cell.element.classList.add('revealed')
 
   if (cell.mine) {
     // Game over
-    cell.element.classList.add(`mine`)
-    cell.element.textContent = `💣`
+    cell.element.classList.add('mine')
+    cell.element.textContent = '💣'
     disableBoard(true)
     stopTimer()
     revealIncorrectFlags()
-    resetBtn.textContent = `😆`
+    resetBtn.textContent = '😆'
     playSound(sounds.over)
     return
   }
@@ -289,7 +289,7 @@ function revealCell(row, col, needPopSound = true) {
   if (checkWin()) {
     disableBoard(true)
     stopTimer()
-    resetBtn.textContent = `😎`
+    resetBtn.textContent = '😎'
     playSound(sounds.win)
     return
   }
@@ -302,10 +302,10 @@ function revealHiddenMines() {
       const cell = board[row][col]
       if (cell.mine && !cell.revealed && !cell.flag) {
         cell.revealed = true
-        cell.element.classList.add(`revealed`)
-        cell.element.classList.add(`last-mine`)
-        cell.element.textContent = `💣`
-        cell.element.style.backgroundColor = `lightgreen`
+        cell.element.classList.add('revealed')
+        cell.element.classList.add('last-mine')
+        cell.element.textContent = '💣'
+        cell.element.style.backgroundColor = 'lightgreen'
       }
     }
   }
@@ -323,24 +323,24 @@ function checkWin() {
 }
 
 function setupSettings() {
-  document.getElementById(`settings`).addEventListener(`click`, function () {
-    settingsMenu.style.display ||= `none`
+  document.getElementById('settings').addEventListener('click', function () {
+    settingsMenu.style.display ||= 'none'
     // Toggle settings menu visibility
     const display = settingsMenu.style.display
-    if (display === `block`) {
+    if (display === 'block') {
       resetSettings()
-      settingsMenu.style.display = `none`
-    } else settingsMenu.style.display = `block`
+      settingsMenu.style.display = 'none'
+    } else settingsMenu.style.display = 'block'
     applySettingsBtn.disabled = !hasChanges()
   })
 }
 
 function hasChanges() {
-  const doubleClickReveal = document.getElementById(`double-click-reveal`).checked
-  const isDeciseconds = document.getElementById(`timer-unit`).checked
-  const mute = document.getElementById(`mute-sounds`).checked
-  const selectedSize = document.querySelector(`input[name="board-size"]:checked`).value
-  const theme = document.getElementById(`theme-toggle`).checked ? 'dark' : 'light'
+  const doubleClickReveal = document.getElementById('double-click-reveal').checked
+  const isDeciseconds = document.getElementById('timer-unit').checked
+  const mute = document.getElementById('mute-sounds').checked
+  const selectedSize = document.querySelector('input[name="board-size"]:checked').value
+  const theme = document.getElementById('theme-toggle').checked ? 'dark' : 'light'
   return (
     selectedSize !== currentSettings.boardSize ||
     isDeciseconds !== currentSettings.isDeciseconds ||
@@ -352,24 +352,24 @@ function hasChanges() {
 
 function resetSettings() {
   const { doubleClickReveal, isDeciseconds, mute, boardSize, theme } = currentSettings
-  document.getElementById(`double-click-reveal`).checked = doubleClickReveal
-  document.getElementById(`mute-sounds`).checked = mute
-  document.getElementById(`timer-unit`).checked = isDeciseconds
-  document.querySelector(`input[name="board-size"][value="${boardSize}"]`).checked = true
-  document.getElementById(`theme-toggle`).checked = currentSettings.theme === theme
+  document.getElementById('double-click-reveal').checked = doubleClickReveal
+  document.getElementById('mute-sounds').checked = mute
+  document.getElementById('timer-unit').checked = isDeciseconds
+  document.querySelector('input[name="board-size"][value="${boardSize}"]').checked = true
+  document.getElementById('theme-toggle').checked = currentSettings.theme === theme
   applySettingsBtn.disabled = true
 }
 
 function startTimer() {
   elapsedTime = 0
-  const interval = timerUnit === `deciseconds` ? 100 : 1000
+  const interval = timerUnit === 'deciseconds' ? 100 : 1000
   timerInterval = setInterval(() => {
-    elapsedTime += timerUnit === `deciseconds` ? 1 : 1
+    elapsedTime += timerUnit === 'deciseconds' ? 1 : 1
     updateTimerDisplay()
     if (elapsedTime >= 600) { // 10 minutes in seconds
       stopTimer()
       disableBoard(true)
-      resetBtn.textContent = `😴`
+      resetBtn.textContent = '😴'
     }
   }, interval)
 }
@@ -379,13 +379,13 @@ function stopTimer() {
 }
 
 function updateTimerDisplay() {
-  const timerElement = document.getElementById(`timer`)
-  const displayTime = timerUnit === `deciseconds` ? (elapsedTime / 10).toFixed(1) : elapsedTime
-  timerElement.textContent = `⏳${displayTime}`
+  const timerElement = document.getElementById('timer')
+  const displayTime = timerUnit === 'deciseconds' ? (elapsedTime / 10).toFixed(1) : elapsedTime
+  timerElement.textContent = '⏳${displayTime}'
 }
 
 function updateMovesCount() {
-  movesCountLabel.textContent = `👣${movesCount}`
+  movesCountLabel.textContent = '👣${movesCount}'
 }
 
 function ensureSafeFirstClick(cell) {
@@ -426,7 +426,7 @@ function expandSafeArea(row, col) {
 
     if (cell.revealed || cell.mine) continue
     cell.revealed = true
-    cell.element.classList.add(`revealed`)
+    cell.element.classList.add('revealed')
 
     const mineCount = countMines(currentRow, currentCol)
     if (mineCount > 0) cell.element.textContent = mineCount
@@ -486,8 +486,8 @@ function revealAdjacentCells(row, col) {
         if (newRow < 0 || newRow >= boardSize || newCol < 0 || newCol >= boardSize) continue
         const cell = board[newRow][newCol].element
         if (!board[newRow][newCol].revealed) {
-          cell.classList.add(`flash`)
-          setTimeout(() => cell.classList.remove(`flash`), 300)
+          cell.classList.add('flash')
+          setTimeout(() => cell.classList.remove('flash'), 300)
         }
       }
     }
@@ -499,10 +499,10 @@ function revealIncorrectFlags() {
     for (let col = 0; col < boardSize; col++) {
       const cell = board[row][col]
       if (cell.flag && !cell.mine) {
-        cell.element.classList.add(`incorrect-flag`)
-        cell.element.textContent = `🚩`
-        const xSpan = document.createElement(`span`)
-        xSpan.textContent = `❌`
+        cell.element.classList.add('incorrect-flag')
+        cell.element.textContent = '🚩'
+        const xSpan = document.createElement('span')
+        xSpan.textContent = '❌'
         cell.element.appendChild(xSpan)
       }
     }
