@@ -14,6 +14,9 @@ const closeSettingsBtn = document.getElementById('close-settings')
 const settingsForm = document.querySelector('#settings-menu form')
 const themeToggle = document.getElementById('theme-toggle')
 const cellShapeToggle = document.getElementById('cell-shape-toggle')
+const scoreForm = document.getElementById('score-form')
+const submitScoreBtn = document.getElementById('submit-score')
+const closeScoreFormBtn = document.getElementById('close-score-form')
 
 const sounds = {
   expand: document.getElementById('expand-sound'),
@@ -36,7 +39,6 @@ let currentSettings = {
 }
 
 let board = []
-// Could use currentSettings instead?
 let boardSize = boardSizes.small.size
 let mineCount = boardSizes.small.mines
 
@@ -58,6 +60,10 @@ applySettingsBtn.addEventListener('click', applySettingsHandler)
 closeSettingsBtn.addEventListener('click', closeSettingsHandler)
 settingsForm.addEventListener('change', () => {
   applySettingsBtn.disabled = !hasChanges()
+})
+submitScoreBtn.addEventListener('click', submitScoreHandler)
+closeScoreFormBtn.addEventListener('click', () => {
+  scoreForm.style.display = 'none'
 })
 
 function playSound(sound) {
@@ -107,9 +113,7 @@ function cellClickHandler(event) {
     smileyAnimation()
     startTimer()
   }
-  // Check if the clicked cell is already revealed and has content
   if (event.target.classList.contains('revealed') && event.target.textContent) {
-    // If double-click reveal is disabled, reveal adjacent cells
     if (!currentSettings.doubleClickReveal) {
       revealAdjacentCells(parseInt(row), parseInt(col))
     }
@@ -139,9 +143,7 @@ function countMines(row, col) {
       if (r === 0 && c === 0) continue
       const newRow = row + r
       const newCol = col + c
-      // Check if the new position is within the board boundaries
       if (newRow < 0 || newRow >= boardSize || newCol < 0 || newCol >= boardSize) continue
-      // Increment count if a mine is found at the new position
       if (board[newRow][newCol].mine) count++
     }
   }
@@ -193,7 +195,7 @@ function placeMines() {
 
 function putFlagHandler(event) {
   event.preventDefault()
-  if (firstClick) return // Prevent flagging before the first click
+  if (firstClick) return
 
   const cell = event.target
   const row = cell.dataset.row
@@ -216,7 +218,7 @@ function resetGame(needResetMovesCount = true) {
   cells.forEach(cell => {
     cell.classList.remove('revealed', 'mine', 'flag')
     cell.style.backgroundColor = '#ccc'
-    cell.textContent = '' // Reset cell content
+    cell.textContent = ''
   })
 
   board = []
@@ -258,7 +260,6 @@ function revealCell(row, col, needPopSound = true) {
   cell.element.classList.add('revealed')
 
   if (cell.mine) {
-    // Game over
     cell.element.classList.add('mine')
     cell.element.textContent = '💣'
     disableBoard(true)
@@ -314,6 +315,56 @@ function revealHiddenMines() {
   }
 }
 
+async function submitScore() {
+  const playerName = document.getElementById('player-name').value
+  const score = {
+    name: playerName,
+    time: elapsedTime,
+    moves: movesCount,
+    boardSize: currentSettings.boardSize,
+    date: new Date().toISOString()
+  }
+  console.log('Submitting score:', score)
+
+  const repo = 'lanly-dev/test-submit' // Replace with your GitHub repository
+  const path = 'scores.json' // Path to the scores file in the repository
+  const token = ''
+
+  try {
+    const response = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+      headers: {
+        Authorization: `token ${token}`,
+        Accept: 'application/vnd.github.v3+json'
+      }
+    })
+    const data = await response.json()
+    const content = JSON.parse(atob(data.content))
+    content.push(score)
+
+    const updatedContent = btoa(JSON.stringify(content, null, 2))
+    await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `token ${token}`,
+        Accept: 'application/vnd.github.v3+json'
+      },
+      body: JSON.stringify({
+        message: 'Add new score',
+        content: updatedContent,
+        sha: data.sha
+      })
+    })
+    console.log('Score submitted successfully')
+    scoreForm.style.display = 'none'
+  } catch (error) {
+    console.error('Error submitting score:', error)
+  }
+}
+
+function submitScoreHandler() {
+  submitScore()
+}
+
 function checkWin() {
   for (let row = 0; row < boardSize; row++) {
     for (let col = 0; col < boardSize; col++) {
@@ -322,13 +373,13 @@ function checkWin() {
     }
   }
   revealHiddenMines()
+  scoreForm.style.display = 'block'
   return true
 }
 
 function setupSettings() {
   document.getElementById('settings').addEventListener('click', function () {
     settingsMenu.style.display ||= 'none'
-    // Toggle settings menu visibility
     const display = settingsMenu.style.display
     if (display === 'block') {
       resetSettings()
@@ -372,7 +423,7 @@ function startTimer() {
   timerInterval = setInterval(() => {
     elapsedTime += timerUnit === 'deciseconds' ? 1 : 1
     updateTimerDisplay()
-    if (elapsedTime >= 600) { // 10 minutes in seconds
+    if (elapsedTime >= 600) {
       stopTimer()
       disableBoard(true)
       resetBtn.textContent = '😴'
@@ -451,7 +502,6 @@ function expandSafeArea(row, col) {
   }
 
   if (!expanded && firstClick) {
-    // If no expansion happened on the first click, reset the board and try again
     resetGame(false)
     ensureSafeFirstClick(board[row][col].element)
   }

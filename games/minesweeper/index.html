@@ -35,7 +35,7 @@
       </label>
       <br>
       <label>
-        <input type="checkbox" id="timer-unit" >
+        <input type="checkbox" id="timer-unit">
         ⏳in deciseconds
       </label>
       <label>
@@ -56,6 +56,15 @@
       </label>
       <button type="button" id="apply-settings" disabled>Apply</button>
       <button type="button" id="close-settings">Close</button>
+    </form>
+  </div>
+  <div id="score-form" class="modal">
+    <h2>Submit Your Score</h2>
+    <form>
+      <label for="player-name">Name:</label>
+      <input type="text" id="player-name" required>
+      <button type="button" id="submit-score">Submit</button>
+      <button type="button" id="close-score-form">Close</button>
     </form>
   </div>
   <audio id="err-sound" src="sounds/err.mp3"></audio>
