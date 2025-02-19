@@ -12,22 +12,22 @@ const git = simpleGit()
 
 // Function to check if directory is a Git repository
 async function isGitRepo(directory) {
-  const repoGit = simpleGit(directory);
+  const repoGit = simpleGit(directory)
   try {
-    await repoGit.status();
-    return true;
+    await repoGit.status()
+    return true
   } catch (error) {
-    return false;
+    return false
   }
 }
 
 // Function to create a directory if it doesn't exist
 function createDirectoryIfNotExists(directory) {
   if (!fs.existsSync(directory)) {
-    fs.mkdirSync(directory, { recursive: true });
-    console.log(`Directory ${directory} created.`);
+    fs.mkdirSync(directory, { recursive: true })
+    console.log(`Directory ${directory} created.`)
   } else {
-    console.log(`Directory ${directory} already exists.`);
+    console.log(`Directory ${directory} already exists.`)
   }
 }
 
@@ -36,8 +36,8 @@ async function cloneRepo() {
   try {
     // Check if the subdirectory already exists
     if (fs.existsSync(repoName)) {
-      console.log(`Subdirectory ${repoName} already exists. Skipping clone.`);
-      return;
+      console.log(`Subdirectory ${repoName} already exists. Skipping clone.`)
+      return
     }
 
     await git.clone(repoUrl, repoName)
@@ -53,16 +53,16 @@ async function cloneRepo() {
 // Function to update high score
 async function updateHighScore(newScore) {
   try {
-    await cloneRepo();
+    await cloneRepo()
     // Change to the subdirectory
-    const repoGit = simpleGit(repoName);
+    const repoGit = simpleGit(repoName)
 
     // Write new high score to file
     try {
       fs.writeFileSync(`${repoName}/highscore.txt`, `High Score: ${newScore}`, 'utf8')
     } catch (writeError) {
-      console.error('Error writing high score to file:', writeError);
-      return;
+      console.error('Error writing high score to file:', writeError)
+      return
     }
 
     // Add changes to git
@@ -81,5 +81,5 @@ async function updateHighScore(newScore) {
 }
 
 // Example usage
-const newScore = 12345; // Replace with the actual high score
-updateHighScore(newScore);
+const newScore = 12345 // Replace with the actual high score
+updateHighScore(newScore)
