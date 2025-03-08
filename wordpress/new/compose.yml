@@ -24,6 +24,7 @@ services:
     volumes:
       - db:/var/lib/mysql
 
+# To persist data between restarts
 volumes:
   wordpress:
   db:

@@ -21,8 +21,8 @@ services:
       MYSQL_USER: user
       MYSQL_PASSWORD: password
       MYSQL_RANDOM_ROOT_PASSWORD: '1'
-    volumes:
-      - ./db:/var/lib/mysql
+#     volumes:
+#       - db:/var/lib/mysql
 
-volumes:
-  db:
+# volumes:
+#   db:
