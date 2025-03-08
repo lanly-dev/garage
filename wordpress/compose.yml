@@ -1,14 +1,14 @@
 services:
   wordpress:
-    image: wordpress:latest
+    image: wordpress:5.4.2
     restart: always
     ports:
       - 8080:80
     environment:
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_USER: user
-      WORDPRESS_DB_PASSWORD: password
-      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_PASSWORD: ${DB_PASS}
+      WORDPRESS_DB_NAME: bitnami_wordpress
     # existing wordpress files
     volumes:
       - ./wordpress:/var/www/html
@@ -17,10 +17,10 @@ services:
     image: mysql:latest
     restart: always
     environment:
-      MYSQL_DATABASE: wordpress
+      MYSQL_DATABASE: bitnami_wordpress
       MYSQL_USER: user
-      MYSQL_PASSWORD: password
-      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+      MYSQL_PASSWORD: ${DB_PASS}
+      MYSQL_ROOT_PASSWORD: ${DB_PASS}
 #     volumes:
 #       - db:/var/lib/mysql
 
