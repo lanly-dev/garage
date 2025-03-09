@@ -1,28 +1,30 @@
 services:
+
   wordpress:
-    image: wordpress:5.4.2
+    image: wordpress
     restart: always
     ports:
       - 8080:80
     environment:
       WORDPRESS_DB_HOST: db
-      WORDPRESS_DB_USER: user
-      WORDPRESS_DB_PASSWORD: ${DB_PASS}
-      WORDPRESS_DB_NAME: bitnami_wordpress
-    # existing wordpress files
+      WORDPRESS_DB_USER: exampleuser
+      WORDPRESS_DB_PASSWORD: examplepass
+      WORDPRESS_DB_NAME: exampledb
     volumes:
-      - ./wordpress:/var/www/html
+      - wordpress:/var/www/html
 
   db:
-    image: mysql:latest
+    image: mysql:8.0
     restart: always
     environment:
-      MYSQL_DATABASE: bitnami_wordpress
-      MYSQL_USER: user
-      MYSQL_PASSWORD: ${DB_PASS}
-      MYSQL_ROOT_PASSWORD: ${DB_PASS}
-#     volumes:
-#       - db:/var/lib/mysql
+      MYSQL_DATABASE: exampledb
+      MYSQL_USER: exampleuser
+      MYSQL_PASSWORD: examplepass
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
+    volumes:
+      - db:/var/lib/mysql
 
-# volumes:
-#   db:
+# To persist data between restarts
+volumes:
+  wordpress:
+  db:
