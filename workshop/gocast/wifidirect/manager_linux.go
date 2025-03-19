@@ -40,7 +40,7 @@ func (m *Manager) startPlatformDiscovery() error {
 	log.Println("[Linux] WiFi Display enabled successfully")
 
 	// Start P2P device discovery as sink
-	cmd = exec.Command("wpa_cli", "p2p_group_add", "persistent")
+	cmd = exec.Command("wpa_cli", "p2p_group_add", "freq=5")
 	if err := cmd.Run(); err != nil {
 		log.Printf("[Linux] P2P group creation failed: %v", err)
 		return fmt.Errorf("failed to create P2P group: %v", err)
@@ -90,7 +90,7 @@ func (m *Manager) monitorDevices() {
 		}
 
 		// Get detailed group information
-		cmd = exec.Command("wpa_cli", "p2p_group_show")
+		cmd = exec.Command("wpa_cli", "list_groups")
 		groupInfo, _ := cmd.Output()
 		log.Printf("[Linux] Current P2P Group Status:\n%s", string(groupInfo))
 

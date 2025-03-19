@@ -71,8 +71,15 @@ func (m *MiracastReceiver) Stop() error {
 		m.connection.Close()
 	}
 
-	if err := m.listener.Close(); err != nil {
-		return fmt.Errorf("failed to stop listener: %v", err)
+	if m.listener != nil {
+		if err := m.listener.Close(); err != nil {
+			log.Printf("Error closing listener: %v", err)
+		}
+	}
+
+	// Stop WiFi Direct discovery
+	if m.wdManager != nil {
+		m.wdManager.StopDiscovery()
 	}
 
 	m.isRunning = false
