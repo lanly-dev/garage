@@ -23,13 +23,13 @@ func (m *Manager) startPlatformDiscovery() error {
 	}
 	log.Println("[Linux] wpa_supplicant is running")
 
-	// Configure device as Miracast receiver
-	cmd = exec.Command("wpa_cli", "wfd_subelem_set", "0", "000600111c4400c8")
+	// Configure device as Miracast sink (receiver)
+	cmd = exec.Command("wpa_cli", "wfd_subelem_set", "0", "000600101c4400c8")
 	if err := cmd.Run(); err != nil {
 		log.Printf("[Linux] WFD subelements configuration failed: %v", err)
 		return fmt.Errorf("failed to configure WFD subelements: %v", err)
 	}
-	log.Println("[Linux] Successfully configured WFD subelements")
+	log.Println("[Linux] Successfully configured WFD subelements as sink")
 
 	// Enable WiFi Display
 	cmd = exec.Command("wpa_cli", "set", "wifi_display", "1")
@@ -39,13 +39,13 @@ func (m *Manager) startPlatformDiscovery() error {
 	}
 	log.Println("[Linux] WiFi Display enabled successfully")
 
-	// Start P2P device discovery and advertisement
-	cmd = exec.Command("wpa_cli", "p2p_group_add")
+	// Start P2P device discovery as sink
+	cmd = exec.Command("wpa_cli", "p2p_group_add", "persistent")
 	if err := cmd.Run(); err != nil {
 		log.Printf("[Linux] P2P group creation failed: %v", err)
 		return fmt.Errorf("failed to create P2P group: %v", err)
 	}
-	log.Println("[Linux] P2P group created successfully")
+	log.Println("[Linux] P2P group created successfully as sink")
 
 	// Start goroutine to monitor for new devices
 	go m.monitorDevices()

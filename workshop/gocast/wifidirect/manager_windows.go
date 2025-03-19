@@ -46,12 +46,12 @@ func (m *Manager) startPlatformDiscovery() error {
 		log.Println("[Windows] Successfully enabled Miracast source")
 	}
 
-	// Configure WiDi settings for extended display
-	cmd = exec.Command("netsh", "wlan", "set", "wirelessdisplay", "settings=extendeddisplay")
+	// Configure WiDi settings for source mode
+	cmd = exec.Command("netsh", "wlan", "set", "wirelessdisplay", "settings=source")
 	if err := cmd.Run(); err != nil {
-		log.Printf("[Windows] Failed to configure extended display: %v", err)
+		log.Printf("[Windows] Failed to configure source settings: %v", err)
 	} else {
-		log.Println("[Windows] Successfully configured extended display")
+		log.Println("[Windows] Successfully configured source settings")
 	}
 
 	// Start monitoring for devices
@@ -75,12 +75,12 @@ func (m *Manager) monitorDevices() {
 			log.Printf("[Windows] Failed to scan for Miracast displays: %v", err)
 		}
 
-		// Advertise as Miracast source
+		// Start Miracast source discovery
 		cmd = exec.Command("netsh", "wlan", "set", "wirelessdisplay", "state=active")
 		if err := cmd.Run(); err != nil {
-			log.Printf("[Windows] Error advertising Miracast source: %v", err)
+			log.Printf("[Windows] Error starting Miracast source discovery: %v", err)
 		} else {
-			log.Println("[Windows] Successfully advertised as Miracast source")
+			log.Println("[Windows] Successfully started Miracast source discovery")
 		}
 
 		// Also check regular WiFi Direct devices
