@@ -7,6 +7,7 @@ import (
 	"log"
 	"os/exec"
 	"strings"
+	"time"
 
 	"github.com/yourusername/gocast/models"
 )
@@ -56,6 +57,8 @@ func (m *Manager) startPlatformDiscovery() error {
 // monitorDevices continuously monitors for incoming Miracast connections
 func (m *Manager) monitorDevices() {
 	log.Println("[Linux] Device monitoring started")
+	processedMACs := make(map[string]bool)
+
 	for m.isScanning {
 		// Monitor P2P group status
 		cmd := exec.Command("wpa_cli", "status")
@@ -64,32 +67,48 @@ func (m *Manager) monitorDevices() {
 			log.Printf("[Linux] Error checking P2P status: %v", err)
 			continue
 		}
-		log.Println("[Linux] Successfully retrieved P2P status")
 
-		peers := strings.Split(string(output), "\n")
-		for _, peer := range peers {
-			if peer == "" {
+		// Parse status output to collect peer information
+		lines := strings.Split(string(output), "\n")
+		peerInfo := make(map[string]string)
+		var currentMAC string
+
+		for _, line := range lines {
+			if line == "" {
+				continue
+			}
+			parts := strings.SplitN(line, "=", 2)
+			if len(parts) != 2 {
 				continue
 			}
 
-			log.Printf("[Linux] Processing peer: %s", peer)
-			// Get peer details
-			cmd = exec.Command("wpa_cli", "p2p_peer", peer)
-			details, err := cmd.Output()
-			if err != nil {
-				log.Printf("[Linux] Failed to get details for peer %s: %v", peer, err)
-				continue
-			}
-
-			// Parse peer details and update devices map
-			device := parseDeviceInfo(string(details))
-			if device != nil {
-				log.Printf("[Linux] Found device: %s (MAC: %s)", device.DeviceName, device.MAC)
-				m.deviceLock.Lock()
-				m.devices[device.MAC] = *device
-				m.deviceLock.Unlock()
+			key, value := parts[0], parts[1]
+			if key == "p2p_device_address" || key == "address" {
+				currentMAC = value
+				peerInfo[key] = value
+			} else if currentMAC != "" {
+				peerInfo[key] = value
 			}
 		}
+
+		// Process collected peer information
+		if currentMAC != "" && !processedMACs[currentMAC] {
+			cmd = exec.Command("wpa_cli", "p2p_peer", currentMAC)
+			details, err := cmd.Output()
+			if err == nil {
+				device := parseDeviceInfo(string(details))
+				if device != nil {
+					log.Printf("[Linux] Found new device: %s (MAC: %s)", device.DeviceName, device.MAC)
+					m.deviceLock.Lock()
+					m.devices[device.MAC] = *device
+					m.deviceLock.Unlock()
+					processedMACs[currentMAC] = true
+				}
+			}
+		}
+
+		// Sleep to avoid excessive CPU usage
+		time.Sleep(2 * time.Second)
 	}
 	log.Println("[Linux] Device monitoring stopped")
 }
