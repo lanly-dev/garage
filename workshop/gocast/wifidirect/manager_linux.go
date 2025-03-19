@@ -89,10 +89,19 @@ func (m *Manager) monitorDevices() {
 			cmd.Run()
 		}
 
-		// Get detailed group information
-		cmd = exec.Command("wpa_cli", "list_groups")
-		groupInfo, _ := cmd.Output()
-		log.Printf("[Linux] Current P2P Group Status:\n%s", string(groupInfo))
+		// Get P2P network information
+		cmd = exec.Command("wpa_cli", "list_network")
+		networkInfo, err := cmd.Output()
+		if err == nil {
+			log.Printf("[Linux] Current P2P Networks:\n%s", string(networkInfo))
+		}
+
+		// Get group interface status
+		cmd = exec.Command("wpa_cli", "interface")
+		interfaceInfo, err := cmd.Output()
+		if err == nil {
+			log.Printf("[Linux] P2P Interface Status:\n%s", string(interfaceInfo))
+		}
 
 		// Check WFD status
 		cmd = exec.Command("wpa_cli", "wfd_subelem_get", "0")
