@@ -39,13 +39,21 @@ func (m *Manager) startPlatformDiscovery() error {
 	}
 	log.Println("[Linux] WiFi Display enabled successfully")
 
-	// Start P2P device discovery as sink
-	cmd = exec.Command("wpa_cli", "p2p_group_add", "freq=5")
+	// Start P2P device discovery as sink with persistent group
+	cmd = exec.Command("wpa_cli", "p2p_group_add", "persistent", "freq=5", "ht40")
 	if err := cmd.Run(); err != nil {
 		log.Printf("[Linux] P2P group creation failed: %v", err)
 		return fmt.Errorf("failed to create P2P group: %v", err)
 	}
 	log.Println("[Linux] P2P group created successfully as sink")
+
+	// Enable P2P device discovery
+	cmd = exec.Command("wpa_cli", "p2p_find", "type=progressive")
+	if err := cmd.Run(); err != nil {
+		log.Printf("[Linux] P2P discovery start failed: %v", err)
+		return fmt.Errorf("failed to start P2P discovery: %v", err)
+	}
+	log.Println("[Linux] P2P discovery started successfully")
 
 	// Start goroutine to monitor for new devices
 	go m.monitorDevices()
@@ -85,7 +93,17 @@ func (m *Manager) monitorDevices() {
 		// Check if we're actually advertising
 		if !strings.Contains(string(output), "p2p_state=ENABLED") {
 			log.Println("[Linux] Warning: P2P is not enabled, attempting to re-enable")
-			cmd = exec.Command("wpa_cli", "p2p_find")
+			// Reconfigure WFD settings
+			cmd = exec.Command("wpa_cli", "wfd_subelem_set", "0", "000600101c4400c8")
+			cmd.Run()
+			// Re-enable WiFi Display
+			cmd = exec.Command("wpa_cli", "set", "wifi_display", "1")
+			cmd.Run()
+			// Recreate persistent P2P group
+			cmd = exec.Command("wpa_cli", "p2p_group_add", "persistent", "freq=5", "ht40")
+			cmd.Run()
+			// Restart P2P discovery
+			cmd = exec.Command("wpa_cli", "p2p_find", "type=progressive")
 			cmd.Run()
 		}
 
