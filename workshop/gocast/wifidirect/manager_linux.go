@@ -11,7 +11,7 @@ import (
 	"github.com/yourusername/gocast/models"
 )
 
-// StartDiscovery begins scanning for nearby WiFi Direct devices on Linux
+// StartDiscovery begins advertising this device as a Miracast receiver on Linux
 func (m *Manager) startPlatformDiscovery() error {
 	// Check if wpa_supplicant is installed and running
 	cmd := exec.Command("pidof", "wpa_supplicant")
@@ -19,10 +19,22 @@ func (m *Manager) startPlatformDiscovery() error {
 		return fmt.Errorf("wpa_supplicant is not running: %v", err)
 	}
 
-	// Initialize wpa_cli for WiFi Direct operations
-	cmd = exec.Command("wpa_cli", "p2p_find")
+	// Configure device as Miracast receiver
+	cmd = exec.Command("wpa_cli", "wfd_subelem_set", "0", "000600111c4400c8")
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("failed to start p2p discovery: %v", err)
+		return fmt.Errorf("failed to configure WFD subelements: %v", err)
+	}
+
+	// Enable WiFi Display
+	cmd = exec.Command("wpa_cli", "set", "wifi_display", "1")
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("failed to enable WiFi Display: %v", err)
+	}
+
+	// Start P2P device discovery and advertisement
+	cmd = exec.Command("wpa_cli", "p2p_group_add")
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("failed to create P2P group: %v", err)
 	}
 
 	// Start goroutine to monitor for new devices
@@ -31,13 +43,14 @@ func (m *Manager) startPlatformDiscovery() error {
 	return nil
 }
 
-// monitorDevices continuously monitors for new WiFi Direct devices
+// monitorDevices continuously monitors for incoming Miracast connections
 func (m *Manager) monitorDevices() {
 	for m.isScanning {
-		cmd := exec.Command("wpa_cli", "p2p_peers")
+		// Monitor P2P group status
+		cmd := exec.Command("wpa_cli", "status")
 		output, err := cmd.Output()
 		if err != nil {
-			log.Printf("Error getting peer list: %v", err)
+			log.Printf("Error checking P2P status: %v", err)
 			continue
 		}
 

@@ -7,6 +7,9 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/yourusername/gocast/rtsp"
+	"github.com/yourusername/gocast/wifidirect"
 )
 
 // Config holds the application configuration
@@ -21,25 +24,35 @@ type MiracastReceiver struct {
 	listener   net.Listener
 	isRunning  bool
 	connection net.Conn
+	rtspServer *rtsp.RTSPServer
+	wdManager  *wifidirect.Manager
 }
 
 // NewMiracastReceiver creates a new instance of MiracastReceiver
 func NewMiracastReceiver(config Config) *MiracastReceiver {
+	rtspServer := rtsp.NewRTSPServer(config.ListenPort)
+	wdManager := wifidirect.NewManager()
+
 	return &MiracastReceiver{
-		config:    config,
-		isRunning: false,
+		config:     config,
+		isRunning:  false,
+		rtspServer: rtspServer,
+		wdManager:  wdManager,
 	}
 }
 
 // Start initializes and starts the Miracast receiver
 func (m *MiracastReceiver) Start() error {
-	addr := fmt.Sprintf(":%d", m.config.ListenPort)
-	listener, err := net.Listen("tcp", addr)
-	if err != nil {
-		return fmt.Errorf("failed to start listener: %v", err)
+	// Start RTSP server
+	if err := m.rtspServer.Start(); err != nil {
+		return fmt.Errorf("failed to start RTSP server: %v", err)
 	}
 
-	m.listener = listener
+	// Start WiFi Direct manager
+	if err := m.wdManager.StartDiscovery(); err != nil {
+		return fmt.Errorf("failed to start WiFi Direct discovery: %v", err)
+	}
+
 	m.isRunning = true
 
 	log.Printf("Miracast receiver started on port %d\n", m.config.ListenPort)
