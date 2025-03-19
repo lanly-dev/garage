@@ -54,19 +54,50 @@ func (m *Manager) startPlatformDiscovery() error {
 	return nil
 }
 
-// monitorDevices continuously monitors for incoming Miracast connections
+// monitorDevices continuously monitors for incoming Miracast connections and signal status
 func (m *Manager) monitorDevices() {
 	log.Println("[Linux] Device monitoring started")
 	processedMACs := make(map[string]bool)
 
+	// Verify P2P and WFD configuration
+	cmd := exec.Command("wpa_cli", "status")
+	output, err := cmd.Output()
+	if err == nil {
+		log.Printf("[Linux] Initial P2P Configuration:\n%s", string(output))
+	}
+
+	cmd = exec.Command("wpa_cli", "p2p_find")
+	if err := cmd.Run(); err != nil {
+		log.Printf("[Linux] Failed to start P2P discovery: %v", err)
+	} else {
+		log.Println("[Linux] P2P discovery started successfully")
+	}
+
 	for m.isScanning {
-		// Monitor P2P group status
-		cmd := exec.Command("wpa_cli", "status")
-		output, err := cmd.Output()
+		// Monitor P2P group and signal status
+		cmd = exec.Command("wpa_cli", "status")
+		output, err = cmd.Output()
 		if err != nil {
 			log.Printf("[Linux] Error checking P2P status: %v", err)
 			continue
 		}
+
+		// Check if we're actually advertising
+		if !strings.Contains(string(output), "p2p_state=ENABLED") {
+			log.Println("[Linux] Warning: P2P is not enabled, attempting to re-enable")
+			cmd = exec.Command("wpa_cli", "p2p_find")
+			cmd.Run()
+		}
+
+		// Get detailed group information
+		cmd = exec.Command("wpa_cli", "p2p_group_show")
+		groupInfo, _ := cmd.Output()
+		log.Printf("[Linux] Current P2P Group Status:\n%s", string(groupInfo))
+
+		// Check WFD status
+		cmd = exec.Command("wpa_cli", "wfd_subelem_get", "0")
+		wfdInfo, _ := cmd.Output()
+		log.Printf("[Linux] WFD Subelement Status: %s", string(wfdInfo))
 
 		// Parse status output to collect peer information
 		lines := strings.Split(string(output), "\n")
