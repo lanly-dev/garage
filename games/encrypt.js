@@ -1,5 +1,10 @@
 // Encryption function
-function simpleEncrypt(text, secretKey) {
+
+function simpleEncrypt(text) {
+  const encrypted = btoa(text)
+  return encrypted
+}
+function simpleEncryptSecret(text, secretKey) {
   const encrypted = btoa(secretKey + text)
   return encrypted
 }
@@ -11,10 +16,12 @@ function simpleDecrypt(encryptedText, secretKey) {
 }
 
 // Example usage
-const secretKey = 'donttellanyone'
+const secretKey = 'secret'
 const textToEncrypt = 'Hello, World!'
 
-const encryptedText = simpleEncrypt(textToEncrypt, secretKey)
+console.log('Secret Key Encrypted:', simpleEncrypt(secretKey), '\nfrom', secretKey)
+
+const encryptedText = simpleEncryptSecret(textToEncrypt, secretKey)
 console.log('Encrypted:', encryptedText)
 
 const decryptedText = simpleDecrypt(encryptedText, secretKey)
