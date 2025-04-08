@@ -297,3 +297,35 @@ body.dark .modal label {
 body.dark .modal button {
   color: #ccc;
 }
+
+#high-scores-modal {
+  display: none;
+  background-color: white;
+  border: 2px solid #ccc;
+  border-radius: 3px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  left: 50%;
+  padding: 20px;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+}
+
+body.dark #high-scores-modal {
+  background-color: #444;
+  border-color: #666;
+}
+
+#high-scores-modal ul {
+  list-style: none;
+  padding: 0;
+}
+
+#high-scores-modal li {
+  margin-bottom: 5px;
+}
+
+#high-scores-modal button {
+  margin-top: 10px;
+}

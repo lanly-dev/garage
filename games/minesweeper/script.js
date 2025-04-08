@@ -17,6 +17,10 @@ const cellShapeToggle = document.getElementById('cell-shape-toggle')
 const scoreForm = document.getElementById('score-form')
 const submitScoreBtn = document.getElementById('submit-score')
 const closeScoreFormBtn = document.getElementById('close-score-form')
+const viewHighScoresBtn = document.getElementById('view-high-scores')
+const highScoresModal = document.getElementById('high-scores-modal')
+const highScoresList = document.getElementById('high-scores-list')
+const closeHighScoresBtn = document.getElementById('close-high-scores')
 
 const sounds = {
   expand: document.getElementById('expand-sound'),
@@ -64,6 +68,15 @@ settingsForm.addEventListener('change', () => {
 submitScoreBtn.addEventListener('click', submitScoreHandler)
 closeScoreFormBtn.addEventListener('click', () => {
   scoreForm.style.display = 'none'
+})
+
+viewHighScoresBtn.addEventListener('click', () => {
+  fetchHighScores()
+  highScoresModal.style.display = 'block'
+})
+
+closeHighScoresBtn.addEventListener('click', () => {
+  highScoresModal.style.display = 'none'
 })
 
 function playSound(sound) {
@@ -329,7 +342,8 @@ async function submitScore() {
   const repo = 'lanly-dev/test-submit' // Replace with your GitHub repository
   const path = 'scores.json' // Path to the scores file in the repository
 
-  const longT = ''
+  // eslint-disable-next-line max-len
+  const longT = 'UGxlYXNlS2VlcFRoaXNTZWNyZXRnaXRodWJfcGF0XzExQURNTDZQQTA5TGE0aWRtVld4MWNfOVY2ZmNscEpucHNKS0lRaUQxb1h5bkhQR0tyZUh2RjRIcUplNkp6aWxVZVBYQ1I1TkdRYk9jcjNOZ0g=.UGxlYXNlS2VlcFRoaXNTZWNyZXQ='
   const [t, es] = longT.split('.')
   const s = atob(es)
   const token = atob(t).replace(s, '')
@@ -367,6 +381,42 @@ async function submitScore() {
 
 function submitScoreHandler() {
   submitScore()
+}
+
+async function fetchHighScores() {
+  const repo = 'lanly-dev/test-submit'
+  const path = 'scores.json'
+
+  // eslint-disable-next-line max-len
+  const longT = 'UGxlYXNlS2VlcFRoaXNTZWNyZXRnaXRodWJfcGF0XzExQURNTDZQQTA5TGE0aWRtVld4MWNfOVY2ZmNscEpucHNKS0lRaUQxb1h5bkhQR0tyZUh2RjRIcUplNkp6aWxVZVBYQ1I1TkdRYk9jcjNOZ0g=.UGxlYXNlS2VlcFRoaXNTZWNyZXQ='
+  const [t, es] = longT.split('.')
+  const s = atob(es)
+  const token = atob(t).replace(s, '')
+
+  try {
+    const response = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+      headers: {
+        Authorization: `token ${token}`,
+        Accept: 'application/vnd.github.v3+json'
+      }
+    })
+    const data = await response.json()
+    const content = JSON.parse(atob(data.content))
+
+    highScoresList.innerHTML = ''
+    content
+      .sort((a, b) => a.time - b.time) // Sort by time (ascending)
+      .slice(0, 10) // Show top 10 scores
+      .forEach((score, index) => {
+        const listItem = document.createElement('li')
+        // eslint-disable-next-line max-len
+        listItem.textContent = `${index + 1}. ${score.name} - ${score.time}s - ${score.moves} moves (${score.boardSize})`
+        highScoresList.appendChild(listItem)
+      })
+  } catch (error) {
+    console.error('Error fetching high scores:', error)
+    highScoresList.innerHTML = '<li>Error loading high scores.</li>'
+  }
 }
 
 function checkWin() {
