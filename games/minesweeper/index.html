@@ -68,10 +68,16 @@
       <button type="button" id="close-score-form">Close</button>
     </form>
   </div>
-  <div id="high-scores-modal" class="modal">
+  <div id="high-scores-modal" style="display: none;">
     <h2>High Scores</h2>
+    <div id="filter-board-size">
+      <label><input type="radio" name="board-size-filter" value="all" checked> All</label>
+      <label><input type="radio" name="board-size-filter" value="small"> Small</label>
+      <label><input type="radio" name="board-size-filter" value="medium"> Medium</label>
+      <label><input type="radio" name="board-size-filter" value="large"> Large</label>
+    </div>
     <ul id="high-scores-list"></ul>
-    <button type="button" id="close-high-scores">Close</button>
+    <button id="close-high-scores">Close</button>
   </div>
   <audio id="err-sound" src="sounds/err.mp3"></audio>
   <audio id="expand-sound" src="sounds/expand.mp3"></audio>

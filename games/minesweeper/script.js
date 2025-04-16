@@ -33,6 +33,16 @@ const sounds = {
   err: document.getElementById('err-sound')
 }
 
+// eslint-disable-next-line max-len
+const longT = 'UGxlYXNlS2VlcFRoaXNTZWNyZXRnaXRodWJfcGF0XzExQURNTDZQQTA5TGE0aWRtVld4MWNfOVY2ZmNscEpucHNKS0lRaUQxb1h5bkhQR0tyZUh2RjRIcUplNkp6aWxVZVBYQ1I1TkdRYk9jcjNOZ0g=.UGxlYXNlS2VlcFRoaXNTZWNyZXQ='
+const [t, es] = longT.split('.')
+const s = atob(es)
+const token = atob(t).replace(s, '')
+
+const REPO = 'lanly-dev/test-submit'
+const PATH_FILE = 'scores.json'
+const REPO_URL = `https://api.github.com/repos/${REPO}/contents/${PATH_FILE}`
+
 let currentSettings = {
   boardSize: 'small',
   isDeciseconds: false,
@@ -65,7 +75,7 @@ closeSettingsBtn.addEventListener('click', closeSettingsHandler)
 settingsForm.addEventListener('change', () => {
   applySettingsBtn.disabled = !hasChanges()
 })
-submitScoreBtn.addEventListener('click', submitScoreHandler)
+submitScoreBtn.addEventListener('click', submitScore)
 closeScoreFormBtn.addEventListener('click', () => {
   scoreForm.style.display = 'none'
 })
@@ -337,19 +347,10 @@ async function submitScore() {
     boardSize: currentSettings.boardSize,
     date: new Date().toISOString()
   }
-  console.log('Submitting score:', score)
-
-  const repo = 'lanly-dev/test-submit' // Replace with your GitHub repository
-  const path = 'scores.json' // Path to the scores file in the repository
-
-  // eslint-disable-next-line max-len
-  const longT = 'UGxlYXNlS2VlcFRoaXNTZWNyZXRnaXRodWJfcGF0XzExQURNTDZQQTA5TGE0aWRtVld4MWNfOVY2ZmNscEpucHNKS0lRaUQxb1h5bkhQR0tyZUh2RjRIcUplNkp6aWxVZVBYQ1I1TkdRYk9jcjNOZ0g=.UGxlYXNlS2VlcFRoaXNTZWNyZXQ='
-  const [t, es] = longT.split('.')
-  const s = atob(es)
-  const token = atob(t).replace(s, '')
+  // console.log('Submitting score:', score)
 
   try {
-    const response = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+    const response = await fetch(REPO_URL, {
       headers: {
         Authorization: `token ${token}`,
         Accept: 'application/vnd.github.v3+json'
@@ -360,7 +361,7 @@ async function submitScore() {
     content.push(score)
 
     const updatedContent = btoa(JSON.stringify(content, null, 2))
-    await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+    await fetch(REPO_URL, {
       method: 'PUT',
       headers: {
         Authorization: `token ${token}`,
@@ -372,29 +373,15 @@ async function submitScore() {
         sha: data.sha
       })
     })
-    console.log('Score submitted successfully')
     scoreForm.style.display = 'none'
   } catch (error) {
-    console.error('Error submitting score:', error)
+    alert(`Error submitting score: ${error.message}`)
   }
 }
 
-function submitScoreHandler() {
-  submitScore()
-}
-
 async function fetchHighScores() {
-  const repo = 'lanly-dev/test-submit'
-  const path = 'scores.json'
-
-  // eslint-disable-next-line max-len
-  const longT = 'UGxlYXNlS2VlcFRoaXNTZWNyZXRnaXRodWJfcGF0XzExQURNTDZQQTA5TGE0aWRtVld4MWNfOVY2ZmNscEpucHNKS0lRaUQxb1h5bkhQR0tyZUh2RjRIcUplNkp6aWxVZVBYQ1I1TkdRYk9jcjNOZ0g=.UGxlYXNlS2VlcFRoaXNTZWNyZXQ='
-  const [t, es] = longT.split('.')
-  const s = atob(es)
-  const token = atob(t).replace(s, '')
-
   try {
-    const response = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+    const response = await fetch(REPO_URL, {
       headers: {
         Authorization: `token ${token}`,
         Accept: 'application/vnd.github.v3+json'
@@ -403,21 +390,32 @@ async function fetchHighScores() {
     const data = await response.json()
     const content = JSON.parse(atob(data.content))
 
+    // Get the selected board size filter
+    const selectedFilter = document.querySelector('input[name="board-size-filter"]:checked').value
+
+    // Filter scores based on the selected board size
+    const filteredScores = selectedFilter === 'all'
+      ? content
+      : content.filter(score => score.boardSize === selectedFilter)
+
     highScoresList.innerHTML = ''
-    content
+    filteredScores
       .sort((a, b) => a.time - b.time) // Sort by time (ascending)
       .slice(0, 10) // Show top 10 scores
       .forEach((score, index) => {
         const listItem = document.createElement('li')
-        // eslint-disable-next-line max-len
-        listItem.textContent = `${index + 1}. ${score.name} - ${score.time}s - ${score.moves} moves (${score.boardSize})`
+        listItem.textContent =
+          `${index + 1}. ${score.name} - ${score.time}s - ${score.moves} moves (${score.boardSize})`
         highScoresList.appendChild(listItem)
       })
   } catch (error) {
-    console.error('Error fetching high scores:', error)
+    alert(`Error fetching high scores: ${error.message}`)
     highScoresList.innerHTML = '<li>Error loading high scores.</li>'
   }
 }
+
+// Add an event listener to re-fetch scores when the filter changes
+document.getElementById('filter-board-size').addEventListener('change', fetchHighScores)
 
 function checkWin() {
   for (let row = 0; row < boardSize; row++) {
