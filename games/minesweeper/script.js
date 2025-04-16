@@ -288,6 +288,7 @@ function revealCell(row, col, needPopSound = true) {
     disableBoard(true)
     stopTimer()
     revealIncorrectFlags()
+    revealHiddenMines()
     resetBtn.textContent = '😆'
     playSound(sounds.over)
     return
@@ -391,12 +392,10 @@ async function fetchHighScores() {
     const content = JSON.parse(atob(data.content))
 
     // Get the selected board size filter
-    const selectedFilter = document.querySelector('input[name="board-size-filter"]:checked').value
+    const selectedFilter = document.querySelector('input[name="scores-filter"]:checked').value
 
     // Filter scores based on the selected board size
-    const filteredScores = selectedFilter === 'all'
-      ? content
-      : content.filter(score => score.boardSize === selectedFilter)
+    const filteredScores = content.filter(score => score.boardSize === selectedFilter)
 
     highScoresList.innerHTML = ''
     filteredScores
@@ -404,8 +403,18 @@ async function fetchHighScores() {
       .slice(0, 10) // Show top 10 scores
       .forEach((score, index) => {
         const listItem = document.createElement('li')
-        listItem.textContent =
-          `${index + 1}. ${score.name} - ${score.time}s - ${score.moves} moves (${score.boardSize})`
+        const nameSpan = document.createElement('span')
+        const timeSpan = document.createElement('span')
+
+        nameSpan.textContent = `${index + 1}. ${score.name.length > 10 ? `${score.name.slice(0, 10)}...` : score.name}`
+        timeSpan.textContent = `${score.time}s`
+
+        nameSpan.classList.add('name-column')
+        timeSpan.classList.add('time-column')
+
+        listItem.appendChild(nameSpan)
+        listItem.appendChild(timeSpan)
+        listItem.title = `${score.name} - ${score.time}s - ${score.moves} moves`
         highScoresList.appendChild(listItem)
       })
   } catch (error) {
@@ -415,7 +424,7 @@ async function fetchHighScores() {
 }
 
 // Add an event listener to re-fetch scores when the filter changes
-document.getElementById('filter-board-size').addEventListener('change', fetchHighScores)
+document.getElementById('filter-options').addEventListener('change', fetchHighScores)
 
 function checkWin() {
   for (let row = 0; row < boardSize; row++) {

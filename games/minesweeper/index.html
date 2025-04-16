@@ -21,39 +21,15 @@
   <div id="settings-menu">
     <h2>Settings</h2>
     <form>
-      <label>
-        <input type="radio" name="board-size" value="small" checked>
-        Small (8x8, 10 💣)
-      </label>
-      <label>
-        <input type="radio" name="board-size" value="medium">
-        Medium (16x16, 40 💣)
-      </label>
-      <label>
-        <input type="radio" name="board-size" value="large">
-        Large (22x22, 99 💣)
-      </label>
+      <label><input type="radio" name="board-size" value="small" checked>Small (8x8, 10 💣)</label>
+      <label><input type="radio" name="board-size" value="medium">Medium (16x16, 40 💣)</label>
+      <label><input type="radio" name="board-size" value="large">Large (22x22, 99 💣)</label>
       <br>
-      <label>
-        <input type="checkbox" id="timer-unit">
-        ⏳in deciseconds
-      </label>
-      <label>
-        <input type="checkbox" id="double-click-reveal">
-        🖱️Double-click to reveal adjacent cells
-      </label>
-      <label>
-        <input type="checkbox" id="mute-sounds">
-        🔇Mute sounds
-      </label>
-      <label>
-        <input type="checkbox" id="theme-toggle">
-        🌗 Dark Theme
-      </label>
-      <label>
-        <input type="checkbox" id="cell-shape-toggle">
-        ⚪ Circle Cells
-      </label>
+      <label><input type="checkbox" id="timer-unit">⏳in deciseconds</label>
+      <label><input type="checkbox" id="double-click-reveal">🖱️Double-click to reveal adjacent cells</label>
+      <label><input type="checkbox" id="mute-sounds">🔇Mute sounds</label>
+      <label><input type="checkbox" id="theme-toggle">🌗 Dark Theme</label>
+      <label><input type="checkbox" id="cell-shape-toggle">⚪ Circle Cells</label>
       <button type="button" id="view-high-scores">🏆View High Scores</button>
       <button type="button" id="apply-settings" disabled>Apply</button>
       <button type="button" id="close-settings">Close</button>
@@ -68,13 +44,13 @@
       <button type="button" id="close-score-form">Close</button>
     </form>
   </div>
-  <div id="high-scores-modal" style="display: none;">
+  <div id="high-scores-modal" style="display:none">
+    <h1 id="cup">🏆</h1>
     <h2>High Scores</h2>
-    <div id="filter-board-size">
-      <label><input type="radio" name="board-size-filter" value="all" checked> All</label>
-      <label><input type="radio" name="board-size-filter" value="small"> Small</label>
-      <label><input type="radio" name="board-size-filter" value="medium"> Medium</label>
-      <label><input type="radio" name="board-size-filter" value="large"> Large</label>
+    <div id="filter-options">
+      <label><input type="radio" name="scores-filter" value="small" checked>Small</label>
+      <label><input type="radio" name="scores-filter" value="medium">Medium</label>
+      <label><input type="radio" name="scores-filter" value="large">Large</label>
     </div>
     <ul id="high-scores-list"></ul>
     <button id="close-high-scores">Close</button>

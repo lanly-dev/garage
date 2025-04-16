@@ -329,3 +329,35 @@ body.dark #high-scores-modal {
 #high-scores-modal button {
   margin-top: 10px;
 }
+
+#high-scores-modal{
+  text-align: center;
+}
+
+li {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 300px; /* Adjust as needed */
+}
+
+#high-scores-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 10px;
+}
+
+#high-scores-list .name-column {
+  flex: 1;
+  text-align: left;
+}
+
+#high-scores-list .time-column {
+  flex: 0 0 50px;
+  text-align: right;
+}
+
+#cup {
+  font-size: 50px;
+  margin:0
+}
