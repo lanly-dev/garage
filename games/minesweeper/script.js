@@ -6,21 +6,30 @@ const boardSizes = {
 
 const gameBoard = document.getElementById('game-board')
 const mineCountLabel = document.getElementById('mine-count')
-const resetBtn = document.getElementById('reset')
-const settingsMenu = document.getElementById('settings-menu')
 const movesCountLabel = document.getElementById('moves-count')
+
+const resetBtn = document.getElementById('reset')
+
+const decisecondsUnitToggle = document.getElementById('timer-unit')
+const doubleClickRevealToggle = document.getElementById('double-click-reveal')
+const muteToggle = document.getElementById('mute-sounds')
+const themeToggle = document.getElementById('theme-toggle')
+const cellShapeToggle = document.getElementById('cell-shape-toggle')
+
 const applySettingsBtn = document.getElementById('apply-settings')
 const closeSettingsBtn = document.getElementById('close-settings')
 const settingsForm = document.querySelector('#settings-menu form')
-const themeToggle = document.getElementById('theme-toggle')
-const cellShapeToggle = document.getElementById('cell-shape-toggle')
-const scoreForm = document.getElementById('score-form')
-const submitScoreBtn = document.getElementById('submit-score')
-const closeScoreFormBtn = document.getElementById('close-score-form')
-const viewHighScoresBtn = document.getElementById('view-high-scores')
-const highScoresModal = document.getElementById('high-scores-modal')
-const highScoresList = document.getElementById('high-scores-list')
+const settingsMenu = document.getElementById('settings-menu')
+
 const closeHighScoresBtn = document.getElementById('close-high-scores')
+const highScoresList = document.getElementById('high-scores-list')
+const highScoresModal = document.getElementById('high-scores-modal')
+const viewHighScoresBtn = document.getElementById('view-high-scores')
+
+const scoreForm = document.getElementById('score-form')
+const closeScoreFormBtn = document.getElementById('close-score-form')
+const submitScoreBtn = document.getElementById('submit-score')
+
 const overlay = document.getElementById('overlay')
 
 const sounds = {
@@ -109,12 +118,12 @@ function playSound(sound) {
 }
 
 function applySettingsHandler() {
-  const selectedSize = document.querySelector('input[name="board-size"]:checked').value
-  const isDeciseconds = document.getElementById('timer-unit').checked
-  const doubleClickReveal = document.getElementById('double-click-reveal').checked
-  const mute = document.getElementById('mute-sounds').checked
-  const theme = document.getElementById('theme-toggle').checked ? 'dark' : 'light'
-  const cellShape = document.getElementById('cell-shape-toggle').checked ? 'circle' : 'square'
+  const selectedSize = boardSizeRadioChecked.value
+  const isDeciseconds = decisecondsUnitToggle.checked
+  const doubleClickReveal = doubleClickRevealToggle.checked
+  const mute = muteToggle.checked
+  const theme = themeToggle.checked ? 'dark' : 'light'
+  const cellShape = cellShapeToggle.checked ? 'circle' : 'square'
 
   applySettings(selectedSize, isDeciseconds, doubleClickReveal, mute, theme, cellShape)
   resetAnimation()
@@ -464,12 +473,12 @@ function setupSettings() {
 }
 
 function hasChanges() {
-  const doubleClickReveal = document.getElementById('double-click-reveal').checked
-  const isDeciseconds = document.getElementById('timer-unit').checked
-  const mute = document.getElementById('mute-sounds').checked
   const selectedSize = document.querySelector('input[name="board-size"]:checked').value
-  const theme = document.getElementById('theme-toggle').checked ? 'dark' : 'light'
-  const cellShape = document.getElementById('cell-shape-toggle').checked ? 'circle' : 'square'
+  const isDeciseconds = decisecondsUnitToggle.checked
+  const doubleClickReveal = doubleClickRevealToggle.checked
+  const mute = muteToggle.checked
+  const theme = themeToggle.checked ? 'dark' : 'light'
+  const cellShape = cellShapeToggle.checked ? 'circle' : 'square'
   return (
     selectedSize !== currentSettings.boardSize ||
     isDeciseconds !== currentSettings.isDeciseconds ||
@@ -482,12 +491,12 @@ function hasChanges() {
 
 function resetSettings() {
   const { doubleClickReveal, isDeciseconds, mute, boardSize, theme, cellShape } = currentSettings
-  document.getElementById('double-click-reveal').checked = doubleClickReveal
-  document.getElementById('mute-sounds').checked = mute
-  document.getElementById('timer-unit').checked = isDeciseconds
   document.querySelector(`input[name="board-size"][value="${boardSize}"]`).checked = true
-  document.getElementById('theme-toggle').checked = theme === 'dark'
-  document.getElementById('cell-shape-toggle').checked = cellShape === 'circle'
+  doubleClickRevealToggle.checked = doubleClickReveal
+  muteToggle.checked = mute
+  decisecondsUnitToggle.checked = isDeciseconds
+  themeToggle.checked = theme === 'dark'
+  cellShapeToggle.checked = cellShape === 'circle'
   applySettingsBtn.disabled = true
 }
 
