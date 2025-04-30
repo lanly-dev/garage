@@ -118,7 +118,7 @@ function playSound(sound) {
 }
 
 function applySettingsHandler() {
-  const selectedSize = boardSizeRadioChecked.value
+  const selectedSize = document.querySelector('input[name="board-size"]:checked').value
   const isDeciseconds = decisecondsUnitToggle.checked
   const doubleClickReveal = doubleClickRevealToggle.checked
   const mute = muteToggle.checked
