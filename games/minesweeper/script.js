@@ -21,6 +21,7 @@ const viewHighScoresBtn = document.getElementById('view-high-scores')
 const highScoresModal = document.getElementById('high-scores-modal')
 const highScoresList = document.getElementById('high-scores-list')
 const closeHighScoresBtn = document.getElementById('close-high-scores')
+const overlay = document.getElementById('overlay')
 
 const sounds = {
   expand: document.getElementById('expand-sound'),
@@ -70,8 +71,14 @@ resetBtn.addEventListener('click', () => {
   playSound(sounds.reset)
 })
 
-applySettingsBtn.addEventListener('click', applySettingsHandler)
-closeSettingsBtn.addEventListener('click', closeSettingsHandler)
+applySettingsBtn.addEventListener('click', () => {
+  applySettingsHandler()
+  toggleOverlay(false)
+})
+closeSettingsBtn.addEventListener('click', () => {
+  closeSettingsHandler()
+  toggleOverlay(false)
+})
 settingsForm.addEventListener('change', () => {
   applySettingsBtn.disabled = !hasChanges()
 })
@@ -87,6 +94,12 @@ viewHighScoresBtn.addEventListener('click', () => {
 
 closeHighScoresBtn.addEventListener('click', () => {
   highScoresModal.style.display = 'none'
+})
+
+// Show overlay when settings menu is opened
+document.getElementById('settings').addEventListener('click', function () {
+  const isVisible = settingsMenu.style.display === 'block'
+  toggleOverlay(!isVisible)
 })
 
 function playSound(sound) {
@@ -624,6 +637,10 @@ function revealIncorrectFlags() {
       }
     }
   }
+}
+
+function toggleOverlay(show) {
+  overlay.classList.toggle('active', show)
 }
 
 setupSettings()

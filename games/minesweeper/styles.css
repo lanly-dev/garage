@@ -136,6 +136,7 @@ body.dark #controls button:hover {
 }
 
 #settings-menu {
+  min-width: 18em;
   background-color: white;
   border: 2px solid #ccc;
   border-radius: 3px;
@@ -299,6 +300,7 @@ body.dark .modal button {
 }
 
 #high-scores-modal {
+  min-width: 18em;
   display: none;
   background-color: white;
   border: 2px solid #ccc;
@@ -320,10 +322,6 @@ body.dark #high-scores-modal {
 #high-scores-modal ul {
   list-style: none;
   padding: 0;
-}
-
-#high-scores-modal li {
-  margin-bottom: 5px;
 }
 
 #high-scores-modal button {
@@ -360,4 +358,19 @@ li {
 #cup {
   font-size: 50px;
   margin:0
+}
+
+#overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.2);
+  display: none;
+  z-index: 999;
+}
+
+#overlay.active {
+  display: block;
 }
