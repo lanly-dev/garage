@@ -374,3 +374,7 @@ li {
 #overlay.active {
   display: block;
 }
+
+#score-form {
+  min-width: 15em;
+}

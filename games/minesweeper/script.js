@@ -74,6 +74,8 @@ let movesCount = 0
 let timerInterval
 let timerUnit = 'seconds'
 
+let touchTimer
+
 resetBtn.addEventListener('click', () => {
   resetGame()
   resetAnimation()
@@ -176,6 +178,25 @@ function cellDoubleClickHandler(event) {
   }
 }
 
+function cellTouchStartHandler(event) {
+  event.preventDefault()
+  const cell = event.target
+  touchTimer = setTimeout(() => {
+    putFlagHandler({ target: cell, preventDefault: () => {} }) // Trigger flag placement
+    cell.longPress = true // Mark as a long press
+  }, 300) // Long press duration (300ms)
+  cell.longPress = false // Reset long press flag
+}
+
+function cellTouchEndHandler(event) {
+  event.preventDefault()
+  clearTimeout(touchTimer) // Cancel flag placement if touch ends early
+  const cell = event.target
+  if (!cell.longPress) {
+    cellClickHandler(event) // Trigger uncovering for short taps
+  }
+}
+
 function smileyAnimation() {
   resetBtn.textContent = '😮'
   setTimeout(() => resetBtn.textContent = '😊', 200)
@@ -211,6 +232,8 @@ function initBoard() {
       cell.dataset.row = row
       cell.dataset.col = col
       cell.addEventListener('click', cellClickHandler)
+      cell.addEventListener('touchstart', cellTouchStartHandler)
+      cell.addEventListener('touchend', cellTouchEndHandler)
       if (currentSettings.doubleClickReveal) {
         cell.addEventListener('dblclick', cellDoubleClickHandler)
       }
@@ -441,7 +464,8 @@ async function fetchHighScores() {
 
         listItem.appendChild(nameSpan)
         listItem.appendChild(timeSpan)
-        listItem.title = `${score.name} - ${score.time}s - ${score.moves} moves`
+        const date = new Date(score.date).toLocaleString()
+        listItem.title = `${score.name} - ${score.time}s - ${score.moves} moves - ${date}`
         highScoresList.appendChild(listItem)
       })
   } catch (error) {
