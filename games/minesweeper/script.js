@@ -53,6 +53,9 @@ const REPO = 'lanly-dev/test-submit'
 const PATH_FILE = 'scores.json'
 const REPO_URL = `https://api.github.com/repos/${REPO}/contents/${PATH_FILE}`
 
+const COUNTERS_FILE = 'counters.json'
+const COUNTERS_URL = `https://api.github.com/repos/${REPO}/contents/${COUNTERS_FILE}`
+
 let currentSettings = {
   boardSize: 'small',
   isDeciseconds: false,
@@ -319,6 +322,36 @@ function resetTimer() {
   updateTimerDisplay()
 }
 
+async function updateCounters(isWin) {
+  try {
+    const response = await fetch(COUNTERS_URL, {
+      headers: {
+        Authorization: `token ${token}`,
+        Accept: 'application/vnd.github.v3+json'
+      }
+    })
+    const { content, sha } = await response.json()
+    const counters = JSON.parse(atob(content))
+
+    counters[isWin ? 'wins' : 'losses']++
+
+    await fetch(COUNTERS_URL, {
+      method: 'PUT',
+      headers: {
+        Authorization: `token ${token}`,
+        Accept: 'application/vnd.github.v3+json'
+      },
+      body: JSON.stringify({
+        message: `Update ${isWin ? 'win' : 'lose'} counter`,
+        content: btoa(JSON.stringify(counters, null, 2)),
+        sha
+      })
+    })
+  } catch (error) {
+    alert(`Error updating counters: ${error.message}`)
+  }
+}
+
 function revealCell(row, col, needPopSound = true) {
   if (row < 0 || col < 0 || row >= boardSize || col >= boardSize) return
   const cell = board[row][col]
@@ -328,6 +361,7 @@ function revealCell(row, col, needPopSound = true) {
   cell.element.classList.add('revealed')
 
   if (cell.mine) {
+    // Game over
     cell.element.classList.add('mine')
     cell.element.textContent = '💣'
     disableBoard(true)
@@ -336,6 +370,7 @@ function revealCell(row, col, needPopSound = true) {
     revealHiddenMines()
     resetBtn.textContent = '😆'
     playSound(sounds.over)
+    updateCounters(false)
     return
   }
   const mineCount = countMines(row, col)
@@ -364,6 +399,7 @@ function revealCell(row, col, needPopSound = true) {
     stopTimer()
     resetBtn.textContent = '😎'
     playSound(sounds.win)
+    updateCounters(true)
     return
   }
   smileyAnimation()
@@ -386,11 +422,13 @@ function revealHiddenMines() {
 
 async function submitScore() {
   const playerName = document.getElementById('player-name').value
+  const platform = navigator.userAgentData?.platform || navigator.platform || 'Unknown Platform'
   const score = {
     name: playerName,
     time: elapsedTime,
     moves: movesCount,
     boardSize: currentSettings.boardSize,
+    platform, // Include platform in the score
     date: new Date().toISOString()
   }
   // console.log('Submitting score:', score)
