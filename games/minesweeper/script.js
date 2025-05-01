@@ -419,6 +419,11 @@ async function fetchHighScores() {
     // Filter scores based on the selected board size
     const filteredScores = content.filter(score => score.boardSize === selectedFilter)
 
+    if (!filteredScores.length) {
+      highScoresList.innerHTML = '<div>No scores available for this board size</div>'
+      return
+    }
+
     highScoresList.innerHTML = ''
     filteredScores
       .sort((a, b) => a.time - b.time) // Sort by time (ascending)
