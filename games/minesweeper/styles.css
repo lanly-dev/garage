@@ -374,7 +374,3 @@ li {
 #overlay.active {
   display: block;
 }
-
-#error-msg {
-  text-align: center;
-}
