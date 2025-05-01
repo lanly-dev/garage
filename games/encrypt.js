@@ -19,10 +19,10 @@ function simpleDecrypt(encryptedText, secretKey) {
 const secretKey = 'secret'
 const textToEncrypt = 'Hello, World!'
 
-console.log('Secret Key Encrypted:', simpleEncrypt(secretKey), '\nfrom', secretKey)
+console.log('Secret Key Encrypted:', simpleEncrypt(secretKey), '\nFROM➡️➡️ ', secretKey, '\n')
 
 const encryptedText = simpleEncryptSecret(textToEncrypt, secretKey)
 console.log('Encrypted:', encryptedText)
 
 const decryptedText = simpleDecrypt(encryptedText, secretKey)
-console.log('Decrypted:', decryptedText)
+console.log('\nDecrypted Test:', decryptedText)

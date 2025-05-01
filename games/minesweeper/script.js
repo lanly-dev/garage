@@ -441,7 +441,7 @@ async function fetchHighScores() {
       })
   } catch (error) {
     alert(`Error fetching high scores: ${error.message}`)
-    highScoresList.innerHTML = '<li>Error loading high scores.</li>'
+    highScoresList.innerHTML = '<div id="error-msg">Error loading high scores❗</div>'
   }
 }
 
