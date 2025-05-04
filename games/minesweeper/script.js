@@ -84,7 +84,6 @@ resetBtn.addEventListener('click', () => {
   resetAnimation()
   playSound(sounds.reset)
 })
-
 applySettingsBtn.addEventListener('click', () => {
   applySettingsHandler()
   toggleOverlay(false)
@@ -100,12 +99,10 @@ submitScoreBtn.addEventListener('click', submitScore)
 closeScoreFormBtn.addEventListener('click', () => {
   scoreForm.style.display = 'none'
 })
-
 viewHighScoresBtn.addEventListener('click', () => {
   fetchHighScores()
   highScoresModal.style.display = 'block'
 })
-
 closeHighScoresBtn.addEventListener('click', () => {
   highScoresModal.style.display = 'none'
 })
@@ -420,6 +417,15 @@ function revealHiddenMines() {
   }
 }
 
+function decodeBase64ToUtf8(base64String) {
+  const binaryString = atob(base64String)
+  const bytes = new Uint8Array(binaryString.length)
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i)
+  }
+  return new TextDecoder('utf-8').decode(bytes)
+}
+
 async function submitScore() {
   const playerName = document.getElementById('player-name').value
   const platform = navigator.userAgentData?.platform || navigator.platform || 'Unknown Platform'
@@ -441,7 +447,7 @@ async function submitScore() {
       }
     })
     const data = await response.json()
-    const content = JSON.parse(atob(data.content))
+    const content = JSON.parse(decodeBase64ToUtf8(data.content))
     content.push(score)
 
     const updatedContent = btoa(JSON.stringify(content, null, 2))
@@ -472,7 +478,7 @@ async function fetchHighScores() {
       }
     })
     const data = await response.json()
-    const content = JSON.parse(atob(data.content))
+    const content = JSON.parse(decodeBase64ToUtf8(data.content))
 
     // Get the selected board size filter
     const selectedFilter = document.querySelector('input[name="scores-filter"]:checked').value
