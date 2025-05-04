@@ -1,5 +1,10 @@
 function decodeBase64ToUtf8(base64String) {
-  return decodeURIComponent(escape(atob(base64String)));
+  const binaryString = atob(base64String)
+  const bytes = new Uint8Array(binaryString.length)
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i)
+  }
+  return new TextDecoder('utf-8').decode(bytes)
 }
 
 const longT = 'UGxlYXNlS2VlcFRoaXNTZWNyZXRnaXRodWJfcGF0XzExQURNTDZQQTA5TGE0aWRtVld4MWNfOVY2ZmNscEpucHNKS0lRaUQxb1h5bkhQR0tyZUh2RjRIcUplNkp6aWxVZVBYQ1I1TkdRYk9jcjNOZ0g=.UGxlYXNlS2VlcFRoaXNTZWNyZXQ='
@@ -18,13 +23,14 @@ async function fetchHighScores() {
     const response = await fetch(REPO_URL, {
       headers: {
         Authorization: `token ${token}`,
-        Accept: 'application/vnd.github.v3+json'
+        Accept: 'application/vnd.github.v3+json',
+        contentType: 'application/json'
       }
     })
     const data = await response.json()
-    const content = JSON.parse(atob(data.content))
+    const content = JSON.parse(decodeBase64ToUtf8(data.content)) // Proper decoding here
     // Filter scores based on the selected board size
-    const filteredScores = content.filter(score => score.boardSize === 'small')
+    const filteredScores = content.filter((score) => score.boardSize === 'small')
 
     filteredScores
       .sort((a, b) => a.time - b.time) // Sort by time (ascending)
