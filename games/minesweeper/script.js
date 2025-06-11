@@ -157,6 +157,7 @@ function cellClickHandler(event) {
   if (firstClick) {
     ensureSafeFirstClick(event.target)
     firstClick = false
+    updateCounters(false, false, true)
     gameStarted = true
     smileyAnimation()
     startTimer()
@@ -363,7 +364,7 @@ function resetTimer() {
   updateTimerDisplay()
 }
 
-async function updateCounters(isWin) {
+async function updateCounters(win, loss, attempt) {
   try {
     const response = await fetch(COUNTERS_URL, {
       headers: {
@@ -374,7 +375,11 @@ async function updateCounters(isWin) {
     const { content, sha } = await response.json()
     const counters = JSON.parse(atob(content))
 
-    counters[isWin ? 'wins' : 'losses']++
+    if (win) counters.wins++
+    if (loss) counters.losses++
+    if (attempt) counters.attempts++
+
+    const icon = win ? '🥇' : loss ? '💥' : '🧹'
 
     await fetch(COUNTERS_URL, {
       method: 'PUT',
@@ -383,7 +388,7 @@ async function updateCounters(isWin) {
         Accept: 'application/vnd.github.v3+json'
       },
       body: JSON.stringify({
-        message: `Update ${isWin ? 'win' : 'lose'} counter`,
+        message: `Update ${icon} counter`,
         content: btoa(JSON.stringify(counters, null, 2)),
         sha
       })
@@ -411,7 +416,7 @@ function revealCell(row, col, needPopSound = true) {
     revealHiddenMines()
     resetBtn.textContent = '😆'
     playSound(sounds.over)
-    updateCounters(false)
+    updateCounters(false, true, false)
     return
   }
   const mineCount = countMines(row, col)
@@ -440,7 +445,7 @@ function revealCell(row, col, needPopSound = true) {
     stopTimer()
     resetBtn.textContent = '😎'
     playSound(sounds.win)
-    updateCounters(true)
+    updateCounters(true, false, false)
     return
   }
   smileyAnimation()
@@ -518,7 +523,7 @@ async function submitScore() {
 async function fetchHighScores() {
   try {
     // Fetch win/loss counters from COUNTERS_URL
-    let winCount = 0, lossCount = 0
+    let winCount = -1, lossCount = -1
     try {
       const countersResp = await fetch(COUNTERS_URL, {
         headers: {
@@ -528,10 +533,11 @@ async function fetchHighScores() {
       })
       const countersData = await countersResp.json()
       const counters = JSON.parse(atob(countersData.content))
-      winCount = counters.wins || 0
-      lossCount = counters.losses || 0
+      winCount = counters.wins ?? 0
+      lossCount = counters.losses ?? 0
+      attemptCount = counters.attempts ?? 0
     } catch (e) {
-      // fallback: leave as 0 if error
+      alert(`Error fetching counters: ${e.message}`)
     }
 
     const response = await fetch(REPO_URL, {
@@ -558,7 +564,8 @@ async function fetchHighScores() {
     const counterDiv = document.createElement('div')
     counterDiv.style.marginBottom = '8px'
     counterDiv.style.fontWeight = 'bold'
-    counterDiv.innerHTML = `🥇${winCount} 💥${lossCount}`
+    counterDiv.innerHTML = `🥇${winCount} 💥${lossCount} 🧹${attemptCount}`
+    counterDiv.title = `Wins: ${winCount}, Losses: ${lossCount}, Attempts: ${attemptCount}`
     highScoresList.innerHTML = ''
     highScoresList.appendChild(counterDiv)
 
