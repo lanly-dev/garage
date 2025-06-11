@@ -517,6 +517,23 @@ async function submitScore() {
 
 async function fetchHighScores() {
   try {
+    // Fetch win/loss counters from COUNTERS_URL
+    let winCount = 0, lossCount = 0
+    try {
+      const countersResp = await fetch(COUNTERS_URL, {
+        headers: {
+          Authorization: `token ${token}`,
+          Accept: 'application/vnd.github.v3+json'
+        }
+      })
+      const countersData = await countersResp.json()
+      const counters = JSON.parse(atob(countersData.content))
+      winCount = counters.wins || 0
+      lossCount = counters.losses || 0
+    } catch (e) {
+      // fallback: leave as 0 if error
+    }
+
     const response = await fetch(REPO_URL, {
       headers: {
         Authorization: `token ${token}`,
@@ -537,7 +554,14 @@ async function fetchHighScores() {
       return
     }
 
+    // Show win/loss counter at the top (from COUNTERS_URL)
+    const counterDiv = document.createElement('div')
+    counterDiv.style.marginBottom = '8px'
+    counterDiv.style.fontWeight = 'bold'
+    counterDiv.innerHTML = `🥇${winCount} 💥${lossCount}`
     highScoresList.innerHTML = ''
+    highScoresList.appendChild(counterDiv)
+
     filteredScores
       .sort((a, b) => a.time - b.time) // Sort by time (ascending)
       .slice(0, 10) // Show top 10 scores
