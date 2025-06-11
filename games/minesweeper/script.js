@@ -254,12 +254,12 @@ function disableBoard(bool) {
   gameBoard.classList.toggle('disabled', bool)
 }
 
-function isTouchDevice() {
+function getDeviceType() {
   return (
     'ontouchstart' in window ||
     navigator.maxTouchPoints > 0 ||
     navigator.msMaxTouchPoints > 0
-  )
+  ) ? 'mobile' : 'desktop'
 }
 
 function initBoard() {
@@ -273,7 +273,7 @@ function initBoard() {
       cell.classList.add('cell', currentSettings.cellShape)
       cell.dataset.row = row
       cell.dataset.col = col
-      if (!isTouchDevice()) {
+      if (getDeviceType() !== 'mobile') {
         cell.addEventListener('click', cellClickHandler)
       }
       cell.addEventListener('touchstart', cellTouchStartHandler)
@@ -473,12 +473,14 @@ function decodeBase64ToUtf8(base64String) {
 async function submitScore() {
   const playerName = document.getElementById('player-name').value
   const platform = navigator.userAgentData?.platform || navigator.platform || 'Unknown Platform'
+  const deviceType = getDeviceType()
   const score = {
     name: playerName,
     time: elapsedTime,
     moves: movesCount,
     boardSize: currentSettings.boardSize,
     platform, // Include platform in the score
+    device: deviceType, // Add device type
     date: new Date().toISOString()
   }
   // console.log('Submitting score:', score)
@@ -553,7 +555,10 @@ async function fetchHighScores() {
         listItem.appendChild(nameSpan)
         listItem.appendChild(timeSpan)
         const date = new Date(score.date).toLocaleString()
-        listItem.title = `${score.name} - ${score.time}s - ${score.moves} moves - ${date}`
+        let d
+        if (!score.device) d = '❓'
+        else d = score.device === 'mobile' ? '📱' : '💻'
+        listItem.title = `${d}|${score.name}|⌛${score.time}|👣${score.moves}|${date}`
         highScoresList.appendChild(listItem)
       })
   } catch (error) {
