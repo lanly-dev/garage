@@ -376,7 +376,7 @@ async function updateCounters(win, loss, attempt) {
     const counters = JSON.parse(atob(content))
 
     if (win) counters.wins++
-    if (loss) counters.losses++
+    if (loss) counters.loses++
     if (attempt) counters.attempts++
 
     const icon = win ? '🥇' : loss ? '💥' : '🧹'
@@ -550,7 +550,7 @@ async function fetchHighScores() {
       const countersData = await countersResp.json()
       const counters = JSON.parse(atob(countersData.content))
       winCount = counters.wins ?? 0
-      lossCount = counters.losses ?? 0
+      lossCount = counters.loses ?? 0
       attemptCount = counters.attempts ?? 0
     } catch (e) {
       alert(`Error fetching counters: ${e.message}`)
@@ -581,7 +581,7 @@ async function fetchHighScores() {
     counterDiv.style.marginBottom = '8px'
     counterDiv.style.fontWeight = 'bold'
     counterDiv.innerHTML = `🥇${winCount} 💥${lossCount} 🧹${attemptCount}`
-    counterDiv.title = `Wins: ${winCount}, Losses: ${lossCount}, Attempts: ${attemptCount}`
+    counterDiv.title = `Wins: ${winCount}, loses: ${lossCount}, Attempts: ${attemptCount}`
     highScoresList.innerHTML = ''
     highScoresList.appendChild(counterDiv)
 
