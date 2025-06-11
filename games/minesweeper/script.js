@@ -479,13 +479,29 @@ async function submitScore() {
   const playerName = document.getElementById('player-name').value
   const platform = navigator.userAgentData?.platform || navigator.platform || 'Unknown Platform'
   const deviceType = getDeviceType()
+  // Fetch current attempt count for this submission
+  let attemptNumber = null
+  try {
+    const countersResp = await fetch(COUNTERS_URL, {
+      headers: {
+        Authorization: `token ${token}`,
+        Accept: 'application/vnd.github.v3+json'
+      }
+    })
+    const countersData = await countersResp.json()
+    const counters = JSON.parse(atob(countersData.content))
+    attemptNumber = counters.attempts ?? null
+  } catch (e) {
+    attemptNumber = null
+  }
   const score = {
     name: playerName,
     time: elapsedTime,
     moves: movesCount,
     boardSize: currentSettings.boardSize,
-    platform, // Include platform in the score
-    device: deviceType, // Add device type
+    platform,
+    device: deviceType,
+    attempt: attemptNumber,
     date: new Date().toISOString()
   }
   // console.log('Submitting score:', score)
@@ -570,7 +586,8 @@ async function fetchHighScores() {
     highScoresList.appendChild(counterDiv)
 
     filteredScores
-      .sort((a, b) => a.time - b.time) // Sort by time (ascending)
+      .sort((a, b) => a.moves - b.moves) // Sort by moves
+      .sort((a, b) => a.time - b.time) // Sort by time
       .slice(0, 10) // Show top 10 scores
       .forEach((score, index) => {
         const listItem = document.createElement('li')
@@ -589,7 +606,7 @@ async function fetchHighScores() {
         let d
         if (!score.device) d = '❓'
         else d = score.device === 'mobile' ? '📱' : '💻'
-        listItem.title = `${d}|${score.name}|⌛${score.time}|👣${score.moves}|${date}`
+        listItem.title = `${d}${score.name}  👣${score.moves}  ${date}`
         highScoresList.appendChild(listItem)
       })
   } catch (error) {
