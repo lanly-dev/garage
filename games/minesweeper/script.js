@@ -78,6 +78,7 @@ let timerInterval
 let timerUnit = 'seconds'
 
 let touchTimer
+let activeTouchCell
 
 resetBtn.addEventListener('click', () => {
   resetGame()
@@ -178,21 +179,56 @@ function cellDoubleClickHandler(event) {
   }
 }
 
+gameBoard.addEventListener('touchmove', function(event) {
+  const cell = activeTouchCell
+  if (!cell || !cell.classList.contains('cell')) return
+  if (typeof cell._touchStartX !== 'number' || typeof cell._touchStartY !== 'number') return
+  const touch = event.touches[0]
+  if (!touch) return
+  const dx = Math.abs(touch.clientX - cell._touchStartX)
+  const dy = Math.abs(touch.clientY - cell._touchStartY)
+  if (dx > 10 || dy > 10) {
+    cell._touchMoved = true
+    clearTimeout(touchTimer)
+  }
+})
+
 function cellTouchStartHandler(event) {
   const cell = event.target
+  activeTouchCell = cell
+  cell.longPress = false
+  cell._touchMoved = false
+  cell._touchStartX = event.touches && event.touches[0] ? event.touches[0].clientX : 0
+  cell._touchStartY = event.touches && event.touches[0] ? event.touches[0].clientY : 0
+  cell._suppressNextTap = false
   touchTimer = setTimeout(() => {
-    putFlagHandler({ target: cell, preventDefault: () => { } }) // Trigger flag placement
-    cell.longPress = true // Mark as a long press
-  }, 300) // Long press duration (300ms)
-  cell.longPress = false // Reset long press flag
+    // Only flag if finger hasn't moved and cell is still active
+    if (activeTouchCell === cell && !cell._touchMoved) {
+      putFlagHandler({ target: cell, preventDefault: () => {} })
+      cell.longPress = true
+      cell._suppressNextTap = true
+    }
+  }, 300)
 }
 
 function cellTouchEndHandler(event) {
-  clearTimeout(touchTimer) // Cancel flag placement if touch ends early
-  const cell = event.target
-  if (!cell.longPress) {
-    cellClickHandler(event) // Trigger uncovering for short taps
+  clearTimeout(touchTimer)
+  const cell = activeTouchCell
+  activeTouchCell = null
+  if (!cell) return
+  // Prevent any action if user was scrolling
+  if (cell._touchMoved) {
+    cell._touchMoved = false
+    return
   }
+  if (cell._suppressNextTap) {
+    cell._suppressNextTap = false
+    return
+  }
+  if (!cell.longPress) {
+    cellClickHandler({ target: cell })
+  }
+  cell.longPress = false
 }
 
 function smileyAnimation() {
