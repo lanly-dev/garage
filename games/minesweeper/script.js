@@ -523,7 +523,7 @@ async function submitScore() {
 async function fetchHighScores() {
   try {
     // Fetch win/loss counters from COUNTERS_URL
-    let winCount = -1, lossCount = -1
+    let winCount = -1, lossCount = -1, attemptCount = -1
     try {
       const countersResp = await fetch(COUNTERS_URL, {
         headers: {
