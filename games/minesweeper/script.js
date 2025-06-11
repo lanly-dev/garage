@@ -179,17 +179,15 @@ function cellDoubleClickHandler(event) {
 }
 
 function cellTouchStartHandler(event) {
-  event.preventDefault()
   const cell = event.target
   touchTimer = setTimeout(() => {
-    putFlagHandler({ target: cell, preventDefault: () => {} }) // Trigger flag placement
+    putFlagHandler({ target: cell, preventDefault: () => { } }) // Trigger flag placement
     cell.longPress = true // Mark as a long press
   }, 300) // Long press duration (300ms)
   cell.longPress = false // Reset long press flag
 }
 
 function cellTouchEndHandler(event) {
-  event.preventDefault()
   clearTimeout(touchTimer) // Cancel flag placement if touch ends early
   const cell = event.target
   if (!cell.longPress) {
@@ -220,6 +218,14 @@ function disableBoard(bool) {
   gameBoard.classList.toggle('disabled', bool)
 }
 
+function isTouchDevice() {
+  return (
+    'ontouchstart' in window ||
+    navigator.maxTouchPoints > 0 ||
+    navigator.msMaxTouchPoints > 0
+  )
+}
+
 function initBoard() {
   disableBoard(false)
   gameBoard.style.gridTemplateColumns = `repeat(${boardSize}, 30px)`
@@ -231,7 +237,9 @@ function initBoard() {
       cell.classList.add('cell', currentSettings.cellShape)
       cell.dataset.row = row
       cell.dataset.col = col
-      cell.addEventListener('click', cellClickHandler)
+      if (!isTouchDevice()) {
+        cell.addEventListener('click', cellClickHandler)
+      }
       cell.addEventListener('touchstart', cellTouchStartHandler)
       cell.addEventListener('touchend', cellTouchEndHandler)
       if (currentSettings.doubleClickReveal) {

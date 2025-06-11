@@ -127,8 +127,12 @@ body.dark #controls button:hover {
 
 #game-board {
   display: grid;
-  gap: 2px;
-  user-select: none;
+  gap: 1px;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  max-width: 95%;
+  padding: 10px;
+  overflow: auto;
 }
 
 #open-settings {
