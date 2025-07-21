@@ -581,7 +581,7 @@ async function fetchHighScores() {
     counterDiv.style.marginBottom = '8px'
     counterDiv.style.fontWeight = 'bold'
     counterDiv.innerHTML = `🥇${winCount} 💥${lossCount} 🧹${attemptCount}`
-    counterDiv.title = `Wins: ${winCount}, loses: ${lossCount}, Attempts: ${attemptCount}`
+    counterDiv.title = `Wins: ${winCount}, loses: ${lossCount}, attempts: ${attemptCount}`
     highScoresList.innerHTML = ''
     highScoresList.appendChild(counterDiv)
 
