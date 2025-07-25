@@ -8,7 +8,7 @@ const startUrl = 'https://www.viator.com/USA/d77'
 const crawler = new PlaywrightCrawler({
   launchContext: {
     launchOptions: {
-      headless: false
+      // headless: false
     }
   },
   maxRequestRetries: 0,
@@ -28,20 +28,36 @@ const crawler = new PlaywrightCrawler({
       // Wait for navigation to results
       await page.waitForLoadState('load')
       // await page.screenshot({path: "test2.png", fullPage: true})
-      // add ?sortType=rating
-      await page.goto(`${request.url}?sortType=rating`, { waitUntil: 'networkidle' })
+      // get current URL and append ?sortType=rating
+      const currentUrl = page.url()
+      const newUrl = `${currentUrl}?sortType=rating`
+      await page.goto(newUrl, { waitUntil: 'networkidle' })
       await page.waitForTimeout(2000 + Math.random() * 2000)
     }
     const items = await page.$$eval('[class*="productCard"]', cards =>
       cards.map(card => {
-        const title = card.querySelector('[class*="title"]')?.textContent?.trim()
         const link = card.querySelector('a')?.href
+        if (!link) return
+        const title = card.querySelector('[class*="title"]')?.textContent?.trim()
         const rating = card.querySelector('[class*="rating"]')?.textContent?.trim()
         const cost = card.querySelector('[class*="price"]')?.textContent?.trim()
         return { title, link, rating, cost }
       })
     )
 
+    // Filter out undefined items
+    const filteredItems = items.filter(item => item !== undefined)
+    console.log(filteredItems.length)
+    await page.waitForTimeout(2000 + Math.random() * 2000)
+
+    for (const item of filteredItems) {
+      await page.goto(item.link, { waitUntil: 'networkidle' })
+      await page.screenshot({path: "test.png", fullPage: true})
+      item.overview = await page.$$eval('[class*="bis_skin_checked"]', cards => cards.map(card => card.textContent.trim()))
+      item.photos = await page.$$eval('[class*="galleryImage"] img', imgs => imgs.map(img => img.src))
+      item.featureList = await page.$$eval('[class*="featureList"] li', features => features.map(feature => feature.textContent.trim()))
+      await page.waitForTimeout(2000 + Math.random() * 2000)
+    }
     console.log(items)
     await Dataset.pushData(items)
   }
