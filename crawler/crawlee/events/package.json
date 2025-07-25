@@ -1,0 +1,11 @@
+{
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js"
+  },
+  "type": "module",
+  "dependencies": {
+    "crawlee": "^3.13.10",
+    "playwright": "^1.54.1"
+  }
+}
