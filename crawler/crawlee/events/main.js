@@ -1,45 +1,45 @@
 
 import { PlaywrightCrawler, Dataset } from 'crawlee'
 
-
-
 // Get location from command line argument
-const location = process.argv[2] || 'New York'; // default to New York if not provided
-const startUrl = 'https://www.viator.com/USA/d77';
+const location = process.argv[2] || 'New York' // default to New York if not provided
+const startUrl = 'https://www.viator.com/USA/d77'
 
 const crawler = new PlaywrightCrawler({
   launchContext: {
     launchOptions: {
-      headless: false,
-    },
+      headless: false
+    }
   },
+  maxRequestRetries: 0,
   requestHandler: async ({ page, request, log }) => {
-    log.info(`Navigating to ${request.url}`);
+    log.info(`Navigating to ${request.url}`)
 
     // Go to homepage and search for the location
     if (request.url === startUrl) {
-      await page.waitForSelector('input[placeholder*="Search"]', { timeout: 15000 });
-      await page.fill('input[placeholder*="Search"]', location);
-      await page.keyboard.press('Enter');
+      // await page.waitForSelector('input[value="USA"]', { timeout: 30000 })
+      // wait for payload to load
+      await page.waitForSelector('input[value="USA"]', { timeout: 10000 })
+      await page.fill('input[value="USA"]', location)
+      await page.keyboard.press('Enter')
       // Wait for navigation to results
-      await page.waitForSelector('[data-automation="product-card"]', { timeout: 15000 });
+      await page.waitForSelector('[class*="productListProductsAndSortByContainer"]', { timeout: 25000 })
     }
+    const items = await page.$$eval('[class*="productCard"]', cards =>
+      cards.map(card => {
+        console.log(card)
+        const title = card.querySelector('.title')?.textContent?.trim()
+        const link = card.querySelector('a')?.href
+        const rating = card.querySelector('.rating')?.textContent?.trim()
+        const cost = card.querySelector('.price')?.textContent?.trim()
+        return { title, link, rating, cost }
+      })
+    )
 
-    // Scrape the results
-    const attractions = await page.evaluate(() => {
-      const results = [];
-      document.querySelectorAll('[data-automation="product-card"]').forEach((item) => {
-        const title = item.querySelector('[data-automation="product-card-title"]')?.innerText || '';
-        const description = item.querySelector('[data-automation="product-card-description"]')?.innerText || '';
-        const price = item.querySelector('[data-automation="product-card-price"]')?.innerText || '';
-        const rating = item.querySelector('[data-automation="product-card-rating-value"]')?.innerText || '';
-        results.push({ title, description, price, rating });
-      });
-      return results;
-    });
+    console.log(items)
 
-    await Dataset.pushData(attractions);
-  },
-});
+    await Dataset.pushData(items)
+  }
+})
 
-await crawler.run([startUrl]);
+await crawler.run([startUrl])
