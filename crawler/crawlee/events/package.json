@@ -1,7 +1,7 @@
 {
   "main": "main.js",
   "scripts": {
-    "start": "node main.js"
+    "start": "node main.js seattle"
   },
   "type": "module",
   "dependencies": {

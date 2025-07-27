@@ -1,3 +1,5 @@
+// Ensure verbose logging for Crawlee
+process.env.CRAWLEE_VERBOSE_LOG = '1'
 
 import { PlaywrightCrawler, Dataset } from 'crawlee'
 
@@ -12,6 +14,7 @@ const crawler = new PlaywrightCrawler({
     }
   },
   maxRequestRetries: 0,
+  requestHandlerTimeoutSecs: 120,
   requestHandler: async ({ page, request, log }) => {
     log.info(`Navigating to ${request.url}`)
 
@@ -34,6 +37,7 @@ const crawler = new PlaywrightCrawler({
       await page.goto(newUrl, { waitUntil: 'networkidle' })
       await page.waitForTimeout(2000 + Math.random() * 2000)
     }
+
     const items = await page.$$eval('[class*="productCard"]', cards =>
       cards.map(card => {
         const link = card.querySelector('a')?.href
@@ -46,20 +50,29 @@ const crawler = new PlaywrightCrawler({
     )
 
     // Filter out undefined items
-    const filteredItems = items.filter(item => item !== undefined)
-    console.log(filteredItems.length)
+    const filteredItems = items.filter(item => {
+      if (!item) return false
+      if (item.rating && parseFloat(item.rating) < 4.0) return false
+      return true
+    })
+    console.log('filteredItems', filteredItems.length)
     await page.waitForTimeout(2000 + Math.random() * 2000)
 
+    let i = 0
     for (const item of filteredItems) {
+      console.log(`Processing: link=${item.link}, title=${item.title}`)
       await page.goto(item.link, { waitUntil: 'networkidle' })
       await page.screenshot({path: "test.png", fullPage: true})
-      item.overview = await page.$$eval('[class*="bis_skin_checked"]', cards => cards.map(card => card.textContent.trim()))
-      item.photos = await page.$$eval('[class*="galleryImage"] img', imgs => imgs.map(img => img.src))
+      item.overview = await page.$$eval('[data-automation="product-overview"] > div > div', cards => cards.map(card => card.textContent.trim()))
+      item.photos = await page.$$eval('[class*="mediaGallery"] img', imgs => imgs.map(img => img.src))
       item.featureList = await page.$$eval('[class*="featureList"] li', features => features.map(feature => feature.textContent.trim()))
       await page.waitForTimeout(2000 + Math.random() * 2000)
+      console.log(`Processed item ${i++}/${filteredItems.length}: ${item.title}`)
+      if (i === 1) break
     }
-    console.log(items)
-    await Dataset.pushData(items)
+    console.log(filteredItems[0])
+    console.log(filteredItems[1])
+    await Dataset.pushData(filteredItems)
   }
 })
 
