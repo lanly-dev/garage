@@ -62,8 +62,10 @@ const crawler = new PlaywrightCrawler({
     for (const item of filteredItems) {
       console.log(`Processing: link=${item.link}, title=${item.title}`)
       await page.goto(item.link, { waitUntil: 'networkidle' })
-      await page.screenshot({path: "test.png", fullPage: true})
+      await page.screenshot({ path: "test.png", fullPage: true })
+      if (!await isLegitPage(page)) return
       item.overview = await page.$$eval('[data-automation="product-overview"] > div > div', cards => cards.map(card => card.textContent.trim()))
+      item.overviewFeatures = await page.$$eval('[data-automation="product-overview"] > ul', cards => cards.map(card => card.textContent.trim()))
       item.photos = await page.$$eval('[class*="mediaGallery"] img', imgs => imgs.map(img => img.src))
       item.featureList = await page.$$eval('[class*="featureList"] li', features => features.map(feature => feature.textContent.trim()))
       await page.waitForTimeout(2000 + Math.random() * 2000)
@@ -75,5 +77,15 @@ const crawler = new PlaywrightCrawler({
     await Dataset.pushData(filteredItems)
   }
 })
+
+async function isLegitPage(page) {
+  const html = await page.content()
+  if (html.includes('DataDome')) {
+    console.warn('Bot prevention detected! Skipping this page.')
+    // await page.screenshot({ path: 'bot-prevention.png', fullPage: true })
+    return false
+  }
+  return true
+}
 
 await crawler.run([startUrl])
