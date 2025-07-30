@@ -79,8 +79,9 @@ const crawler = new PlaywrightCrawler({
     for (const item of filteredItems) {
       log.info(`Processing: link=${item.link}, title=${item.title}`)
       await page.goto(item.link, { waitUntil: 'networkidle' })
-      await page.screenshot({ path: 'test.png', fullPage: true })
-      if (!await isLegitPage(page, log)) return
+      // await page.screenshot({ path: 'test.png', fullPage: true })
+      page = await getLegitPage(page, log)
+      if (!page) continue
       item.overview = await page.$$eval('[data-automation="product-overview"] > div > div', cards => cards.map(card => card.textContent.trim()))
       item.overviewFeatures = await page.$$eval('[data-automation="product-overview"] > ul > li', cards => cards.map(card => card.textContent.trim()))
       item.photos = await page.$$eval('[class*="mediaGallery"] img', imgs => imgs.map(img => img.src))
@@ -90,7 +91,6 @@ const crawler = new PlaywrightCrawler({
 
       item.additionalInfo = await page.$$eval('[data-automation="additional-info-section"] li', items => items.map(item => item.textContent.trim()))
       log.info(`Processed item ${i++}/${filteredItems.length}: ${item.title}`)
-      if (i === 1) break
     }
     // console.log(filteredItems[0])
     // console.log(filteredItems[1])
@@ -108,15 +108,20 @@ const crawler = new PlaywrightCrawler({
 //   await page.waitForTimeout(2000 + Math.random() * 2000)
 // }
 
-async function isLegitPage(page, log) {
+
+async function getLegitPage(page, log, count = 0) {
+  if (count > 3) {
+    log.warning('Tried: ' + count + ' times to get a legit page! Skipping this page.')
+    return null
+  }
   const html = await page.content()
   if (html.includes('DataDome')) {
-    log.warn('🤖 Bot prevention detected! Skipping this page.')
+    log.warning('🤖 Bot prevention detected! Skipping this page.')
     // await page.screenshot({ path: 'bot-prevention.png', fullPage: true })
-    throw new Error('Bot prevention detected') // to retry the request
-    // return false
+    await page.waitForTimeout(2000 + Math.random() * 2000)
+    return getLegitPage(page, log) // to retry the request
   }
-  return true
+  return page
 }
 
 async function randomClick(page, log) {
