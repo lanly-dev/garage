@@ -6,6 +6,11 @@
   "type": "module",
   "dependencies": {
     "crawlee": "^3.13.10",
-    "playwright": "^1.54.1"
+    "playwright": "^1.54.1",
+    "playwright-extra": "^4.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2"
+  },
+  "devDependencies": {
+    "eslint": "^9.32.0"
   }
 }

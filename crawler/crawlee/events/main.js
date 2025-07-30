@@ -1,5 +1,15 @@
 // Ensure verbose logging for Crawlee
 process.env.CRAWLEE_VERBOSE_LOG = '1'
+// NOTE: not sure if this one helps?
+// https://github.com/apify/crawlee/blob/master/docs/examples/crawler-plugins/playwright-extra.ts
+// For playwright-extra you will need to import the browser type itself that you want to use!
+// By default, PlaywrightCrawler uses chromium, but you can also use firefox or webkit.
+import { chromium } from 'playwright-extra'
+import stealthPlugin from 'puppeteer-extra-plugin-stealth'
+
+// First, we tell playwright-extra to use the plugin (or plugins) we want.
+// Certain plugins might have options you can pass in - read up on their documentation!
+chromium.use(stealthPlugin())
 
 import { PlaywrightCrawler, Dataset } from 'crawlee'
 
@@ -10,7 +20,7 @@ const startUrl = 'https://www.viator.com/USA/d77'
 const crawler = new PlaywrightCrawler({
   launchContext: {
     launchOptions: {
-      // headless: false
+      // headless: false,
       viewport: { width: 1280, height: 800 },
       args: [
         '--window-size=1280,800',
@@ -18,7 +28,7 @@ const crawler = new PlaywrightCrawler({
       ]
     }
   },
-  maxRequestRetries: 0,
+  maxRequestRetries: 1,
   requestHandlerTimeoutSecs: 120,
   requestHandler: async ({ page, request, log }) => {
     log.info(`Navigating to ${request.url}`)
@@ -62,24 +72,33 @@ const crawler = new PlaywrightCrawler({
     })
     await randomClick(page)
     await randomMovement(page)
-    await page.waitForTimeout(3000 + Math.random() * 3000)
+    await randomScroll(page)
+    await page.waitForTimeout(5000 + Math.random() * 3000)
 
     let i = 0
     for (const item of filteredItems) {
       console.log(`Processing: link=${item.link}, title=${item.title}`)
       await page.goto(item.link, { waitUntil: 'networkidle' })
-      await page.screenshot({ path: "test.png", fullPage: true })
+      await page.screenshot({ path: 'test.png', fullPage: true })
       if (!await isLegitPage(page)) return
       item.overview = await page.$$eval('[data-automation="product-overview"] > div > div', cards => cards.map(card => card.textContent.trim()))
       item.overviewFeatures = await page.$$eval('[data-automation="product-overview"] > ul > li', cards => cards.map(card => card.textContent.trim()))
       item.photos = await page.$$eval('[class*="mediaGallery"] img', imgs => imgs.map(img => img.src))
-      item.featureList = await page.$$eval('[class*="featureList"] li', features => features.map(feature => feature.textContent.trim()))
+      const featureList = await page.$$eval('[data-automation="whats-included-section"] ul', uls => uls.map(ul => Array.from(ul.querySelectorAll('li')).map(li => li.textContent.trim())))
+      item.included = featureList[0] || []
+      item.excluded = featureList[1] || []
+
+      const showMoreButton = page.locator('[class*="seeMoreWrapper"] button')
+      await showMoreButton.click()
+      // await page.screenshot({ path: 'test.png', fullPage: true })
+      await page.waitForSelector('[class*="ReactModal__Content"] [class*="featureList"] li');
+      item.additionalInfo = await page.$$eval( '[class*="ReactModal__Content"] [class*="featureList"] li', items => items.map(item => item.textContent.trim()))
       await page.waitForTimeout(2000 + Math.random() * 2000)
       console.log(`Processed item ${i++}/${filteredItems.length}: ${item.title}`)
-      if (i === 1) break
+      // if (i === 1) break
     }
     console.log(filteredItems[0])
-    console.log(filteredItems[1])
+    // console.log(filteredItems[1])
     await Dataset.pushData(filteredItems)
   }
 })
@@ -112,6 +131,17 @@ async function randomMovement(page) {
     await page.waitForTimeout(500 + Math.random() * 500)
   }
   console.info('Simulated random mouse movement on the page')
+}
+
+async function randomScroll(page) {
+  // Simulate random scrolling on the page
+  const scrollHeight = await page.evaluate(() => document.body.scrollHeight)
+  for (let i = 0; i < 5; i++) {
+    const scrollY = Math.floor(Math.random() * scrollHeight)
+    await page.evaluate(y => window.scrollTo(0, y), scrollY)
+    await page.waitForTimeout(500 + Math.random() * 500)
+  }
+  console.info('Simulated random scrolling on the page')
 }
 
 await crawler.run([startUrl])
