@@ -36,7 +36,7 @@ const crawler = new PlaywrightCrawler({
     // Go to homepage and search for the location
     if (request.url === startUrl) {
       // await page.waitForSelector('input[value="USA"]', { timeout: 30000 })
-      // wait for payload to load
+
       // await page.screenshot({path: "test.png", fullPage: true})
       await page.waitForTimeout(2000 + Math.random() * 2000)
       await page.fill('input[value="USA"]', location)
@@ -53,7 +53,7 @@ const crawler = new PlaywrightCrawler({
       await page.waitForTimeout(2000 + Math.random() * 2000)
     }
 
-    const items = await page.$$eval('[class*="productCard"]', cards =>
+    const items = await page.$$eval('[data-automation="ttd-product-list-card"]', cards =>
       cards.map(card => {
         const link = card.querySelector('a')?.href
         if (!link) return
