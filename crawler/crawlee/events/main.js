@@ -28,8 +28,8 @@ const crawler = new PlaywrightCrawler({
       ]
     }
   },
-  maxRequestRetries: 1,
-  requestHandlerTimeoutSecs: 120,
+  maxRequestRetries: 5,
+  requestHandlerTimeoutSecs: 1200,
   requestHandler: async ({ page, request, log }) => {
     log.info(`Navigating to ${request.url}`)
 
@@ -70,17 +70,17 @@ const crawler = new PlaywrightCrawler({
       if (item.rating && parseFloat(item.rating) < 4.0) return false
       return true
     })
-    await randomClick(page)
-    await randomMovement(page)
-    await randomScroll(page)
+    await randomClick(page, log)
+    await randomMovement(page, log)
+    await randomScroll(page, log)
     await page.waitForTimeout(5000 + Math.random() * 3000)
 
     let i = 0
     for (const item of filteredItems) {
-      console.log(`Processing: link=${item.link}, title=${item.title}`)
+      log.info(`Processing: link=${item.link}, title=${item.title}`)
       await page.goto(item.link, { waitUntil: 'networkidle' })
       await page.screenshot({ path: 'test.png', fullPage: true })
-      if (!await isLegitPage(page)) return
+      if (!await isLegitPage(page, log)) return
       item.overview = await page.$$eval('[data-automation="product-overview"] > div > div', cards => cards.map(card => card.textContent.trim()))
       item.overviewFeatures = await page.$$eval('[data-automation="product-overview"] > ul > li', cards => cards.map(card => card.textContent.trim()))
       item.photos = await page.$$eval('[class*="mediaGallery"] img', imgs => imgs.map(img => img.src))
@@ -88,41 +88,47 @@ const crawler = new PlaywrightCrawler({
       item.included = featureList[0] || []
       item.excluded = featureList[1] || []
 
-      const showMoreButton = page.locator('[class*="seeMoreWrapper"] button')
-      await showMoreButton.click()
-      // await page.screenshot({ path: 'test.png', fullPage: true })
-      await page.waitForSelector('[class*="ReactModal__Content"] [class*="featureList"] li');
-      item.additionalInfo = await page.$$eval( '[class*="ReactModal__Content"] [class*="featureList"] li', items => items.map(item => item.textContent.trim()))
-      await page.waitForTimeout(2000 + Math.random() * 2000)
-      console.log(`Processed item ${i++}/${filteredItems.length}: ${item.title}`)
-      // if (i === 1) break
+      item.additionalInfo = await page.$$eval('[data-automation="additional-info-section"] li', items => items.map(item => item.textContent.trim()))
+      log.info(`Processed item ${i++}/${filteredItems.length}: ${item.title}`)
+      if (i === 1) break
     }
-    console.log(filteredItems[0])
+    // console.log(filteredItems[0])
     // console.log(filteredItems[1])
     await Dataset.pushData(filteredItems)
   }
 })
 
-async function isLegitPage(page) {
+// This is for when you want to click on the "See More" button in the modal to get full list of additional info
+// async function additionalInfoModal({ request, error }) {
+//   const showMoreButton = page.locator('[class*="seeMoreWrapper"] button')
+//   await showMoreButton.click()
+//   // await page.screenshot({ path: 'test.png', fullPage: true })
+//   await page.waitForSelector('[class*="ReactModal__Content"] [class*="featureList"] li')
+//   item.additionalInfo = await page.$$eval('[class*="ReactModal__Content"] [class*="featureList"] li', items => items.map(item => item.textContent.trim()))
+//   await page.waitForTimeout(2000 + Math.random() * 2000)
+// }
+
+async function isLegitPage(page, log) {
   const html = await page.content()
   if (html.includes('DataDome')) {
-    console.warn('🤖 Bot prevention detected! Skipping this page.')
+    log.warn('🤖 Bot prevention detected! Skipping this page.')
     // await page.screenshot({ path: 'bot-prevention.png', fullPage: true })
-    return false
+    throw new Error('Bot prevention detected') // to retry the request
+    // return false
   }
   return true
 }
 
-async function randomClick(page) {
+async function randomClick(page, log) {
   await page.waitForTimeout(2000 + Math.random() * 2000)
   await page.mouse.click(
     Math.floor(Math.random() * 1280), // random x within viewport width
     Math.floor(Math.random() * 800)   // random y within viewport height
   )
-  console.info('Simulated random mouse click on the page')
+  log.info('Simulated random mouse click on the page')
 }
 
-async function randomMovement(page) {
+async function randomMovement(page, log) {
   // Simulate mouse movement to random positions
   for (let i = 0; i < 5; i++) {
     const x = Math.floor(Math.random() * 1280)
@@ -130,10 +136,10 @@ async function randomMovement(page) {
     await page.mouse.move(x, y)
     await page.waitForTimeout(500 + Math.random() * 500)
   }
-  console.info('Simulated random mouse movement on the page')
+  log.info('Simulated random mouse movement on the page')
 }
 
-async function randomScroll(page) {
+async function randomScroll(page, log) {
   // Simulate random scrolling on the page
   const scrollHeight = await page.evaluate(() => document.body.scrollHeight)
   for (let i = 0; i < 5; i++) {
@@ -141,7 +147,7 @@ async function randomScroll(page) {
     await page.evaluate(y => window.scrollTo(0, y), scrollY)
     await page.waitForTimeout(500 + Math.random() * 500)
   }
-  console.info('Simulated random scrolling on the page')
+  log.info('Simulated random scrolling on the page')
 }
 
 await crawler.run([startUrl])
