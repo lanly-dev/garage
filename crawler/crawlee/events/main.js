@@ -11,6 +11,11 @@ const crawler = new PlaywrightCrawler({
   launchContext: {
     launchOptions: {
       // headless: false
+      viewport: { width: 1280, height: 800 },
+      args: [
+        '--window-size=1280,800',
+        '--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36'
+      ]
     }
   },
   maxRequestRetries: 0,
@@ -55,8 +60,9 @@ const crawler = new PlaywrightCrawler({
       if (item.rating && parseFloat(item.rating) < 4.0) return false
       return true
     })
-    console.log('filteredItems', filteredItems.length)
-    await page.waitForTimeout(2000 + Math.random() * 2000)
+    await randomClick(page)
+    await randomMovement(page)
+    await page.waitForTimeout(3000 + Math.random() * 3000)
 
     let i = 0
     for (const item of filteredItems) {
@@ -65,7 +71,7 @@ const crawler = new PlaywrightCrawler({
       await page.screenshot({ path: "test.png", fullPage: true })
       if (!await isLegitPage(page)) return
       item.overview = await page.$$eval('[data-automation="product-overview"] > div > div', cards => cards.map(card => card.textContent.trim()))
-      item.overviewFeatures = await page.$$eval('[data-automation="product-overview"] > ul', cards => cards.map(card => card.textContent.trim()))
+      item.overviewFeatures = await page.$$eval('[data-automation="product-overview"] > ul > li', cards => cards.map(card => card.textContent.trim()))
       item.photos = await page.$$eval('[class*="mediaGallery"] img', imgs => imgs.map(img => img.src))
       item.featureList = await page.$$eval('[class*="featureList"] li', features => features.map(feature => feature.textContent.trim()))
       await page.waitForTimeout(2000 + Math.random() * 2000)
@@ -81,11 +87,31 @@ const crawler = new PlaywrightCrawler({
 async function isLegitPage(page) {
   const html = await page.content()
   if (html.includes('DataDome')) {
-    console.warn('Bot prevention detected! Skipping this page.')
+    console.warn('🤖 Bot prevention detected! Skipping this page.')
     // await page.screenshot({ path: 'bot-prevention.png', fullPage: true })
     return false
   }
   return true
+}
+
+async function randomClick(page) {
+  await page.waitForTimeout(2000 + Math.random() * 2000)
+  await page.mouse.click(
+    Math.floor(Math.random() * 1280), // random x within viewport width
+    Math.floor(Math.random() * 800)   // random y within viewport height
+  )
+  console.info('Simulated random mouse click on the page')
+}
+
+async function randomMovement(page) {
+  // Simulate mouse movement to random positions
+  for (let i = 0; i < 5; i++) {
+    const x = Math.floor(Math.random() * 1280)
+    const y = Math.floor(Math.random() * 800)
+    await page.mouse.move(x, y)
+    await page.waitForTimeout(500 + Math.random() * 500)
+  }
+  console.info('Simulated random mouse movement on the page')
 }
 
 await crawler.run([startUrl])
