@@ -90,7 +90,7 @@ const crawler = new PlaywrightCrawler({
       item.excluded = featureList[1] || []
 
       item.additionalInfo = await page.$$eval('[data-automation="additional-info-section"] li', items => items.map(item => item.textContent.trim()))
-      log.info(`Processed item ${i++}/${filteredItems.length}: ${item.title}`)
+      log.info(`Processed item ${i++ + 1}/${filteredItems.length}: ${item.title}`)
     }
     // console.log(filteredItems[0])
     // console.log(filteredItems[1])
