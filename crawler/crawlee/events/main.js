@@ -33,25 +33,23 @@ const crawler = new PlaywrightCrawler({
   requestHandler: async ({ page, request, log }) => {
     log.info(`Navigating to ${request.url}`)
 
-    // Go to homepage and search for the location
-    if (request.url === startUrl) {
-      // await page.waitForSelector('input[value="USA"]', { timeout: 30000 })
+    // await page.waitForSelector('input[value="USA"]', { timeout: 30000 })
 
-      // await page.screenshot({path: "test.png", fullPage: true})
-      await page.waitForTimeout(2000 + Math.random() * 2000)
-      await page.fill('input[value="USA"]', location)
-      await page.waitForTimeout(2000 + Math.random() * 2000)
-      await page.keyboard.press('Enter')
-      await page.waitForTimeout(2000 + Math.random() * 2000)
-      // Wait for navigation to results
-      await page.waitForLoadState('load')
-      // await page.screenshot({path: "test2.png", fullPage: true})
-      // get current URL and append ?sortType=rating
-      const currentUrl = page.url()
-      const newUrl = `${currentUrl}?sortType=rating`
-      await page.goto(newUrl, { waitUntil: 'networkidle' })
-      await page.waitForTimeout(2000 + Math.random() * 2000)
-    }
+    // await page.screenshot({path: "test.png", fullPage: true})
+    await page.waitForTimeout(2000 + Math.random() * 2000)
+    await page.fill('input[value="USA"]', location)
+    await page.waitForTimeout(2000 + Math.random() * 2000)
+    await page.keyboard.press('Enter')
+    await page.waitForTimeout(2000 + Math.random() * 2000)
+    // Wait for navigation to results
+    await page.waitForLoadState('load')
+    // await page.screenshot({path: "test2.png", fullPage: true})
+    // get current URL and append ?sortType=rating
+    const currentUrl = page.url()
+    const newUrl = `${currentUrl}?sortType=rating`
+    await page.goto(newUrl, { waitUntil: 'networkidle' })
+    await page.waitForTimeout(2000 + Math.random() * 2000)
+
 
     const items = await page.$$eval('[data-automation="ttd-product-list-card"]', cards =>
       cards.map(card => {
