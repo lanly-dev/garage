@@ -1,3 +1,6 @@
+https://quasar.dev/start/quick-start \
+https://quasar.dev/start/quasar-cli
+
 ```
 npm i -g @quasar/cli
 npm init quasar@latest
