@@ -3,6 +3,7 @@
     "adbkit",
     "scrcpy"
   ],
+  "explorer.sortOrder": "type",
   "terminal.integrated.env.windows": {
     "PATH": "${workspaceFolder}\\libs\\scrcpy;${env:PATH}"
   }
