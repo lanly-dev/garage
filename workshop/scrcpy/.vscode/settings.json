@@ -1,0 +1,9 @@
+{
+  "cSpell.words": [
+    "adbkit",
+    "scrcpy"
+  ],
+  "terminal.integrated.env.windows": {
+    "PATH": "${workspaceFolder}\\libs\\scrcpy;${env:PATH}"
+  }
+}
