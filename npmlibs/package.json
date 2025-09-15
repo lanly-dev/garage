@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@neplex/vectorizer": "^0.0.5"
+  }
+}
