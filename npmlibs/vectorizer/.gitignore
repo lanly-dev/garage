@@ -1,5 +1,6 @@
 *.jpg
 *.png
 *.svg
+vtracer.exe
 node_modules/
 package-lock.json
