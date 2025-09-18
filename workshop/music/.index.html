@@ -1,0 +1,75 @@
+<!-- No external audio file needed; use Web Audio API for click sound -->
+<script src="https://unpkg.com/@tonejs/midi"></script>
+<!-- No instrument samples needed -->
+<div id="keystrokeDisplay" style="font-size:2em;margin-top:1em;"></div>
+<div id="keystrokeLog" style="font-size:1.2em;margin-top:0.5em;color:#555;"></div>
+<script type="module">
+  // Will be filled per song
+  let notes = []
+  let currentNoteIdx = 0
+  // Create a single AudioContext for all playback
+  const ctx = new (window.AudioContext || window.webkitAudioContext)()
+
+  const fileInput = document.createElement('input')
+  fileInput.type = 'file'
+  fileInput.accept = '.mid'
+  document.body.appendChild(fileInput)
+
+  fileInput.onchange = async () => {
+    const file = fileInput.files[0]
+    const arrayBuffer = await file.arrayBuffer()
+    const midi = new Midi(arrayBuffer)
+    // Gather all notes from all tracks
+    let allNotes = []
+    midi.tracks.forEach(track => {
+      track.notes.forEach(note => {
+        allNotes.push({
+          midi: note.midi,
+          name: note.name,
+          duration: note.duration,
+          time: note.time
+        })
+      })
+    })
+    // Group notes by their time (frame)
+    let timeMap = {}
+    allNotes.forEach(note => {
+      if (!timeMap[note.time]) timeMap[note.time] = []
+      timeMap[note.time].push(note)
+    })
+    // Sort time frames
+    let timeFrames = Object.keys(timeMap).map(Number).sort((a, b) => a - b)
+    // notes will be an array of arrays: each array is all notes at that time
+    notes = timeFrames.map(t => timeMap[t])
+    currentNoteIdx = 0
+    document.getElementById('keystrokeLog').textContent = ''
+    document.getElementById('keystrokeDisplay').textContent = 'Ready! Type to play.'
+  }
+
+  // Load a piano sampler using Tone.js
+  document.addEventListener('keydown', () => {
+    if (notes.length === 0 || currentNoteIdx >= notes.length) return
+    const chordNotes = notes[currentNoteIdx]
+    const display = document.getElementById('keystrokeDisplay')
+    const logDiv = document.getElementById('keystrokeLog')
+    // Play all notes in this time frame as a chord
+    chordNotes.forEach(note => {
+      const osc = ctx.createOscillator()
+      const gain = ctx.createGain()
+      osc.type = 'triangle'
+      const noteFreq = 440 * Math.pow(2, (note.midi - 69) / 12)
+      osc.frequency.value = noteFreq
+      gain.gain.value = 0.2 / chordNotes.length // lower volume for chords
+      osc.connect(gain)
+      gain.connect(ctx.destination)
+      osc.start()
+      const playDuration = Math.max(note.duration, 0.7)
+      osc.stop(ctx.currentTime + playDuration)
+      gain.gain.setValueAtTime(gain.gain.value, ctx.currentTime)
+      gain.gain.linearRampToValueAtTime(0, ctx.currentTime + playDuration)
+    })
+    display.textContent = `Music notes: ${chordNotes.map(n => n.name + ' (MIDI ' + n.midi + ')').join(', ')}`
+    logDiv.textContent += chordNotes.map(n => n.name).join(' ') + ' | '
+    currentNoteIdx++
+  })
+</script>
