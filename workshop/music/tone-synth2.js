@@ -96,11 +96,16 @@ class NodeSynth {
       track.notes.forEach(note => {
         const frequency = this.midiToFrequency(note.midi)
 
+        // Debug: Check actual durations from @tonejs/midi
+        if (note.duration < 0.1) {
+          console.log(`Short note found: ${note.name} duration: ${note.duration.toFixed(3)}s`)
+        }
+
         allNotes.push({
           frequency,
           startTime: note.time,
-          duration: Math.max(note.duration, 0.1), // Minimum duration
-          velocity: Math.floor(note.velocity * 127), // Convert 0-1 to 0-127
+          duration: note.duration, // can alert to change the speed
+          velocity: note.velocity, // volume
           midiNote: note.midi,
           noteName: note.name
         })
@@ -127,7 +132,7 @@ class NodeSynth {
         console.log(`Processing note ${index + 1}/${allNotes.length}`)
       }
 
-      const volume = (note.velocity / 127) * 0.1 // Scale velocity
+      const volume = note.velocity * 0.5 // .5 need to damp down volume, the full one make bass sound terrible
       const noteResult = this.generateNote(
         note.frequency,
         note.duration,
