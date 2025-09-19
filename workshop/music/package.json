@@ -1,7 +1,9 @@
 {
   "type": "module",
   "dependencies": {
+    "@tonejs/midi": "^2.0.28",
     "midi-parser-js": "^4.0.4",
+    "puppeteer": "^24.22.0",
     "speaker": "^0.5.5",
     "tone": "^15.1.22"
   }

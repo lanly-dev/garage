@@ -1,5 +1,6 @@
 import Speaker from 'speaker'
-import MidiParser from 'midi-parser-js'
+import pkg from '@tonejs/midi'
+const { Midi } = pkg
 import fs from 'fs'
 
 // Tone.js-inspired synthesis in pure Node.js
@@ -41,7 +42,7 @@ class NodeSynth {
         // Attack phase
         envelope = t / attack
       } else if (t <= attack + decay) {
-        // Decay phase  
+        // Decay phase
         envelope = 1 - (1 - sustain) * (t - attack) / decay
       } else if (t <= releaseStart) {
         // Sustain phase
@@ -80,45 +81,29 @@ class NodeSynth {
   // Play MIDI file
   async playMidiFile(midiFilePath, options = {}) {
     const midiData = fs.readFileSync(midiFilePath)
-    const parsed = MidiParser.parse(midiData)
+    const midi = new Midi(midiData)
 
     console.log(`Parsing MIDI file: ${midiFilePath}`)
-    console.log(`Tracks: ${parsed.track.length}`)
+    console.log(`Duration: ${midi.duration.toFixed(2)} seconds`)
+    console.log(`Tracks: ${midi.tracks.length}`)
 
-    // Extract all notes from all tracks
+    // Extract all notes from all tracks using @tonejs/midi
     let allNotes = []
-    let currentTime = 0
 
-    parsed.track.forEach((track, trackIndex) => {
-      let trackTime = 0
-      let activeNotes = new Map() // For note on/off tracking
+    midi.tracks.forEach((track, trackIndex) => {
+      console.log(`Track ${trackIndex}: ${track.name || 'Untitled'} - ${track.notes.length} notes`)
 
-      track.event.forEach(event => {
-        // * .5 == 2x speed
-        trackTime += event.deltaTime / parsed.timeDivision * 0.5 // Convert to seconds (rough)
+      track.notes.forEach(note => {
+        const frequency = this.midiToFrequency(note.midi)
 
-        if (event.type === 9 && event.data[1] > 0) { // Note On
-          const midiNote = event.data[0]
-          const velocity = event.data[1]
-          activeNotes.set(midiNote, { startTime: trackTime, velocity })
-        } else if (event.type === 8 || (event.type === 9 && event.data[1] === 0)) { // Note Off
-          const midiNote = event.data[0]
-          if (activeNotes.has(midiNote)) {
-            const noteInfo = activeNotes.get(midiNote)
-            const duration = trackTime - noteInfo.startTime
-            const frequency = this.midiToFrequency(midiNote)
-
-            allNotes.push({
-              frequency,
-              startTime: noteInfo.startTime,
-              duration: Math.max(duration, 0.1), // Minimum duration
-              velocity: noteInfo.velocity,
-              midiNote
-            })
-
-            activeNotes.delete(midiNote)
-          }
-        }
+        allNotes.push({
+          frequency,
+          startTime: note.time,
+          duration: Math.max(note.duration, 0.1), // Minimum duration
+          velocity: Math.floor(note.velocity * 127), // Convert 0-1 to 0-127
+          midiNote: note.midi,
+          noteName: note.name
+        })
       })
     })
 
@@ -128,7 +113,7 @@ class NodeSynth {
     allNotes.sort((a, b) => a.startTime - b.startTime)
 
     // Calculate total duration
-    const totalDuration = Math.max(...allNotes.map(n => n.startTime + n.duration)) + 1
+    const totalDuration = Math.max(midi.duration, Math.max(...allNotes.map(n => n.startTime + n.duration))) + 1
     const totalSamples = Math.floor(this.sampleRate * totalDuration)
 
     console.log(`Total duration: ${totalDuration.toFixed(2)} seconds`)
