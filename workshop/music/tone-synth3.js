@@ -29,7 +29,8 @@ class NodeSynth {
 
     // --- Velocity mapping (browser uses 0.2 base volume) ---
     let velocity = options.velocity !== undefined ? options.velocity : 0.8
-    let volume = 0.2 * velocity  // Browser Tone.js uses 0.2 base volume
+    let chordScale = options.chordScale !== undefined ? options.chordScale : 1
+    let volume = 0.2 * velocity * chordScale  // Browser Tone.js uses 0.2 base volume + chord scaling
 
     // --- Simplified envelope to match browser linear ramp ---
     const attack = 0.005  // Very quick attack
@@ -112,6 +113,21 @@ class NodeSynth {
 
     console.log(`Total duration: ${totalDuration.toFixed(2)} seconds`)
 
+    // Group notes by time frame for chord volume scaling (like browser)
+    const timeFrames = new Map()
+    allNotes.forEach(note => {
+      const timeKey = Math.floor(note.startTime * 10) / 10  // 0.1s precision
+      if (!timeFrames.has(timeKey)) timeFrames.set(timeKey, [])
+      timeFrames.get(timeKey).push(note)
+    })
+
+    // Apply chord scaling to each note
+    allNotes.forEach(note => {
+      const timeKey = Math.floor(note.startTime * 10) / 10
+      const chordSize = timeFrames.get(timeKey).length
+      note.chordScale = 1 / chordSize  // Volume scaling for chords
+    })
+
     // Create final audio buffer
     const finalBuffer = Buffer.alloc(totalSamples * 2)
 
@@ -129,7 +145,12 @@ class NodeSynth {
         note.frequency,
         note.duration,  // Use original duration, let generateNote apply minimum
         note.startTime,
-        { ...options, midiNote: note.midiNote, velocity: note.velocity }
+        { 
+          ...options, 
+          midiNote: note.midiNote, 
+          velocity: note.velocity,
+          chordScale: note.chordScale  // Apply chord volume scaling
+        }
       )
 
       // Mix into final buffer
