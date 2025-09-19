@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIDI Auto Player</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .file-input-wrapper {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .file-input {
+            padding: 10px;
+            border: 2px dashed #ddd;
+            border-radius: 5px;
+            background: #fafafa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .file-input:hover {
+            border-color: #007bff;
+            background: #f0f8ff;
+        }
+        .controls {
+            text-align: center;
+            margin: 20px 0;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s ease;
+        }
+        button:hover:not(:disabled) {
+            background: #0056b3;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .status {
+            text-align: center;
+            font-size: 1.2em;
+            margin: 20px 0;
+            min-height: 30px;
+        }
+        .progress-container {
+            margin: 20px 0;
+            background: #f0f0f0;
+            border-radius: 10px;
+            padding: 5px;
+        }
+        .progress-bar {
+            background: #007bff;
+            height: 20px;
+            border-radius: 5px;
+            width: 0%;
+            transition: width 0.1s ease;
+        }
+        .current-notes {
+            background: #e8f4f8;
+            border: 1px solid #bee5eb;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 20px 0;
+            min-height: 50px;
+        }
+        .tempo-control {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .tempo-control label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .tempo-control input {
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎵 MIDI Auto Player</h1>
+        
+        <div class="file-input-wrapper">
+            <input type="file" id="fileInput" accept=".mid,.midi" class="file-input">
+            <p>Select a MIDI file to play automatically</p>
+        </div>
+
+        <div class="tempo-control">
+            <label for="tempoSlider">Playback Speed: <span id="tempoValue">1.0x</span></label>
+            <input type="range" id="tempoSlider" min="0.25" max="3.0" step="0.25" value="1.0">
+        </div>
+
+        <div class="controls">
+            <button id="playBtn" disabled>▶️ Play</button>
+            <button id="pauseBtn" disabled>⏸️ Pause</button>
+            <button id="stopBtn" disabled>⏹️ Stop</button>
+        </div>
+
+        <div class="status" id="status">Load a MIDI file to begin</div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <div class="current-notes" id="currentNotes">
+            <strong>Current Notes:</strong> <span id="noteDisplay">None playing</span>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/@tonejs/midi"></script>
+    <script type="module">
+        class MidiPlayer {
+            constructor() {
+                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                this.notes = [];
+                this.currentNoteIdx = 0;
+                this.isPlaying = false;
+                this.isPaused = false;
+                this.startTime = 0;
+                this.pauseTime = 0;
+                this.totalDuration = 0;
+                this.playbackSpeed = 1.0;
+                this.timeouts = [];
+                this.activeOscillators = [];
+
+                this.initializeElements();
+                this.bindEvents();
+            }
+
+            initializeElements() {
+                this.fileInput = document.getElementById('fileInput');
+                this.playBtn = document.getElementById('playBtn');
+                this.pauseBtn = document.getElementById('pauseBtn');
+                this.stopBtn = document.getElementById('stopBtn');
+                this.status = document.getElementById('status');
+                this.progressBar = document.getElementById('progressBar');
+                this.noteDisplay = document.getElementById('noteDisplay');
+                this.tempoSlider = document.getElementById('tempoSlider');
+                this.tempoValue = document.getElementById('tempoValue');
+            }
+
+            bindEvents() {
+                this.fileInput.addEventListener('change', (e) => this.loadMidiFile(e));
+                this.playBtn.addEventListener('click', () => this.play());
+                this.pauseBtn.addEventListener('click', () => this.pause());
+                this.stopBtn.addEventListener('click', () => this.stop());
+                this.tempoSlider.addEventListener('input', (e) => this.updateTempo(e));
+            }
+
+            async loadMidiFile(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                try {
+                    this.status.textContent = 'Loading MIDI file...';
+                    
+                    const arrayBuffer = await file.arrayBuffer();
+                    const midi = new Midi(arrayBuffer);
+                    
+                    // Extract all notes with timing
+                    let allNotes = [];
+                    midi.tracks.forEach(track => {
+                        track.notes.forEach(note => {
+                            allNotes.push({
+                                midi: note.midi,
+                                name: note.name,
+                                duration: note.duration,
+                                time: note.time,
+                                velocity: note.velocity || 0.8
+                            });
+                        });
+                    });
+
+                    // Sort notes by time
+                    allNotes.sort((a, b) => a.time - b.time);
+                    this.notes = allNotes;
+                    this.totalDuration = Math.max(...allNotes.map(n => n.time + n.duration));
+                    
+                    this.status.textContent = `Loaded: ${file.name} (${this.notes.length} notes, ${this.totalDuration.toFixed(1)}s)`;
+                    this.playBtn.disabled = false;
+                    this.currentNoteIdx = 0;
+                    this.progressBar.style.width = '0%';
+                    this.noteDisplay.textContent = 'Ready to play';
+
+                } catch (error) {
+                    this.status.textContent = 'Error loading MIDI file: ' + error.message;
+                    console.error('MIDI loading error:', error);
+                }
+            }
+
+            updateTempo(event) {
+                this.playbackSpeed = parseFloat(event.target.value);
+                this.tempoValue.textContent = this.playbackSpeed + 'x';
+                
+                // If playing, restart with new tempo
+                if (this.isPlaying && !this.isPaused) {
+                    const currentTime = this.getCurrentPlaybackTime();
+                    this.stop();
+                    this.playFromTime(currentTime);
+                }
+            }
+
+            getCurrentPlaybackTime() {
+                if (!this.isPlaying) return 0;
+                if (this.isPaused) return this.pauseTime;
+                return ((this.ctx.currentTime - this.startTime) * this.playbackSpeed);
+            }
+
+            play() {
+                if (this.notes.length === 0) return;
+
+                // Resume from pause or start from beginning
+                const startFromTime = this.isPaused ? this.pauseTime : 0;
+                this.playFromTime(startFromTime);
+            }
+
+            playFromTime(startTime) {
+                this.clearTimeouts();
+                this.stopAllOscillators();
+                
+                this.isPlaying = true;
+                this.isPaused = false;
+                this.startTime = this.ctx.currentTime - (startTime / this.playbackSpeed);
+                
+                this.playBtn.disabled = true;
+                this.pauseBtn.disabled = false;
+                this.stopBtn.disabled = false;
+                
+                this.status.textContent = 'Playing...';
+
+                // Schedule all notes
+                this.notes.forEach((note, index) => {
+                    if (note.time >= startTime) {
+                        const delay = (note.time - startTime) / this.playbackSpeed;
+                        const timeout = setTimeout(() => {
+                            this.playNote(note);
+                            this.updateProgress();
+                        }, delay * 1000);
+                        this.timeouts.push(timeout);
+                    }
+                });
+
+                // Schedule end of playback
+                const totalDelay = (this.totalDuration - startTime) / this.playbackSpeed;
+                const endTimeout = setTimeout(() => {
+                    this.onPlaybackComplete();
+                }, totalDelay * 1000);
+                this.timeouts.push(endTimeout);
+
+                // Start progress updates
+                this.updateProgress();
+                this.progressInterval = setInterval(() => this.updateProgress(), 100);
+            }
+
+            playNote(note) {
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    
+                    osc.type = 'triangle';
+                    const frequency = 440 * Math.pow(2, (note.midi - 69) / 12);
+                    osc.frequency.value = frequency;
+                    
+                    const volume = (note.velocity || 0.8) * 0.3;
+                    gain.gain.value = volume;
+                    
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    
+                    const now = this.ctx.currentTime;
+                    osc.start(now);
+                    
+                    const noteDuration = note.duration / this.playbackSpeed;
+                    osc.stop(now + noteDuration);
+                    
+                    // Fade out
+                    gain.gain.setValueAtTime(volume, now);
+                    gain.gain.linearRampToValueAtTime(0, now + noteDuration);
+                    
+                    this.activeOscillators.push(osc);
+                    
+                    // Update display
+                    this.noteDisplay.textContent = `${note.name} (MIDI ${note.midi}) - ${frequency.toFixed(1)}Hz`;
+                    
+                    // Clean up finished oscillators
+                    osc.onended = () => {
+                        const index = this.activeOscillators.indexOf(osc);
+                        if (index > -1) {
+                            this.activeOscillators.splice(index, 1);
+                        }
+                    };
+                    
+                } catch (error) {
+                    console.error('Error playing note:', error);
+                }
+            }
+
+            pause() {
+                if (!this.isPlaying || this.isPaused) return;
+                
+                this.isPaused = true;
+                this.pauseTime = this.getCurrentPlaybackTime();
+                
+                this.clearTimeouts();
+                this.stopAllOscillators();
+                clearInterval(this.progressInterval);
+                
+                this.playBtn.disabled = false;
+                this.pauseBtn.disabled = true;
+                this.status.textContent = 'Paused';
+                this.noteDisplay.textContent = 'Paused';
+            }
+
+            stop() {
+                this.isPlaying = false;
+                this.isPaused = false;
+                this.pauseTime = 0;
+                
+                this.clearTimeouts();
+                this.stopAllOscillators();
+                clearInterval(this.progressInterval);
+                
+                this.playBtn.disabled = false;
+                this.pauseBtn.disabled = true;
+                this.stopBtn.disabled = true;
+                
+                this.status.textContent = 'Stopped';
+                this.noteDisplay.textContent = 'Stopped';
+                this.progressBar.style.width = '0%';
+            }
+
+            onPlaybackComplete() {
+                this.isPlaying = false;
+                this.isPaused = false;
+                clearInterval(this.progressInterval);
+                
+                this.playBtn.disabled = false;
+                this.pauseBtn.disabled = true;
+                this.stopBtn.disabled = true;
+                
+                this.status.textContent = 'Playback complete';
+                this.noteDisplay.textContent = 'Finished';
+                this.progressBar.style.width = '100%';
+            }
+
+            updateProgress() {
+                if (!this.isPlaying || this.totalDuration === 0) return;
+                
+                const currentTime = this.getCurrentPlaybackTime();
+                const progress = Math.min((currentTime / this.totalDuration) * 100, 100);
+                this.progressBar.style.width = progress + '%';
+            }
+
+            clearTimeouts() {
+                this.timeouts.forEach(timeout => clearTimeout(timeout));
+                this.timeouts = [];
+            }
+
+            stopAllOscillators() {
+                this.activeOscillators.forEach(osc => {
+                    try {
+                        osc.stop();
+                    } catch (e) {
+                        // Oscillator might already be stopped
+                    }
+                });
+                this.activeOscillators = [];
+            }
+        }
+
+        // Initialize the MIDI player when the page loads
+        const player = new MidiPlayer();
+        
+        // Handle audio context resume (required for some browsers)
+        document.addEventListener('click', () => {
+            if (player.ctx.state === 'suspended') {
+                player.ctx.resume();
+            }
+        }, { once: true });
+    </script>
+</body>
+</html>
