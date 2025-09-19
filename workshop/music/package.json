@@ -1,6 +1,8 @@
 {
   "type": "module",
   "dependencies": {
-    "speaker": "^0.5.5"
+    "midi-parser-js": "^4.0.4",
+    "speaker": "^0.5.5",
+    "tone": "^15.1.22"
   }
 }
