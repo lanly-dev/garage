@@ -6,5 +6,6 @@
     "lamejs",
     "libfluidsynth",
     "tonejs"
-  ]
+  ],
+  "explorer.sortOrder": "type"
 }
