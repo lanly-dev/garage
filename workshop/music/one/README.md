@@ -24,3 +24,5 @@ Environment variables (advanced tuning):
 Notes
 - This is intentionally simple and uses `speaker` native bindings. On Windows, the `SimplePlayer` approach (sequential writes) is often more stable.
 - If you want lower latency, consider tuning `MIX_CHUNK` or using the `Node` with a dedicated low-latency audio library.
+
+> NOT WORKING FOR FAST TYPING
