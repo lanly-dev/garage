@@ -1,0 +1,8 @@
+{
+  "scripts": {
+    "start": "node stepper.js"
+  },
+  "dependencies": {
+    "midi-file-parser": "^1.0.0"
+  }
+}
