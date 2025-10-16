@@ -1,0 +1,8 @@
+*.mp3
+*.mp4
+*.pt
+*.png
+.venv*
+ffmpedg.exe
+mingw64
+temp
