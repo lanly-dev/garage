@@ -64,7 +64,9 @@ pip install -r requirements.txt
 2. Run:
 	python inference.py --checkpoint_path <model> --face <face> --audio <audio> --outfile <output>
 
-
-Note: On Windows, you may need GCC for building some dependencies. Download GCC from https://winlibs.com/ and add it to your PATH. --> Not sure if needed but installation complain relates about it, and include the bin doesn't help
-
 It need ffmpeg to run https://github.com/BtbN/FFmpeg-Builds https://github.com/BtbN/FFmpeg-Builds/releases/tag/latest
+
+Need to convert *.pt for newer pytorch version
+
+> Only able to do 1 face, probably better to do with a moving person
+> Work with actual talking but not singing (or maybe split the voice out would be better)

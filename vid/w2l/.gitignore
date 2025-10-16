@@ -3,6 +3,7 @@
 *.pt
 *.png
 .venv*
-ffmpedg.exe
+ffmpeg.exe
 mingw64
 temp
+Wav2Lip
