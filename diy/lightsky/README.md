@@ -1,4 +1,4 @@
-> Hold the power button for 2 seconds, then use 2 fingers to swipe down from the top to show a pop-up (force the app to crash/become unresponsive) to access the real Android settings and enable USB debugging
+> Hold the power button for 2 seconds to show the power/restart options, then use 2 fingers to swipe down from the top to show a pop-up (force the app to crash/become unresponsive) to access the real Android settings and enable USB debugging
 
 Ref:
 - https://github.com/dinewby88/SkylightMaxCalendarADB
