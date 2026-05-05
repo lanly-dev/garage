@@ -2,8 +2,8 @@
 *.mp4
 *.pt
 *.png
+*.wav
 .venv*
 ffmpeg.exe
 mingw64
 temp
-Wav2Lip
