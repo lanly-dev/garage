@@ -1,0 +1,1 @@
+powershell ./Off_light.ps1
