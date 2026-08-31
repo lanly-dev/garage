@@ -1,5 +1,7 @@
 {
   "cSpell.words": [
     "resrgan"
-  ]
+  ],
+  "n88n.apiKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0ZjM0M2ZmYy1kYmJjLTQwMjktODU3ZS00NjYyN2UyMDFlMTMiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwianRpIjoiZDNmMmY5Y2EtNmI0Yy00MzhlLTkxMjUtYzA4NDgzMmU2M2Y3IiwiaWF0IjoxNzgzNDUwMTgyfQ.n_Cl0WSIDaNWjFAQYrfjb00GKTJe23XP4EivJBHm4a8",
+  "n88n.baseUrl": "http://192.168.0.230:5678"
 }

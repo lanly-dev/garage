@@ -1,0 +1,14 @@
+services:
+  openhands:
+    image: ghcr.io/openhands/agent-canvas:1.16.0
+    container_name: openhands-app
+    ports:
+      - "2222:8000"
+    volumes:
+      # Persists OpenHands settings and chat state across container restarts
+      - ~/.openhands:/home/openhands/.openhands
+      # Project files the agent can access
+      - .:/projects
+    tty: true
+    stdin_open: true
+    restart: unless-stopped
