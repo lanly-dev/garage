@@ -1,13 +1,18 @@
-TopLine: 'CPU %cpu% • RAM %ram% | %date%'
-BottomLine: '🔼%upload_speed% 🔽%download_speed% | %time%'
+TopLine: 💻%cpu% 🖼️%ram%-%gpu_temp% | %date%
+BottomLine: ↑%upload_speed% ↓%download_speed% | %time%
 DateFormat: 'MMM dd yyyy'
 TimeFormat: "hh':'mm':'ss tt"
 DataCollection:
   NetworkMetricsFormat: mbs
-  NetworkMetricsFixedDecimals: -1
+  NetworkMetricsFixedDecimals: 1
   DiskMetricsFormat: sameAsNetwork
   DiskMetricsFixedDecimals: -1
   PercentageFormat: spacePaddingAndSymbol
   UpdateInterval: 1
   NetworkAdapterName: ''
   GpuAdapterName: ''
+TimeStyle:
+  FontWeight: thin
+  CharacterSpacing: -90
+DateStyle:
+  FontWeight: thin
