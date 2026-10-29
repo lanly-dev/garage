@@ -13,6 +13,6 @@ DataCollection:
   GpuAdapterName: ''
 TimeStyle:
   FontWeight: thin
-  CharacterSpacing: -90
+  CharacterSpacing: -93
 DateStyle:
   FontWeight: thin
