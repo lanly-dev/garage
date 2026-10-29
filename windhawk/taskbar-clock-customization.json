@@ -1,0 +1,14 @@
+{
+  "TopLine": "CPU %cpu% • RAM %ram% | %date%",
+  "BottomLine": "🔼%upload_speed% 🔽%download_speed% | %time%",
+  "DateFormat": "MMM dd yyyy",
+  "TimeFormat": "hh':'mm':'ss tt",
+  "DataCollection.NetworkMetricsFormat": "mbs",
+  "DataCollection.NetworkMetricsFixedDecimals": -1,
+  "DataCollection.DiskMetricsFormat": "sameAsNetwork",
+  "DataCollection.DiskMetricsFixedDecimals": -1,
+  "DataCollection.PercentageFormat": "spacePaddingAndSymbol",
+  "DataCollection.UpdateInterval": 1,
+  "DataCollection.NetworkAdapterName": "",
+  "DataCollection.GpuAdapterName": ""
+}
