@@ -1,4 +1,4 @@
-TopLine: 💻%cpu% 🖼️%ram%-%gpu_temp% | %date%
+TopLine: 💻%cpu% 🗄️%ram% 🖼️%gpu%-%gpu_temp% | %date%
 BottomLine: ↑%upload_speed% ↓%download_speed% | %time%
 DateFormat: 'MMM dd yyyy'
 TimeFormat: "hh':'mm':'ss tt"
@@ -13,6 +13,6 @@ DataCollection:
   GpuAdapterName: ''
 TimeStyle:
   FontWeight: thin
-  CharacterSpacing: -93
+  CharacterSpacing: -100
 DateStyle:
   FontWeight: thin
